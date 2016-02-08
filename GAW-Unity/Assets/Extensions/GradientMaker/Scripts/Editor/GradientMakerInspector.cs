@@ -30,7 +30,7 @@ class GradientMakerInspector : Editor {
 		DrawDefaultInspector();
 		gradEdit = (GradientMaker)target;
 		
-		EditorGUIUtility.LookLikeControls();
+		//EditorGUIUtility.LookLikeControls();
 		//// Gradient GUI element is being provided by GradientEditor class as it's an internal UI element
 		
 		// Gradient Options
@@ -83,9 +83,9 @@ class GradientMakerInspector : Editor {
 		string path = null;
 		
 		if(Application.platform == RuntimePlatform.OSXEditor){
-			path = Application.dataPath + "/GradientMaker/";
+			path = Application.dataPath + "/Extensions/GradientMaker/";
 		} else if (Application.platform == RuntimePlatform.WindowsEditor){
-			path = Application.dataPath + "\\GradientMaker\\";		
+			path = Application.dataPath + "\\Extensions\\GradientMaker\\";		
 		} 
 		
 		byte[] rawChecker = File.ReadAllBytes(path + "Checker.png");

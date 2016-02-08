@@ -37,7 +37,7 @@ class GradientMakerEditor : EditorWindow {
 	
 	static void Init () {
 		GradientMakerEditor window = (GradientMakerEditor)EditorWindow.GetWindow(typeof (GradientMakerEditor));
-		window.title = "Gradient Maker Lite";
+		EditorWindow.GetWindow(typeof (GradientMakerEditor)).titleContent.text = "Gradient Maker Lite";
 		window.minSize = new Vector2(260,410);
 		
 	}
@@ -96,9 +96,9 @@ class GradientMakerEditor : EditorWindow {
 		if(checker == null || checker.width != _gradientSizeX || checker.height != _gradientSizeY){
 			
 			if(Application.platform == RuntimePlatform.OSXEditor){
-				path = Application.dataPath + "/GradientMaker/";
+				path = Application.dataPath + "/Extensions/GradientMaker/";
 			} else if (Application.platform == RuntimePlatform.WindowsEditor){
-				path = Application.dataPath + "\\GradientMaker\\";		
+				path = Application.dataPath + "\\Extensions\\GradientMaker\\";		
 			} 
 			
 			byte[] rawChecker = File.ReadAllBytes(path + "Checker.png");
