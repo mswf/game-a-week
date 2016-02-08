@@ -1,23 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 
 namespace Week00
 {
 	public class MenuController : MonoBehaviour
 	{
+		public Scene sceneToLoad;
 
-		// Use this for initialization
-		void Start()
+		public void LoadScene()
 		{
-
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-
+			SceneManager.LoadScene(sceneToLoad.name);
 		}
 	}
-
 }
