@@ -172,13 +172,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c750ac2a92822b4ea7e56621a87d5c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 256
-  frequency: 32
+  resolution: 128
+  frequency: 12
   octaves: 3
   lacunarity: 2
   persistence: 0.5
   noiseType: 1
-  dimensions: 2
+  dimensions: 3
 --- !u!1 &1408525552
 GameObject:
   m_ObjectHideFlags: 0
