@@ -27,6 +27,8 @@ using System.Text;
 using UnityEngine;
 using LunarPlugin;
 
+using Log = LunarPlugin.Log;
+
 namespace LunarPluginInternal
 {
     using Option = CCommand.Option;
@@ -110,7 +112,7 @@ namespace LunarPluginInternal
                 }
                 else
                 {
-                    Log.e("Unable to register command: name={0} type={1}", commandName, type);
+					LunarPlugin.Log.e("Unable to register command: name={0} type={1}", commandName, type);
                 }
             }
 

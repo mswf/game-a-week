@@ -25,6 +25,8 @@ using System.Reflection;
 
 using LunarPlugin;
 
+using Log = LunarPlugin.Log;
+
 namespace LunarPluginInternal
 {
     using CommandList = LinkedList<CCommand>;
@@ -117,7 +119,7 @@ namespace LunarPluginInternal
             }
             catch (Exception e)
             {
-                Log.error(e, "Unable to initialize cvar container: {0}", type);
+				LunarPlugin.Log.error(e, "Unable to initialize cvar container: {0}", type);
             }
 
         }
@@ -313,13 +315,13 @@ namespace LunarPluginInternal
                 CDelegateCommand delegateCmd = existingCmd as CDelegateCommand;
                 if (delegateCmd != null)
                 {
-                    Log.w("Overriding command: {0}", name);
+					LunarPlugin.Log.w("Overriding command: {0}", name);
                     delegateCmd.ActionDelegate = action;
 
                     return true;
                 }
 
-                Log.e("Another command with the same name exists: {0}", name);
+				LunarPlugin.Log.e("Another command with the same name exists: {0}", name);
                 return false;
             }
             
@@ -337,7 +339,7 @@ namespace LunarPluginInternal
                     return true;
                 }
 
-                Log.e("Unable to unregister a non-delegate command: {0}", cmd);
+				LunarPlugin.Log.e("Unable to unregister a non-delegate command: {0}", cmd);
                 return false;
             }
 

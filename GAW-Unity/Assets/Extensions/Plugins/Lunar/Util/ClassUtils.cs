@@ -29,6 +29,9 @@ using LunarPlugin;
 
 using UnityEngine;
 
+using Log = LunarPlugin.Log;
+
+
 namespace LunarPluginInternal
 {
     delegate bool ListMethodsFilter(MethodInfo method);
@@ -56,7 +59,7 @@ namespace LunarPluginInternal
             }
             catch (Exception e)
             {
-                Log.error(e, "Can't create instance of type: " + t);
+				LunarPlugin.Log.error(e, "Can't create instance of type: " + t);
             }
 
             return null;

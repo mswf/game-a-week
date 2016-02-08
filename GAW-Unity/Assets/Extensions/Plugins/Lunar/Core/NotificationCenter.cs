@@ -23,6 +23,8 @@
 using System.Collections.Generic;
 
 using LunarPlugin;
+using Log = LunarPlugin.Log;
+
 
 namespace LunarPluginInternal
 {
@@ -370,7 +372,7 @@ namespace LunarPluginInternal
                     }
                     catch (Exception e)
                     {
-                        Log.error(e, "Error while notifying delegate");
+						LunarPlugin.Log.error(e, "Error while notifying delegate");
                     }
                 }
             }

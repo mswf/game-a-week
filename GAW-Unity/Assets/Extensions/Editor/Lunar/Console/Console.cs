@@ -28,6 +28,8 @@ using UnityEngine;
 using LunarPlugin;
 using LunarPluginInternal;
 
+using Log = LunarPlugin.Log;
+
 namespace LunarEditor
 {
     class Console : AbstractConsole
@@ -68,7 +70,7 @@ namespace LunarEditor
 
         public void RegisterLogDelegate()
         {
-            Log.AddLogDelegate(OnLogMessage);
+			LunarPlugin.Log.AddLogDelegate(OnLogMessage);
         }
         
         private void OnLogMessage(LogLevel level, Tag tag, string message, string stackTrace)
@@ -84,7 +86,7 @@ namespace LunarEditor
 
         public override void Destroy()
         {
-            Log.RemoveLogDelegate(OnLogMessage);
+			LunarPlugin.Log.RemoveLogDelegate(OnLogMessage);
             base.Destroy();
         }
 

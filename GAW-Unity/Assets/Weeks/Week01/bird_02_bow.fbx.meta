@@ -1,0 +1,174 @@
+fileFormatVersion: 2
+guid: 89a80aa57f4fb0b4bb57c9ab9a2ab09f
+timeCreated: 1454932902
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Bird_Skeleton.002
+    100004: Body
+    100006: Head
+    100008: Head_Beak_Lower
+    100010: Head_Beak_Lower_end
+    100012: Head_Eye_L
+    100014: Head_Eye_L_end
+    100016: Head_Eye_R
+    100018: Head_Eye_R_end
+    100020: Head_Feather
+    100022: Head_Feather_end
+    100024: Hip_L
+    100026: Hip_L_end
+    100028: Hip_R
+    100030: Hip_R_end
+    100032: Leg_Feet_L
+    100034: Leg_Feet_R
+    100036: Leg_Heel_L
+    100038: Leg_Heel_R
+    100040: Leg_Lower_L
+    100042: Leg_Lower_R
+    100044: Leg_Upper_L
+    100046: Leg_Upper_R
+    100048: Neck
+    100050: Shoulder_L
+    100052: Shoulder_R
+    100054: Sphere.006
+    100056: Tail_1
+    100058: Tail_2
+    100060: Tail_3
+    100062: Tail_3_end
+    100064: Wing_1_L
+    100066: Wing_1_R
+    100068: Wing_2_L
+    100070: Wing_2_R
+    100072: Wing_3_L
+    100074: Wing_3_R
+    100076: Wing_F_1_L
+    100078: Wing_F_1_L_end
+    100080: Wing_F_1_R
+    100082: Wing_F_1_R_end
+    100084: Wing_F_2_L
+    100086: Wing_F_2_L_end
+    100088: Wing_F_2_R
+    100090: Wing_F_2_R_end
+    100092: Wing_F_3_L
+    100094: Wing_F_3_L_end
+    100096: Wing_F_3_R
+    100098: Wing_F_3_R_end
+    400000: //RootNode
+    400002: Bird_Skeleton.002
+    400004: Body
+    400006: Head
+    400008: Head_Beak_Lower
+    400010: Head_Beak_Lower_end
+    400012: Head_Eye_L
+    400014: Head_Eye_L_end
+    400016: Head_Eye_R
+    400018: Head_Eye_R_end
+    400020: Head_Feather
+    400022: Head_Feather_end
+    400024: Hip_L
+    400026: Hip_L_end
+    400028: Hip_R
+    400030: Hip_R_end
+    400032: Leg_Feet_L
+    400034: Leg_Feet_R
+    400036: Leg_Heel_L
+    400038: Leg_Heel_R
+    400040: Leg_Lower_L
+    400042: Leg_Lower_R
+    400044: Leg_Upper_L
+    400046: Leg_Upper_R
+    400048: Neck
+    400050: Shoulder_L
+    400052: Shoulder_R
+    400054: Sphere.006
+    400056: Tail_1
+    400058: Tail_2
+    400060: Tail_3
+    400062: Tail_3_end
+    400064: Wing_1_L
+    400066: Wing_1_R
+    400068: Wing_2_L
+    400070: Wing_2_R
+    400072: Wing_3_L
+    400074: Wing_3_R
+    400076: Wing_F_1_L
+    400078: Wing_F_1_L_end
+    400080: Wing_F_1_R
+    400082: Wing_F_1_R_end
+    400084: Wing_F_2_L
+    400086: Wing_F_2_L_end
+    400088: Wing_F_2_R
+    400090: Wing_F_2_R_end
+    400092: Wing_F_3_L
+    400094: Wing_F_3_L_end
+    400096: Wing_F_3_R
+    400098: Wing_F_3_R_end
+    4300000: Sphere.006
+    9500000: //RootNode
+    13700000: Sphere.006
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 100
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

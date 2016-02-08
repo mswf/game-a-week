@@ -25,6 +25,8 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+using Log = LunarPlugin.Log;
+
 using LunarPlugin;
 
 [assembly: InternalsVisibleTo("Assembly-CSharp")]
@@ -61,7 +63,7 @@ namespace LunarPluginInternal
 
             if (s_sharedInstance == null)
             {
-                Log.e("Can't execute command: app is not initialized");
+				LunarPlugin.Log.e("Can't execute command: app is not initialized");
                 return false;
             }
 

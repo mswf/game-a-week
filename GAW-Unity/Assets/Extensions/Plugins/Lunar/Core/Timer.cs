@@ -23,6 +23,9 @@
 
 using LunarPlugin;
 
+using Log = LunarPlugin.Log;
+
+
 namespace LunarPluginInternal
 {
     public class Timer
@@ -88,7 +91,7 @@ namespace LunarPluginInternal
                 }
                 catch (Exception e)
                 {
-                    Log.error(e, "Exception while firing timer");
+					LunarPlugin.Log.error(e, "Exception while firing timer");
                     Cancel();
                 }
             }

@@ -27,6 +27,9 @@ using System.Collections;
 using LunarPlugin;
 using LunarPluginInternal;
 
+using Log = LunarPlugin.Log;
+
+
 namespace LunarEditor
 {
     delegate void TextFieldDelegate(TextField field);
@@ -89,7 +92,7 @@ namespace LunarEditor
                 }
                 catch (Exception e)
                 {
-                    Log.error(e);
+					LunarPlugin.Log.error(e);
                 }
             }
 
@@ -130,7 +133,7 @@ namespace LunarEditor
             }
             catch (Exception e)
             {
-                Log.error(e);
+				LunarPlugin.Log.error(e);
             }
 
             if (Event.current.keyCode == KeyCode.Tab || Event.current.character == '\t')
