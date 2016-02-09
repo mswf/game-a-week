@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 namespace Week01
 {
@@ -28,6 +27,8 @@ namespace Week01
 
 		private Texture2D texture;
 
+		private Color[] samples;
+
 		private void OnEnable()
 		{
 			if (texture == null)
@@ -40,6 +41,8 @@ namespace Week01
 					anisoLevel = 9
 				};
 				GetComponent<MeshRenderer>().material.mainTexture = texture;
+
+				samples = new Color[resolution * resolution];
 			}
 			FillTexture();
 		}
@@ -49,6 +52,7 @@ namespace Week01
 			if (texture.width != resolution)
 			{
 				texture.Resize(resolution, resolution);
+				samples = new Color[resolution * resolution];
 			}
 
 			Vector3 point00 = transform.TransformPoint(new Vector3(-0.5f, -0.5f));
@@ -60,8 +64,9 @@ namespace Week01
 
 			float stepSize = 1f/resolution;
 
-			//float[] samples = new float[resolution*resolution];
+			//float startTime = Time.realtimeSinceStartup;
 
+			Color whiteColor = Color.white;
 			for (int y = 0, i = 0; y < resolution; y++)
 			{
 				float t = (y + 0.5f)*stepSize;
@@ -77,11 +82,13 @@ namespace Week01
 						sample = sample*0.5f + 0.5f;
 					}
 
-
-
-					texture.SetPixel(x, y, Color.white * sample);
+					samples[i] = whiteColor * sample;
 				}
 			}
+
+			texture.SetPixels(samples);
+
+			//Log.Steb(Time.realtimeSinceStartup - startTime);
 
 			texture.Apply();
 		}
