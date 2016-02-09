@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Runtime.CompilerServices;
 
 namespace Week01
 {
@@ -145,12 +146,12 @@ namespace Week01
 			return sum/range;
 		}
 
-		private static readonly float sqr2 = Mathf.Sqrt(2f);
+		private static readonly float sqr2 = (float)System.Math.Sqrt(2d);
 
 		public static float Value1D(Vector3 point, float frequency)
 		{
 			point *= frequency;
-			int i0 = Mathf.FloorToInt(point.x);
+			int i0 = (int)System.Math.Floor(point.x);
 			float t = point.x - i0;
 			i0 &= hashMask;
 			int i1 = i0 + 1;
@@ -165,8 +166,8 @@ namespace Week01
 		public static float Value2D(Vector3 point, float frequency)
 		{
 			point *= frequency;
-			int ix0 = Mathf.FloorToInt(point.x);
-			int iy0 = Mathf.FloorToInt(point.y);
+			int ix0 = (int)System.Math.Floor(point.x);
+			int iy0 = (int)System.Math.Floor(point.y);
 			float tx = point.x - ix0;
 			float ty = point.y - iy0;
 			ix0 &= hashMask;
@@ -184,18 +185,18 @@ namespace Week01
 			tx = Smooth(tx);
 			ty = Smooth(ty);
 
-			return Mathf.Lerp(
-					Mathf.Lerp(h00, h10, tx),
-					Mathf.Lerp(h01, h11, tx),
+			return MathS.LerpUnclamped(
+					MathS.LerpUnclamped(h00, h10, tx),
+					MathS.LerpUnclamped(h01, h11, tx),
 					ty) * (1f/hashMask);
 		}
 
 		public static float Value3D(Vector3 point, float frequency)
 		{
 			point *= frequency;
-			int ix0 = Mathf.FloorToInt(point.x);
-			int iy0 = Mathf.FloorToInt(point.y);
-			int iz0 = Mathf.FloorToInt(point.z);
+			int ix0 = (int)System.Math.Floor(point.x);
+			int iy0 = (int)System.Math.Floor(point.y);
+			int iz0 = (int)System.Math.Floor(point.z);
 			float tx = point.x - ix0;
 			float ty = point.y - iy0;
 			float tz = point.z - iz0;
@@ -226,16 +227,16 @@ namespace Week01
 			ty = Smooth(ty);
 			tz = Smooth(tz);
 
-			return Mathf.Lerp(
-				Mathf.Lerp(Mathf.Lerp(h000, h100, tx), Mathf.Lerp(h010, h110, tx), ty),
-				Mathf.Lerp(Mathf.Lerp(h001, h101, tx), Mathf.Lerp(h011, h111, tx), ty),
+			return MathS.LerpUnclamped(
+				MathS.LerpUnclamped(Mathf.Lerp(h000, h100, tx), MathS.LerpUnclamped(h010, h110, tx), ty),
+				MathS.LerpUnclamped(Mathf.Lerp(h001, h101, tx), MathS.LerpUnclamped(h011, h111, tx), ty),
 				tz) * (1f / hashMask);
 		}
 
 		public static float Perlin1D(Vector3 point, float frequency)
 		{
 			point *= frequency;
-			int i0 = Mathf.FloorToInt(point.x);
+			int i0 = (int)System.Math.Floor(point.x);
 			float t0 = point.x - i0;
 			float t1 = t0 - 1f;
 			i0 &= hashMask;
@@ -249,14 +250,14 @@ namespace Week01
 
 
 			float t = Smooth(t0);
-			return Mathf.Lerp(v0, v1, t) * 2f;
+			return MathS.LerpUnclamped(v0, v1, t) * 2f;
 		}
 
 		public static float Perlin2D(Vector3 point, float frequency)
 		{
 			point *= frequency;
-			int ix0 = Mathf.FloorToInt(point.x);
-			int iy0 = Mathf.FloorToInt(point.y);
+			int ix0 = (int)System.Math.Floor(point.x);
+			int iy0 = (int)System.Math.Floor(point.y);
 			float tx0 = point.x - ix0;
 			float ty0 = point.y - iy0;
 			float tx1 = tx0 - 1f;
@@ -281,18 +282,19 @@ namespace Week01
 				
 			float tx = Smooth(tx0);
 			float ty = Smooth(ty0);
-			return Mathf.Lerp(
-				Mathf.Lerp(v00, v10, tx),
-				Mathf.Lerp(v01, v11, tx),
+			return MathS.LerpUnclamped(
+				MathS.LerpUnclamped(v00, v10, tx),
+				MathS.LerpUnclamped(v01, v11, tx),
 				ty) * sqr2;
 		}
 
 		public static float Perlin3D(Vector3 point, float frequency)
 		{
 			point *= frequency;
-			int ix0 = Mathf.FloorToInt(point.x);
-			int iy0 = Mathf.FloorToInt(point.y);
-			int iz0 = Mathf.FloorToInt(point.z);
+			
+			int ix0 = (int) System.Math.Floor(point.x);
+			int iy0 = (int) System.Math.Floor(point.y);
+			int iz0 = (int) System.Math.Floor(point.z);
 			float tx0 = point.x - ix0;
 			float ty0 = point.y - iy0;
 			float tz0 = point.z - iz0;
@@ -313,6 +315,17 @@ namespace Week01
 			int h01 = hash[h0 + iy1];
 			int h11 = hash[h1 + iy1];
 
+
+			// Inlined stuff here
+
+			float tx = Smooth(tx0);
+			float ty = Smooth(ty0);
+
+			return MathS.LerpUnclamped(
+				MathS.LerpUnclamped(MathS.LerpUnclamped(Dot(gradients3D[hash[h00 + iz0] & gradientsMask3D], tx0, ty0, tz0), Dot(gradients3D[hash[h10 + iz0] & gradientsMask3D], tx1, ty0, tz0), tx), MathS.LerpUnclamped(Dot(gradients3D[hash[h01 + iz0] & gradientsMask3D], tx0, ty1, tz0), Dot(gradients3D[hash[h11 + iz0] & gradientsMask3D], tx1, ty1, tz0), tx), ty),
+				MathS.LerpUnclamped(MathS.LerpUnclamped(Dot(gradients3D[hash[h00 + iz1] & gradientsMask3D], tx0, ty0, tz1), Dot(gradients3D[hash[h10 + iz1] & gradientsMask3D], tx1, ty0, tz1), tx), MathS.LerpUnclamped(Dot(gradients3D[hash[h01 + iz1] & gradientsMask3D], tx0, ty1, tz1), Dot(gradients3D[hash[h11 + iz1] & gradientsMask3D], tx1, ty1, tz1), tx), ty),
+				Smooth(tz0));
+			/*
 			Vector3 g000 = gradients3D[hash[h00 + iz0] & gradientsMask3D];
 			Vector3 g100 = gradients3D[hash[h10 + iz0] & gradientsMask3D];
 			Vector3 g010 = gradients3D[hash[h01 + iz0] & gradientsMask3D];
@@ -322,6 +335,7 @@ namespace Week01
 			Vector3 g011 = gradients3D[hash[h01 + iz1] & gradientsMask3D];
 			Vector3 g111 = gradients3D[hash[h11 + iz1] & gradientsMask3D];
 
+
 			float v000 = Dot(g000, tx0, ty0, tz0);
 			float v100 = Dot(g100, tx1, ty0, tz0);
 			float v010 = Dot(g010, tx0, ty1, tz0);
@@ -330,16 +344,18 @@ namespace Week01
 			float v101 = Dot(g101, tx1, ty0, tz1);
 			float v011 = Dot(g011, tx0, ty1, tz1);
 			float v111 = Dot(g111, tx1, ty1, tz1);
-
+			
 
 			float tx = Smooth(tx0);
 			float ty = Smooth(ty0);
 			float tz = Smooth(tz0);
 
-			return Mathf.Lerp(
-				Mathf.Lerp(Mathf.Lerp(v000, v100, tx), Mathf.Lerp(v010, v110, tx), ty),
-				Mathf.Lerp(Mathf.Lerp(v001, v101, tx), Mathf.Lerp(v011, v111, tx), ty),
+			return MathS.LerpUnclamped(
+				MathS.LerpUnclamped(MathS.LerpUnclamped(v000, v100, tx), MathS.LerpUnclamped(v010, v110, tx), ty),
+				MathS.LerpUnclamped(MathS.LerpUnclamped(v001, v101, tx), MathS.LerpUnclamped(v011, v111, tx), ty),
 				tz);
+
+			*/
 		}
 	}
 }
