@@ -32,11 +32,13 @@ namespace Week01
 		{
 			if (texture == null)
 			{
-				texture = new Texture2D(resolution, resolution, TextureFormat.RGB24, true);
-				texture.name = "Procedural Texture";
-				texture.wrapMode = TextureWrapMode.Clamp;
-				texture.filterMode = FilterMode.Trilinear;
-				texture.anisoLevel = 9;
+				texture = new Texture2D(resolution, resolution, TextureFormat.RGB24, true)
+				{
+					name = "Procedural Texture",
+					wrapMode = TextureWrapMode.Clamp,
+					filterMode = FilterMode.Trilinear,
+					anisoLevel = 9
+				};
 				GetComponent<MeshRenderer>().material.mainTexture = texture;
 			}
 			FillTexture();
@@ -57,6 +59,7 @@ namespace Week01
 			NoiseMethod method = Noise.noiseMethods[(int)noiseType][dimensions - 1];
 
 			float stepSize = 1f/resolution;
+			
 			for (int y = 0; y < resolution; y++)
 			{
 				Vector3 point0 = Vector3.Lerp(point00, point01, (y + 0.5f)*stepSize);
@@ -74,11 +77,12 @@ namespace Week01
 					texture.SetPixel(x, y, Color.white * sample);
 				}
 			}
+
 			texture.Apply();
 		}
 
 		// Update is called once per frame
-		void Update()
+		private void Update()
 		{
 			if (transform.hasChanged)
 			{

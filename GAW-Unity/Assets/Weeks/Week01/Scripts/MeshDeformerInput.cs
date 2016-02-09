@@ -10,7 +10,7 @@ namespace Week01
 		public float force = 10f;
 		public float forceOffset = 0.1f;
 
-		private Camera camera;
+		private new Camera camera;
 
 		// Use this for initialization
 		void Start()

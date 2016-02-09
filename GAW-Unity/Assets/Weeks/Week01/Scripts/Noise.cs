@@ -8,11 +8,11 @@ namespace Week01
 	{
 		Value,
 		Perlin
-	};
+	}
 	
 	public static class Noise
 	{
-		private static int[] hash =
+		private static readonly int[] hash =
 		{
 			151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225,
 			140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148,
@@ -51,14 +51,14 @@ namespace Week01
 
 		private const int hashMask = 255;
 
-		private static float[] gradients1D =
+		private static readonly float[] gradients1D =
 		{
 			1f, -1f
 		};
 
 		private const int gradientsMask1D = 1;
 
-		private static Vector2[] gradients2D =
+		private static readonly Vector2[] gradients2D =
 		{
 			new Vector2( 1f, 0f),
 			new Vector2(-1f, 0f),
@@ -72,7 +72,7 @@ namespace Week01
 
 		private const int gradientsMask2D = 7;
 
-		private static Vector3[] gradients3D = {
+		private static readonly Vector3[] gradients3D = {
 			new Vector3( 1f, 1f, 0f),
 			new Vector3(-1f, 1f, 0f),
 			new Vector3( 1f,-1f, 0f),
@@ -83,7 +83,7 @@ namespace Week01
 			new Vector3(-1f, 0f,-1f),
 			new Vector3( 0f, 1f, 1f),
 			new Vector3( 0f,-1f, 1f),
-			new Vector3( 0f, 1f,-1f),
+			new Vector3( 0f, 1f,-1f),	
 			new Vector3( 0f,-1f,-1f),
 
 			new Vector3( 1f, 1f, 0f),
@@ -94,21 +94,21 @@ namespace Week01
 
 		private const int gradientsMask3D = 15;
 
-		public static NoiseMethod[] valueMethods =
+		public static readonly NoiseMethod[] valueMethods =
 		{
 			Value1D,
 			Value2D,
 			Value3D
 		};
 
-		public static NoiseMethod[] perlinMethods =
+		public static readonly NoiseMethod[] perlinMethods =
 		{
 			Perlin1D,
 			Perlin2D,
 			Perlin3D
 		};
 
-		public static NoiseMethod[][] noiseMethods =
+		public static readonly NoiseMethod[][] noiseMethods =
 		{
 			valueMethods,
 			perlinMethods
@@ -133,7 +133,7 @@ namespace Week01
 		{
 			float sum = method(point, frequency);
 			float amplitude = 1f;
-			float range = 1f;
+			float range = amplitude;
 
 			for (int o = 1; o < octaves; o++)
 			{
@@ -145,7 +145,7 @@ namespace Week01
 			return sum/range;
 		}
 
-		private static float sqr2 = Mathf.Sqrt(2f);
+		private static readonly float sqr2 = Mathf.Sqrt(2f);
 
 		public static float Value1D(Vector3 point, float frequency)
 		{
