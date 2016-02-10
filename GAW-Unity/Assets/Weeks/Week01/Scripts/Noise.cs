@@ -159,7 +159,7 @@ namespace Week01
 			int h1 = hash[i1];
 
 			t = Smooth(t);
-			return Mathf.Lerp(h0, h1, t) * (1f / hashMask);
+			return MathS.LerpUnclamped(h0, h1, t) * (1f / hashMask);
 		}
 
 		public static float Value2D(Vector3 point, float frequency)
@@ -227,8 +227,8 @@ namespace Week01
 			tz = Smooth(tz);
 
 			return MathS.LerpUnclamped(
-				MathS.LerpUnclamped(Mathf.Lerp(h000, h100, tx), MathS.LerpUnclamped(h010, h110, tx), ty),
-				MathS.LerpUnclamped(Mathf.Lerp(h001, h101, tx), MathS.LerpUnclamped(h011, h111, tx), ty),
+				MathS.LerpUnclamped(MathS.LerpUnclamped(h000, h100, tx), MathS.LerpUnclamped(h010, h110, tx), ty),
+				MathS.LerpUnclamped(MathS.LerpUnclamped(h001, h101, tx), MathS.LerpUnclamped(h011, h111, tx), ty),
 				tz) * (1f / hashMask);
 		}
 

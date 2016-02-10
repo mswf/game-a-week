@@ -67,22 +67,39 @@ namespace Week01
 			//float startTime = Time.realtimeSinceStartup;
 
 			Color whiteColor = Color.white;
-			for (int y = 0, i = 0; y < resolution; y++)
+
+			if (noiseType != NoiseMethodType.Value)
+			//  sample = sample * 0.5f + 0.5f
 			{
-				float t = (y + 0.5f)*stepSize;
-				Vector3 point0 = MathS.Vector3LerpUnclamped(point00, point01, t);
-				Vector3 point1 = MathS.Vector3LerpUnclamped(point10, point11, t);
-
-				for (int x = 0; x < resolution; x++, i++)
+				for (int y = 0, i = 0; y < resolution; y++)
 				{
-					Vector3 point = MathS.Vector3LerpUnclamped(point0, point1, (x + 0.5f) * stepSize);
-					float sample = Noise.Sum(method, point, frequency, octaves, lacunarity, persistence);
-					if (noiseType != NoiseMethodType.Value)
-					{
-						sample = sample*0.5f + 0.5f;
-					}
+					float t = (y + 0.5f)*stepSize;
+					Vector3 point0 = MathS.Vector3LerpUnclamped(point00, point01, t);
+					Vector3 point1 = MathS.Vector3LerpUnclamped(point10, point11, t);
 
-					samples[i] = whiteColor * sample;
+					for (int x = 0; x < resolution; x++, i++)
+					{
+						Vector3 point = MathS.Vector3LerpUnclamped(point0, point1, (x + 0.5f)*stepSize);
+						float sample = Noise.Sum(method, point, frequency, octaves, lacunarity, persistence) * 0.5f + 0.5f;
+						samples[i] = whiteColor*sample;
+					}
+				}
+			}
+			else
+			// sample = sample
+			{
+				for (int y = 0, i = 0; y < resolution; y++)
+				{
+					float t = (y + 0.5f) * stepSize;
+					Vector3 point0 = MathS.Vector3LerpUnclamped(point00, point01, t);
+					Vector3 point1 = MathS.Vector3LerpUnclamped(point10, point11, t);
+
+					for (int x = 0; x < resolution; x++, i++)
+					{
+						Vector3 point = MathS.Vector3LerpUnclamped(point0, point1, (x + 0.5f) * stepSize);
+						float sample = Noise.Sum(method, point, frequency, octaves, lacunarity, persistence);
+						samples[i] = whiteColor * sample;
+					}
 				}
 			}
 
