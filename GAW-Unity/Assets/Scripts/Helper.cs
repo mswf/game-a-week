@@ -21,6 +21,11 @@ public static class Helper
 public class MathS
 {
 
+	public static float FloorToInt(float value)
+	{
+		return (int)System.Math.Floor(value);
+	}
+
 	public static float Lerp(float from, float to, float value)
 	{
 		if (value < 0.0f)
@@ -149,4 +154,15 @@ public class MathS
 							v1.w + (v2.w - v1.w) * value);
 	}
 
+
+
+	public static float Vector2DistanceSquared(Vector2 pointA, Vector2 pointB)
+	{
+		return (float) System.Math.Sqrt(Vector2.Distance(pointA, pointB));
+	}
+
+	public static float Vector3DistanceSquared(Vector3 pointA, Vector3 pointB)
+	{
+		return (float)System.Math.Sqrt(Vector3.Distance(pointA, pointB));
+	}
 }
