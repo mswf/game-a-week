@@ -21,7 +21,7 @@ public static class Helper
 public class MathS
 {
 
-	public static float FloorToInt(float value)
+	public static int FloorToInt(float value)
 	{
 		return (int)System.Math.Floor(value);
 	}

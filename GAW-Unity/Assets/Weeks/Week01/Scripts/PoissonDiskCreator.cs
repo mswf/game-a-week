@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Week01
@@ -10,18 +11,21 @@ namespace Week01
 		[Range(1f, 10f)]
 		public float rejectionDistance = 1f;
 
-		[Range(1f,20f)]
+		[Range(0.01f,1f)]
 		public float minDistance = 1f;
 
 		[Range(10, 50)]
 		public int samplingCount = 30;
 
-		public Vector3 topLeft;
-		public Vector3 lowerRight;
+		public Vector3 dimensions;
 
+		[Range(0, 10)]
+		public int seed = 0;
 
-		[Range(1, 200)]
-		public int earlyOut = 10;
+		[Range(0.01f, 0.3f)]
+		public float frequency = 5f;
+
+		public Gradient gizmoGradient;
 
 		private Vector3[] points;
 
@@ -30,20 +34,22 @@ namespace Week01
 			Refresh();
 		}
 
-
 		public void Refresh()
 		{
 
 			//float cellSize = minDistance/Mathf.Sqrt(2f);
 
-			points = SamplePoints(transform.TransformPoint(topLeft), transform.TransformPoint(lowerRight), null, minDistance, samplingCount, earlyOut).ToArray();
+			RandomHelper.Random = new System.Random(seed);
+			
+			points = SamplePoints(transform.TransformPoint(Vector3.zero), transform.TransformPoint(dimensions), null, minDistance, frequency, samplingCount).ToArray();
 
-			Log.Steb(points.Length);
+			//Log.Steb("Actual length: " + points.Length);
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
+
 			if (transform.hasChanged)
 			{
 				transform.hasChanged = false;
@@ -55,11 +61,11 @@ namespace Week01
 		{
 			if (points != null)
 			{
-				float scale = 1f / points.Length;
-				Gizmos.color = Color.yellow;
 				for (int v = 0; v < points.Length; v++)
 				{
-					Gizmos.DrawSphere(points[v], 0.5f);
+					float sample = (Noise.Perlin3D(points[v], frequency) + 0.5f);
+					Gizmos.color = gizmoGradient.Evaluate(sample);
+					Gizmos.DrawSphere(points[v], .1f);
 				}
 			}
 		}
@@ -87,13 +93,13 @@ namespace Week01
 			public int GridHeight;
 			public int GridDepth;
 
+			public float Frequency;
+
 		}
 
 
-		static List<Vector3> SamplePoints(Vector3 topLeft, Vector3 lowerRight, float? rejectionDistance, float minimumDistance, int pointsPerIteration, int earlyOut)
+		static List<Vector3> SamplePoints(Vector3 topLeft, Vector3 lowerRight, float? rejectionDistance, float minimumDistance, float frequency, int pointsPerIteration)
 		{
-			RandomHelper.Random = new System.Random(0);
-
 			var settings = new Settings()
 			{
 				TopLeft = topLeft,
@@ -102,20 +108,22 @@ namespace Week01
 				Center = (topLeft + lowerRight) / 2f,
 				CellSize = minimumDistance / SquareRootTwo,
 				MinimumDistance = minimumDistance,
-				RejectionSqDistance = rejectionDistance == null ? null : rejectionDistance * rejectionDistance
+				RejectionSqDistance = rejectionDistance == null ? null : rejectionDistance * rejectionDistance,
+				Frequency = frequency
 			};
 			
 			settings.GridWidth = (int)(settings.Dimensions.x / settings.CellSize) + 1;
 			settings.GridHeight = (int)(settings.Dimensions.y / settings.CellSize) + 1;
 			settings.GridDepth = (int)(settings.Dimensions.z / settings.CellSize) + 1;
 
-			int guesstimateSize = (settings.GridWidth* settings.GridHeight * settings.GridDepth * 2);
-			Log.Steb(guesstimateSize);
+			//int guesstimateSize = (settings.GridWidth* settings.GridHeight * settings.GridDepth * 2);
+			//Log.Steb(guesstimateSize);
+			//TODO: proper guesstimate, prolly research this
 			var state = new State()
 			{
 				grid = new Vector3?[settings.GridWidth, settings.GridHeight, settings.GridDepth],
-				activePoints = new List<Vector3>(15000),
-				points = new List<Vector3>(15000)
+				activePoints = new List<Vector3>(),
+				points = new List<Vector3>()
 			};
 
 			AddFirstPoint(ref settings, ref state);
@@ -123,7 +131,7 @@ namespace Week01
 
 			int iterations = 0;
 
-			while (state.activePoints.Count != 0 && iterations < earlyOut)
+			while (state.activePoints.Count != 0 && iterations < 20000)
 			{
 				var listIndex = RandomHelper.Random.Next(state.activePoints.Count);
 
@@ -190,15 +198,24 @@ namespace Week01
 				int maxY = Mathf.Max(0, qIndex.y - 2);
 				int maxZ = Mathf.Max(0, qIndex.z - 2);
 
-				for (var i = maxX; i < Mathf.Min(settings.GridWidth, qIndex.x + 3) && !tooClose; i++)
+				int minX = Mathf.Min(settings.GridWidth, qIndex.x + 3);
+				int minY = Mathf.Min(settings.GridHeight, qIndex.y + 3);
+				int minZ = Mathf.Min(settings.GridDepth, qIndex.z + 3);
+
+				float minimumDistance = settings.MinimumDistance;
+				minimumDistance += minimumDistance * (Noise.Perlin3D(q, settings.Frequency)+0.5f) * 1.2f;
+
+				for (var i = maxX; i < minX && !tooClose; i++)
 				{
-					for (var j = maxY; j < Mathf.Min(settings.GridHeight, qIndex.y+3) && !tooClose; j++)
+					for (var j = maxY; j < minY && !tooClose; j++)
 					{
-						for (var k = maxZ; k < Mathf.Min(settings.GridHeight, qIndex.y + 3) && !tooClose; k++)
-							if (state.grid[i, j, k].HasValue && Vector3.Distance(state.grid[i, j, k].Value, q) < settings.MinimumDistance)
+						for (var k = maxZ; k < minZ && !tooClose; k++)
+		//						if (state.grid[i, j, k].HasValue && Vector3.Distance(state.grid[i, j, k].Value, q) < settings.MinimumDistance)
+								if (state.grid[i, j, k].HasValue && Vector3.Distance(state.grid[i, j, k].Value, q) < minimumDistance)
 								tooClose = true;
 					}
 				}
+				
 
 				if (!tooClose)
 				{
@@ -214,28 +231,21 @@ namespace Week01
 
 		private static Vector3 GenerateRandomAround(Vector3 center, float minimumDistance)
 		{
-			var d = RandomHelper.NextFloat();
-			var radius = minimumDistance + minimumDistance*d;
+			
+			//float sample = Noise.Perlin3D(center, FREQUENCY) +0.5f;
 
-			d = RandomHelper.NextFloat();
-			var randomX = d*360f;
-			d = RandomHelper.NextFloat();
-			var randomY = d*360f;
-			d = RandomHelper.NextFloat();
-			var randomZ = d*360f;
+			var radius = (minimumDistance + minimumDistance* RandomHelper.NextFloat() * 3f);
 
-	//		Log.Steb((Quaternion.Euler(randomX, randomY, randomZ) * Vector3.one).magnitude);
-
-			return center + (Quaternion.Euler(randomX, randomY, randomZ) * Vector3.one).normalized * radius;
+			return center + (Quaternion.Euler(RandomHelper.NextFloat() * 360f, RandomHelper.NextFloat() * 360f, RandomHelper.NextFloat() * 360f) * Vector3.one).normalized * radius;
 		}
 
 		static Vector3i Denormalize(Vector3 point, Vector3 origin, float cellSize)
 		{
 			return new Vector3i
 			{
-				x = (int) ((point.x - origin.x)/cellSize),
-				y = (int) ((point.y - origin.y)/cellSize),
-				z = (int) ((point.z - origin.z)/cellSize)
+				x = MathS.FloorToInt((point.x - origin.x)/cellSize),
+				y = MathS.FloorToInt((point.y - origin.y)/cellSize),
+				z = MathS.FloorToInt((point.z - origin.z)/cellSize)
 			};
 		}
 
@@ -244,6 +254,12 @@ namespace Week01
 			public int x;
 			public int y;
 			public int z;
+		}
+
+		public struct PoissonPoint
+		{
+			public Vector3 position;
+			public float noiseSample;
 		}
 
 		private static class RandomHelper
