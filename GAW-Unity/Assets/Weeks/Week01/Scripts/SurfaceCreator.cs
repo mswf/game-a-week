@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.ComponentModel;
 
 namespace Week01
 {
@@ -68,7 +66,7 @@ namespace Week01
 			Vector3 point01 = q * new Vector3(-0.5f,  0.5f) + offset;
 			Vector3 point11 = q * new Vector3( 0.5f,  0.5f) + offset;
 
-			NoiseMethod method = Noise.noiseMethods[(int) noiseType][dimensions - 1];
+			NoiseMethod method = Noise.NoiseMethods[(int) noiseType][dimensions - 1];
 			float stepSize = 1f/resolution;
 			float amplitude = damping ? strength/frequency : strength;
 			for (int v = 0, y = 0; y <= resolution; y++)

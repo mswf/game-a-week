@@ -1,60 +1,59 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 namespace Week01
 {
 	[RequireComponent(typeof(MeshFilter))]
 	public class MeshDeformer : MonoBehaviour
 	{
-		private Mesh deformingMesh;
-		private Vector3[] originalVertices, displacedVertices;
+		private Mesh _deformingMesh;
+		private Vector3[] _originalVertices, _displacedVertices;
 
-		private Vector3[] vertexVelocities;
+		private Vector3[] _vertexVelocities;
 
 		public float springForce = 20f;
 		public float damping = 5f;
 
-		private float uniformScale = 1f;
+		private float _uniformScale = 1f;
 
 		// Use this for initialization
-		void Start()
+		private void Start()
 		{
-			deformingMesh = GetComponent<MeshFilter>().mesh;
-			originalVertices = deformingMesh.vertices;
-			displacedVertices = new Vector3[originalVertices.Length];
+			_deformingMesh = GetComponent<MeshFilter>().mesh;
+			_originalVertices = _deformingMesh.vertices;
+			_displacedVertices = new Vector3[_originalVertices.Length];
 
-			for (int i = 0; i < originalVertices.Length; i++)
+			for (int i = 0; i < _originalVertices.Length; i++)
 			{
-				displacedVertices[i] = originalVertices[i];
+				_displacedVertices[i] = _originalVertices[i];
 			}
 
-			vertexVelocities = new Vector3[originalVertices.Length];
+			_vertexVelocities = new Vector3[_originalVertices.Length];
 
 		}
 
 		// Update is called once per frame
-		void Update()
+		private void Update()
 		{
-			uniformScale = transform.localScale.x;
+			_uniformScale = transform.localScale.x;
 
-			for (int i = 0; i < displacedVertices.Length; i++)
+			for (int i = 0; i < _displacedVertices.Length; i++)
 			{
 				UpdateVertex(i);
 			}
-			deformingMesh.vertices = displacedVertices;
-			deformingMesh.RecalculateNormals();
+			_deformingMesh.vertices = _displacedVertices;
+			_deformingMesh.RecalculateNormals();
 		}
 
 		private void UpdateVertex(int i)
 		{
-			Vector3 velocity = vertexVelocities[i];
-			Vector3 displacement = displacedVertices[i] - originalVertices[i];
-			displacement *= uniformScale;
+			Vector3 velocity = _vertexVelocities[i];
+			Vector3 displacement = _displacedVertices[i] - _originalVertices[i];
+			displacement *= _uniformScale;
 			velocity -= displacement*springForce*Time.deltaTime;
 			velocity *= 1f - damping*Time.deltaTime;
-			vertexVelocities[i] = velocity;
+			_vertexVelocities[i] = velocity;
 
-			displacedVertices[i] += velocity* (Time.deltaTime*uniformScale);
+			_displacedVertices[i] += velocity* (Time.deltaTime*_uniformScale);
 		}
 
 		public void AddDeformingForce(Vector3 point, float force)
@@ -64,7 +63,7 @@ namespace Week01
 
 			point = transform.InverseTransformPoint(point);
 
-			for (int i = 0; i < displacedVertices.Length; i++)
+			for (int i = 0; i < _displacedVertices.Length; i++)
 			{
 				AddForceToVertex(i, point, force);
 			}
@@ -72,11 +71,11 @@ namespace Week01
 
 		private void AddForceToVertex(int i, Vector3 point, float force)
 		{
-			Vector3 pointToVertex = displacedVertices[i] - point;
-			pointToVertex *= uniformScale;
+			Vector3 pointToVertex = _displacedVertices[i] - point;
+			pointToVertex *= _uniformScale;
 			float attenuatedForce = force/(1f + pointToVertex.sqrMagnitude);
 			float velocity = attenuatedForce*Time.deltaTime;
-			vertexVelocities[i] += pointToVertex.normalized*velocity;
+			_vertexVelocities[i] += pointToVertex.normalized*velocity;
 		}
 	}
 

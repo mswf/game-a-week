@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+// ReSharper disable SuggestVarOrType_BuiltInTypes
+// ReSharper disable SuggestVarOrType_SimpleTypes
 
 namespace Week01
 {
@@ -12,7 +14,7 @@ namespace Week01
 	
 	public static class Noise
 	{
-		private static readonly int[] hash =
+		private static readonly int[] Hash =
 		{
 			151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225,
 			140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148,
@@ -49,16 +51,16 @@ namespace Week01
 			222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
 		};
 
-		private const int hashMask = 255;
+		private const int HashMask = 255;
 
-		private static readonly float[] gradients1D =
+		private static readonly float[] Gradients1D =
 		{
 			1f, -1f
 		};
 
-		private const int gradientsMask1D = 1;
+		private const int GradientsMask1D = 1;
 
-		private static readonly Vector2[] gradients2D =
+		private static readonly Vector2[] Gradients2D =
 		{
 			new Vector2( 1f, 0f),
 			new Vector2(-1f, 0f),
@@ -70,9 +72,9 @@ namespace Week01
 			new Vector2(-1f,-1f).normalized
 		};
 
-		private const int gradientsMask2D = 7;
+		private const int GradientsMask2D = 7;
 
-		private static readonly Vector3[] gradients3D = {
+		private static readonly Vector3[] Gradients3D = {
 			new Vector3( 1f, 1f, 0f),
 			new Vector3(-1f, 1f, 0f),
 			new Vector3( 1f,-1f, 0f),
@@ -92,26 +94,26 @@ namespace Week01
 			new Vector3( 0f,-1f,-1f)
 		};
 
-		private const int gradientsMask3D = 15;
+		private const int GradientsMask3D = 15;
 
-		public static readonly NoiseMethod[] valueMethods =
+		public static readonly NoiseMethod[] ValueMethods =
 		{
 			Value1D,
 			Value2D,
 			Value3D
 		};
 
-		public static readonly NoiseMethod[] perlinMethods =
+		public static readonly NoiseMethod[] PerlinMethods =
 		{
 			Perlin1D,
 			Perlin2D,
 			Perlin3D
 		};
 
-		public static readonly NoiseMethod[][] noiseMethods =
+		public static readonly NoiseMethod[][] NoiseMethods =
 		{
-			valueMethods,
-			perlinMethods
+			ValueMethods,
+			PerlinMethods
 		};
 
 		private static float Smooth(float t)
@@ -145,21 +147,21 @@ namespace Week01
 			return sum/range;
 		}
 
-		private static readonly float sqr2 = (float)System.Math.Sqrt(2d);
+		private static readonly float Sqr2 = (float)System.Math.Sqrt(2d);
 
 		public static float Value1D(Vector3 point, float frequency)
 		{
 			point *= frequency;
 			int i0 = (int)System.Math.Floor(point.x);
 			float t = point.x - i0;
-			i0 &= hashMask;
+			i0 &= HashMask;
 			int i1 = i0 + 1;
 
-			int h0 = hash[i0];
-			int h1 = hash[i1];
+			int h0 = Hash[i0];
+			int h1 = Hash[i1];
 
 			t = Smooth(t);
-			return MathS.LerpUnclamped(h0, h1, t) * (1f / hashMask);
+			return MathS.LerpUnclamped(h0, h1, t) * (1f / HashMask);
 		}
 
 		public static float Value2D(Vector3 point, float frequency)
@@ -169,17 +171,17 @@ namespace Week01
 			int iy0 = (int)System.Math.Floor(point.y);
 			float tx = point.x - ix0;
 			float ty = point.y - iy0;
-			ix0 &= hashMask;
-			iy0 &= hashMask;
+			ix0 &= HashMask;
+			iy0 &= HashMask;
 			int ix1 = ix0 + 1;
 			int iy1 = iy0 + 1;
 
-			int h0 = hash[ix0];
-			int h1 = hash[ix1];
-			int h00 = hash[h0 + iy0];
-			int h10 = hash[h1 + iy0];
-			int h01 = hash[h0 + iy1];
-			int h11 = hash[h1 + iy1];
+			int h0 = Hash[ix0];
+			int h1 = Hash[ix1];
+			int h00 = Hash[h0 + iy0];
+			int h10 = Hash[h1 + iy0];
+			int h01 = Hash[h0 + iy1];
+			int h11 = Hash[h1 + iy1];
 
 			tx = Smooth(tx);
 			ty = Smooth(ty);
@@ -187,7 +189,7 @@ namespace Week01
 			return MathS.LerpUnclamped(
 					MathS.LerpUnclamped(h00, h10, tx),
 					MathS.LerpUnclamped(h01, h11, tx),
-					ty) * (1f/hashMask);
+					ty) * (1f/HashMask);
 		}
 
 		public static float Value3D(Vector3 point, float frequency)
@@ -199,28 +201,28 @@ namespace Week01
 			float tx = point.x - ix0;
 			float ty = point.y - iy0;
 			float tz = point.z - iz0;
-			ix0 &= hashMask;
-			iy0 &= hashMask;
-			iz0 &= hashMask;
+			ix0 &= HashMask;
+			iy0 &= HashMask;
+			iz0 &= HashMask;
 			int ix1 = ix0 + 1;
 			int iy1 = iy0 + 1;
 			int iz1 = iz0 + 1;
 
-			int h0 = hash[ix0];
-			int h1 = hash[ix1];
-			int h00 = hash[h0 + iy0];
-			int h10 = hash[h1 + iy0];
-			int h01 = hash[h0 + iy1];
-			int h11 = hash[h1 + iy1];
+			int h0 = Hash[ix0];
+			int h1 = Hash[ix1];
+			int h00 = Hash[h0 + iy0];
+			int h10 = Hash[h1 + iy0];
+			int h01 = Hash[h0 + iy1];
+			int h11 = Hash[h1 + iy1];
 
-			int h000 = hash[h00 + iz0];
-			int h100 = hash[h10 + iz0];
-			int h010 = hash[h01 + iz0];
-			int h110 = hash[h11 + iz0];
-			int h001 = hash[h00 + iz1];
-			int h101 = hash[h10 + iz1];
-			int h011 = hash[h01 + iz1];
-			int h111 = hash[h11 + iz1];
+			int h000 = Hash[h00 + iz0];
+			int h100 = Hash[h10 + iz0];
+			int h010 = Hash[h01 + iz0];
+			int h110 = Hash[h11 + iz0];
+			int h001 = Hash[h00 + iz1];
+			int h101 = Hash[h10 + iz1];
+			int h011 = Hash[h01 + iz1];
+			int h111 = Hash[h11 + iz1];
 
 			tx = Smooth(tx);
 			ty = Smooth(ty);
@@ -229,7 +231,7 @@ namespace Week01
 			return MathS.LerpUnclamped(
 				MathS.LerpUnclamped(MathS.LerpUnclamped(h000, h100, tx), MathS.LerpUnclamped(h010, h110, tx), ty),
 				MathS.LerpUnclamped(MathS.LerpUnclamped(h001, h101, tx), MathS.LerpUnclamped(h011, h111, tx), ty),
-				tz) * (1f / hashMask);
+				tz) * (1f / HashMask);
 		}
 
 		public static float Perlin1D(Vector3 point, float frequency)
@@ -238,11 +240,11 @@ namespace Week01
 			int i0 = (int)System.Math.Floor(point.x);
 			float t0 = point.x - i0;
 			float t1 = t0 - 1f;
-			i0 &= hashMask;
+			i0 &= HashMask;
 			int i1 = i0 + 1;
 
-			float g0 = gradients1D[hash[i0] & gradientsMask1D];
-			float g1 = gradients1D[hash[i1] & gradientsMask1D];
+			float g0 = Gradients1D[Hash[i0] & GradientsMask1D];
+			float g1 = Gradients1D[Hash[i1] & GradientsMask1D];
 
 			float v0 = g0 * t0;
 			float v1 = g1 * t1;
@@ -261,18 +263,18 @@ namespace Week01
 			float ty0 = point.y - iy0;
 			float tx1 = tx0 - 1f;
 			float ty1 = ty0 - 1f;
-			ix0 &= hashMask;
-			iy0 &= hashMask;
+			ix0 &= HashMask;
+			iy0 &= HashMask;
 			int ix1 = ix0 + 1;
 			int iy1 = iy0 + 1;
 
-			int h0 = hash[ix0];
-			int h1 = hash[ix1];
+			int h0 = Hash[ix0];
+			int h1 = Hash[ix1];
 
-			Vector2 g00 = gradients2D[hash[h0 + iy0] & gradientsMask2D];
-			Vector2 g10 = gradients2D[hash[h1 + iy0] & gradientsMask2D];
-			Vector2 g01 = gradients2D[hash[h0 + iy1] & gradientsMask2D];
-			Vector2 g11 = gradients2D[hash[h1 + iy1] & gradientsMask2D];
+			Vector2 g00 = Gradients2D[Hash[h0 + iy0] & GradientsMask2D];
+			Vector2 g10 = Gradients2D[Hash[h1 + iy0] & GradientsMask2D];
+			Vector2 g01 = Gradients2D[Hash[h0 + iy1] & GradientsMask2D];
+			Vector2 g11 = Gradients2D[Hash[h1 + iy1] & GradientsMask2D];
 
 			float v00 = Dot(g00, tx0, ty0);
 			float v10 = Dot(g10, tx1, ty0);
@@ -284,7 +286,7 @@ namespace Week01
 			return MathS.LerpUnclamped(
 				MathS.LerpUnclamped(v00, v10, tx),
 				MathS.LerpUnclamped(v01, v11, tx),
-				ty) * sqr2;
+				ty) * Sqr2;
 		}
 
 		public static float Perlin3D(Vector3 point, float frequency)
@@ -300,19 +302,19 @@ namespace Week01
 			float tx1 = tx0 - 1f;
 			float ty1 = ty0 - 1f;
 			float tz1 = tz0 - 1f;
-			ix0 &= hashMask;
-			iy0 &= hashMask;
-			iz0 &= hashMask;
+			ix0 &= HashMask;
+			iy0 &= HashMask;
+			iz0 &= HashMask;
 			int ix1 = ix0 + 1;
 			int iy1 = iy0 + 1;
 			int iz1 = iz0 + 1;
 
-			int h0 = hash[ix0];
-			int h1 = hash[ix1];
-			int h00 = hash[h0 + iy0];
-			int h10 = hash[h1 + iy0];
-			int h01 = hash[h0 + iy1];
-			int h11 = hash[h1 + iy1];
+			int h0 = Hash[ix0];
+			int h1 = Hash[ix1];
+			int h00 = Hash[h0 + iy0];
+			int h10 = Hash[h1 + iy0];
+			int h01 = Hash[h0 + iy1];
+			int h11 = Hash[h1 + iy1];
 
 
 			// Inlined stuff here
@@ -321,8 +323,8 @@ namespace Week01
 			float ty = Smooth(ty0);
 
 			return MathS.LerpUnclamped(
-				MathS.LerpUnclamped(MathS.LerpUnclamped(Dot(gradients3D[hash[h00 + iz0] & gradientsMask3D], tx0, ty0, tz0), Dot(gradients3D[hash[h10 + iz0] & gradientsMask3D], tx1, ty0, tz0), tx), MathS.LerpUnclamped(Dot(gradients3D[hash[h01 + iz0] & gradientsMask3D], tx0, ty1, tz0), Dot(gradients3D[hash[h11 + iz0] & gradientsMask3D], tx1, ty1, tz0), tx), ty),
-				MathS.LerpUnclamped(MathS.LerpUnclamped(Dot(gradients3D[hash[h00 + iz1] & gradientsMask3D], tx0, ty0, tz1), Dot(gradients3D[hash[h10 + iz1] & gradientsMask3D], tx1, ty0, tz1), tx), MathS.LerpUnclamped(Dot(gradients3D[hash[h01 + iz1] & gradientsMask3D], tx0, ty1, tz1), Dot(gradients3D[hash[h11 + iz1] & gradientsMask3D], tx1, ty1, tz1), tx), ty),
+				MathS.LerpUnclamped(MathS.LerpUnclamped(Dot(Gradients3D[Hash[h00 + iz0] & GradientsMask3D], tx0, ty0, tz0), Dot(Gradients3D[Hash[h10 + iz0] & GradientsMask3D], tx1, ty0, tz0), tx), MathS.LerpUnclamped(Dot(Gradients3D[Hash[h01 + iz0] & GradientsMask3D], tx0, ty1, tz0), Dot(Gradients3D[Hash[h11 + iz0] & GradientsMask3D], tx1, ty1, tz0), tx), ty),
+				MathS.LerpUnclamped(MathS.LerpUnclamped(Dot(Gradients3D[Hash[h00 + iz1] & GradientsMask3D], tx0, ty0, tz1), Dot(Gradients3D[Hash[h10 + iz1] & GradientsMask3D], tx1, ty0, tz1), tx), MathS.LerpUnclamped(Dot(Gradients3D[Hash[h01 + iz1] & GradientsMask3D], tx0, ty1, tz1), Dot(Gradients3D[Hash[h11 + iz1] & GradientsMask3D], tx1, ty1, tz1), tx), ty),
 				Smooth(tz0));
 			/*
 			Vector3 g000 = gradients3D[hash[h00 + iz0] & gradientsMask3D];

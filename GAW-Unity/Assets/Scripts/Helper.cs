@@ -1,28 +1,22 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-
-using System;
 using System.Collections.Generic;
 
 
 public static class Helper
 {
-	static System.Random _randomArrayRandom = new System.Random();
+	private static readonly System.Random _randomArrayRandom = new System.Random();
 
 	public static void RandomizeArray<T>(ref T[] arr)
 	{
-		List<KeyValuePair<int, T>> list = new List<KeyValuePair<int, T>>(arr.Length);
+		var list = new List<KeyValuePair<int, T>>(arr.Length);
+		list.AddRange(arr.Select(s => new KeyValuePair<int, T>(_randomArrayRandom.Next(), s)));
 		// Add all strings from array
 		// Add new random int each time
-		foreach (T s in arr)
-		{
-			list.Add(new KeyValuePair<int, T>(_randomArrayRandom.Next(), s));
-		}
 		// Sort the list by the random number
 		var sorted = list.OrderBy(item => item.Key);
 		// Allocate new string array
-		// T[] result = new T[arr.Length];
 		// Copy values to array
 		int index = 0;
 		foreach (var pair in sorted)

@@ -53,7 +53,7 @@ Category {
 				#endif
 				o.color = v.color;
 				#ifdef SOFTPARTICLES_ON				
-				//o.color.a = o.color.a * (1.0f - o.projPos.z*0.09f);
+				o.color.a = o.color.a * (1.0f - o.projPos.z*0.03f);
 				#endif
 
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);

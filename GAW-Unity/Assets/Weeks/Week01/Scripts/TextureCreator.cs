@@ -60,7 +60,7 @@ namespace Week01
 			Vector3 point01 = transform.TransformPoint(new Vector3(-0.5f,  0.5f));
 			Vector3 point11 = transform.TransformPoint(new Vector3( 0.5f,  0.5f));
 
-			NoiseMethod method = Noise.noiseMethods[(int)noiseType][dimensions - 1];
+			NoiseMethod method = Noise.NoiseMethods[(int)noiseType][dimensions - 1];
 
 			float stepSize = 1f/resolution;
 
