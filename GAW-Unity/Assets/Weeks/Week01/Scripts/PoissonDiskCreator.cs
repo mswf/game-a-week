@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using DG.Tweening.Plugins.Options;
 
 namespace Week01
 {
@@ -35,6 +36,9 @@ namespace Week01
 
 		[Range(0.1f, 100f)]
 		public float particleLifeTime = 1f;
+
+		[Range(0.1f, 4f)]
+		public float particleSize = 1.5f;
 
 		private float _particleStartTime = 0f;
 
@@ -95,7 +99,7 @@ namespace Week01
 					_emitParams[i].position = _points[i];
 					_emitParams[i].velocity = Vector3.zero;
 					_emitParams[i].startLifetime = particleLifeTime;
-					_emitParams[i].startSize = (sample * -1f + 1f) * 1.5f;
+					_emitParams[i].startSize = Mathf.Sqrt(sample * -1f + 1f) * particleSize;
 					_emitParams[i].rotation = sample * 10f;
 					_emitParams[i].velocity = Vector3.up*Mathf.Sin(sample)*0.06f;
 					_emitParams[i].startColor = gizmoGradient.Evaluate(sample);
@@ -126,62 +130,33 @@ namespace Week01
 			if (endRange < startRange)
 			{
 				for (int i = startRange; i < length; i++)
-				{
-					_particleSystem.Emit(
-						_emitParams[i], 1
-					);
-				}
+					_particleSystem.Emit(_emitParams[i], 1);
 				for (int i = 0; i < endRange; i++)
-				{
-					_particleSystem.Emit(
-						_emitParams[i], 1
-					);
-				}
+					_particleSystem.Emit(_emitParams[i], 1);
 			}
 			else if (endRange > length)
 			{
 				for (int i = startRange; i < length; i++)
-				{
-					_particleSystem.Emit(
-						_emitParams[i], 1
-					);
-				}
+					_particleSystem.Emit(_emitParams[i], 1);
 				for (int i = 0; i < length - endRange; i++)
-				{
-					_particleSystem.Emit(
-						_emitParams[i], 1
-					);
-				}
+					_particleSystem.Emit(_emitParams[i], 1);
 			}
 			else
 			{
 				for (int i = startRange; i < endRange; i++)
-				{
-					_particleSystem.Emit(
-						_emitParams[i], 1
-					);
-				}
+					_particleSystem.Emit(_emitParams[i], 1);
 			}
-
-			
-
-
 		}
 
-		/*
-		private void OnDrawGizmosSelected()
+		
+		private void OnDrawGizmos()
 		{
-			if (points != null)
-			{
-				for (int v = 0; v < points.Length; v++)
-				{
-					float sample = (Noise.Perlin3D(points[v], frequency) + 0.5f);
-					Gizmos.color = gizmoGradient.Evaluate(sample);
-					Gizmos.DrawSphere(points[v], .1f);
-				}
-			}
+			Gizmos.color = Color.green;
+			
+			Gizmos.DrawWireCube(transform.TransformPoint(dimensions * 0.5f), dimensions);
+			
 		}
-		*/
+		
 
 		// Poisson Stuff
 		public const int DefaultPointsPerIteration = 30;
@@ -196,8 +171,8 @@ namespace Week01
 
 		private struct Settings
 		{
-			public Vector3 topLeft, lowerRight, center;
-			public Vector3 dimensions;
+			public Bounds bounds;
+			
 			public float? rejectionSqDistance;
 			public float minimumDistance;
 			public float cellSize;
@@ -216,10 +191,7 @@ namespace Week01
 
 			var settings = new Settings
 			{
-				topLeft = topLeft,
-				lowerRight = lowerRight,
-				center = (topLeft + lowerRight) / 2f,
-				dimensions = dimensions,
+				bounds = new Bounds(topLeft + dimensions*.5f, dimensions),
 				rejectionSqDistance = rejectionDistance == null ? null : rejectionDistance * rejectionDistance,
 				minimumDistance = minimumDistance,
 				cellSize = cellSize,
@@ -228,10 +200,9 @@ namespace Week01
 				gridDepth = (int)(dimensions.z / cellSize) + 1,
 				frequency = frequency
 			};
-			
 
 
-			//int guesstimateSize = (settings.GridWidth* settings.GridHeight * settings.GridDepth * 2);
+			int guesstimateSize = (int) (settings.gridWidth * settings.gridHeight * settings.gridDepth * cellSize);
 			//Log.Steb(guesstimateSize);
 			//TODO: proper guesstimate, prolly research this
 			var state = new State()
@@ -254,7 +225,7 @@ namespace Week01
 				var found = false;
 
 				for (var k = 0; k < pointsPerIteration; k++)
-					found |= AddNextPoint(point, ref settings, ref state);
+					found |= AddNextPoint(ref point, ref settings, ref state);
 
 				if (!found)
 					state.activePoints.RemoveAt(listIndex);
@@ -271,21 +242,21 @@ namespace Week01
 			while (!added)
 			{
 				var d = RandomHelper.NextFloat();
-				var xr = settings.topLeft.x + settings.dimensions.x*d;
+				var xr = settings.bounds.min.x + settings.bounds.size.x*d;
 
 				d = RandomHelper.NextFloat();
-				var yr = settings.topLeft.y + settings.dimensions.y * d;
+				var yr = settings.bounds.min.y + settings.bounds.size.y * d;
 
 				d = RandomHelper.NextFloat();
-				var zr = settings.topLeft.z + settings.dimensions.z * d;
+				var zr = settings.bounds.min.z + settings.bounds.size.z * d;
 
 				var p = new Vector3(xr, yr, zr);
 				if (settings.rejectionSqDistance != null &&
-				    MathS.Vector3DistanceSquared(settings.center, p) > settings.rejectionSqDistance)
+				    MathS.Vector3DistanceSquared(settings.bounds.center, p) > settings.rejectionSqDistance)
 					continue;
 				added = true;
 
-				var index = Denormalize(p, settings.topLeft, settings.cellSize);
+				var index = Denormalize(ref p, settings.bounds.min, settings.cellSize);
 
 				state.grid[(int) index.x, (int) index.y, (int) index.z] = p;
 
@@ -294,66 +265,68 @@ namespace Week01
 			}
 		}
 
-		private static bool AddNextPoint(Vector3 point, ref Settings settings, ref State state)
+		private static bool AddNextPoint(ref Vector3 point, ref Settings settings, ref State state)
 		{
-			var found = false;
-			var q = GenerateRandomAround(point, settings.minimumDistance);
+			var q = GenerateRandomAround(ref point, settings.minimumDistance);
 
-			if (q.x >= settings.topLeft.x && q.x < settings.lowerRight.x &&
-			    q.y > settings.topLeft.y && q.y < settings.lowerRight.y &&
-			    q.z > settings.topLeft.z && q.z < settings.lowerRight.z &&
+			if (settings.bounds.Contains(q) &&
 			    (settings.rejectionSqDistance == null ||
-			     MathS.Vector3DistanceSquared(settings.center, q) <= settings.rejectionSqDistance))
+			     MathS.Vector3DistanceSquared(settings.bounds.center, q) <= settings.rejectionSqDistance))
 			{
-				var qIndex = Denormalize(q, settings.topLeft, settings.cellSize);
-				var tooClose = false;
-
-				
-				int maxX = Mathf.Max(0, qIndex.x - 2);
-				int maxY = Mathf.Max(0, qIndex.y - 2);
-				int maxZ = Mathf.Max(0, qIndex.z - 2);
-
-				int minX = Mathf.Min(settings.gridWidth, qIndex.x + 3);
-				int minY = Mathf.Min(settings.gridHeight, qIndex.y + 3);
-				int minZ = Mathf.Min(settings.gridDepth, qIndex.z + 3);
+				var qIndex = Denormalize(ref q, settings.bounds.min, settings.cellSize);
 
 				float minimumDistance = settings.minimumDistance;
-				minimumDistance += minimumDistance * (Noise.Perlin3D(q, settings.frequency)+0.5f) * 1.2f;
+				minimumDistance += minimumDistance * (Noise.Perlin3D(q, settings.frequency) + 0.5f) * 1.2f;
 
-				for (var i = maxX; i < minX && !tooClose; i++)
-				{
-					for (var j = maxY; j < minY && !tooClose; j++)
-					{
-						for (var k = maxZ; k < minZ && !tooClose; k++)
-		//						if (state.grid[i, j, k].HasValue && Vector3.Distance(state.grid[i, j, k].Value, q) < settings.MinimumDistance)
-								if (state.grid[i, j, k].HasValue && Vector3.Distance(state.grid[i, j, k].Value, q) < minimumDistance)
-								tooClose = true;
-					}
-				}
-				
+
+				var tooClose = isTooClose(ref state.grid, ref q, 
+					Mathf.Max(0, qIndex.x - 2), Mathf.Max(0, qIndex.y - 2), Mathf.Max(0, qIndex.z - 2), 
+					
+					Mathf.Min(settings.gridWidth, qIndex.x + 3), 
+					Mathf.Min(settings.gridHeight, qIndex.y + 3), 
+					Mathf.Min(settings.gridDepth, qIndex.z + 3), 
+					
+					minimumDistance);
 
 				if (!tooClose)
 				{
-					found = true;
 					state.activePoints.Add(q);
 					state.points.Add(q);
-					state.grid[(int) qIndex.x, (int) qIndex.y, (int) qIndex.z] = q;
+					state.grid[qIndex.x, qIndex.y, qIndex.z] = q;
+
+					return true;
 				}
 			}
 
-			return found;
+			return false;
 		}
 
-		private static Vector3 GenerateRandomAround(Vector3 center, float minimumDistance)
+		private static bool isTooClose(ref Vector3?[,,] grid, ref Vector3 q, int maxX, int maxY, int maxZ, int minX, int minY, int minZ, float minimumDistance)
+		{
+			for (var i = maxX; i < minX; i++)
+			{
+				for (var j = maxY; j < minY; j++)
+				{
+					for (var k = maxZ; k < minZ; k++)
+		//				if (state.grid[i, j, k].HasValue && Vector3.Distance(state.grid[i, j, k].Value, q) < settings.MinimumDistance)
+						if (grid[i, j, k].HasValue && Vector3.Distance(grid[i, j, k].Value, q) < minimumDistance)
+							return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static Vector3 GenerateRandomAround(ref Vector3 center, float minimumDistance)
 		{
 			//float sample = Noise.Perlin3D(center, FREQUENCY) +0.5f;
 
 			var radius = (minimumDistance + minimumDistance* RandomHelper.NextFloat() * 3f);
 
-			return center + (Quaternion.Euler(RandomHelper.NextFloat() * 360f, RandomHelper.NextFloat() * 360f, RandomHelper.NextFloat() * 360f) * Vector3.one).normalized * radius;
+			return center + (Random.rotation * Vector3.one).normalized * radius;
 		}
 
-		static Vector3i Denormalize(Vector3 point, Vector3 origin, float cellSize)
+		static Vector3i Denormalize(ref Vector3 point, Vector3 origin, float cellSize)
 		{
 			return new Vector3i
 			{

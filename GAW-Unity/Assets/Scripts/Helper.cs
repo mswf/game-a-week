@@ -10,20 +10,46 @@ public static class Helper
 
 	public static void RandomizeArray<T>(ref T[] arr)
 	{
-		var list = new List<KeyValuePair<int, T>>(arr.Length);
-		list.AddRange(arr.Select(s => new KeyValuePair<int, T>(_randomArrayRandom.Next(), s)));
+		var arrayCopy = arr;
+
+		var arrayLength = arr.Length;
+		var remainingIndexes = arrayLength;
+
+		var indexList = new List<int>(arrayLength);
+		for (var i = 0; i < arrayLength; i++)
+		{
+			indexList.Add(i);
+		}
+
+		for (var i = 0; i < arrayLength; i++)
+		{
+			var randomIndex = _randomArrayRandom.Next(0, remainingIndexes);
+
+			arr[arrayLength - remainingIndexes] = arrayCopy[indexList[randomIndex]];
+			indexList.RemoveAt(randomIndex);
+
+			remainingIndexes--;
+		}
+
+		/*
+		var arrayLength = arr.Length;
+		var list = new List<KeyValuePair<int, T>>(arrayLength);
+		list.AddRange(arr.Select(arrItem => new KeyValuePair<int, T>(_randomArrayRandom.Next(arrayLength), arrItem)));
 		// Add all strings from array
 		// Add new random int each time
 		// Sort the list by the random number
 		var sorted = list.OrderBy(item => item.Key);
 		// Allocate new string array
 		// Copy values to array
-		int index = 0;
+		var index = 0;
 		foreach (var pair in sorted)
 		{
 			arr[index] = pair.Value;
 			index++;
 		}
+
+		*/
+
 	}
 
 	public static GameObject FindInChildren(this GameObject go, string name)

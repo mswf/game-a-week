@@ -6,21 +6,22 @@ Properties {
 }
 
 Category {
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="AlphaTest"}
 	Blend SrcAlpha OneMinusSrcAlpha
-	ColorMask RGB
+	ColorMask RGBA
 	Cull Off Lighting Off ZWrite Off
-
+	
 	SubShader {
 		Pass {
-		
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_particles
-			#pragma multi_compile_fog
+			//#pragma multi_compile_fog
 			
 			#include "UnityCG.cginc"
+
 
 			sampler2D _MainTex;
 			fixed4 _TintColor;
@@ -35,7 +36,7 @@ Category {
 				float4 vertex : SV_POSITION;
 				fixed4 color : COLOR;
 				float2 texcoord : TEXCOORD0;
-				UNITY_FOG_COORDS(1)
+				//UNITY_FOG_COORDS(1)
 				#ifdef SOFTPARTICLES_ON
 				float4 projPos : TEXCOORD2;
 				#endif
@@ -57,7 +58,7 @@ Category {
 				#endif
 
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
-				UNITY_TRANSFER_FOG(o,o.vertex);
+				//UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
 
@@ -72,6 +73,7 @@ Category {
 				float fade = saturate (_InvFade * (sceneZ-partZ));
 				i.color.a *= fade;
 				#endif
+
 				
 				fixed4 col = 2.0f * i.color * _TintColor * tex2D(_MainTex, i.texcoord);
 				//UNITY_APPLY_FOG(i.fogCoord, col);

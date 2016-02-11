@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Speckles
+    uniqueID: 2538320613
+    locked: 0
+  - name: Clouds
+    uniqueID: 2068301707
+    locked: 0

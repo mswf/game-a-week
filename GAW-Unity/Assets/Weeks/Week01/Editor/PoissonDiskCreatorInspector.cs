@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Week01
 {
-	[CustomEditor(typeof(PoissonDiskCreator))]
+	[CustomEditor(typeof(PoissonDiskCreator))] [CanEditMultipleObjects]
 	public class PoissonDiskCreatorInspector : Editor
 	{
 		private PoissonDiskCreator creator;

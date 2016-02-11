@@ -5,11 +5,7 @@
  * \date © 2011-2015
  */
 
-using System;
-using System.Collections;
-
 using UnityEngine;
-using UnityEditor;
 
 namespace Extensions
 {
