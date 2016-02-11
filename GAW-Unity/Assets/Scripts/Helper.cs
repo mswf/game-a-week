@@ -1,8 +1,37 @@
 ﻿using System.Linq;
 using UnityEngine;
 
+
+using System;
+using System.Collections.Generic;
+
+
 public static class Helper
 {
+	static System.Random _randomArrayRandom = new System.Random();
+
+	public static void RandomizeArray<T>(ref T[] arr)
+	{
+		List<KeyValuePair<int, T>> list = new List<KeyValuePair<int, T>>(arr.Length);
+		// Add all strings from array
+		// Add new random int each time
+		foreach (T s in arr)
+		{
+			list.Add(new KeyValuePair<int, T>(_randomArrayRandom.Next(), s));
+		}
+		// Sort the list by the random number
+		var sorted = list.OrderBy(item => item.Key);
+		// Allocate new string array
+		// T[] result = new T[arr.Length];
+		// Copy values to array
+		int index = 0;
+		foreach (var pair in sorted)
+		{
+			arr[index] = pair.Value;
+			index++;
+		}
+	}
+
 	public static GameObject FindInChildren(this GameObject go, string name)
 	{
 		return (from x in go.GetComponentsInChildren<Transform>()
@@ -16,6 +45,28 @@ public static class Helper
 				where x.gameObject.name == name
 				select x.gameObject).First().transform;
 	}
+}
+
+
+public struct Vector2i
+{
+	public int x;
+	public int y;
+}
+
+public struct Vector3i
+{
+	public int x;
+	public int y;
+	public int z;
+}
+
+public struct Vector4i
+{
+	public int x;
+	public int y;
+	public int z;
+	public int w;
 }
 
 public class MathS

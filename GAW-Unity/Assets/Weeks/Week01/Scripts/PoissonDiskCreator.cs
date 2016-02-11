@@ -4,8 +4,11 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
+
+
 namespace Week01
 {
+	[RequireComponent(typeof(ParticleSystem))]
 	public class PoissonDiskCreator : MonoBehaviour
 	{
 		[Range(1f, 10f)]
@@ -29,9 +32,36 @@ namespace Week01
 
 		private Vector3[] points;
 
+		private new ParticleSystem particleSystem;
+		private ParticleSystem.EmitParams[] emitParams;
+
+		[Range(0.1f, 100f)]
+		public float spawnTimeFrame = 1f;
+
+		[Range(0.1f, 100f)]
+		public float particleLifeTime = 1f;
+
+		private float particleStartTime = 0f;
+
 		private void OnEnable()
 		{
 			Refresh();
+		}
+
+		void Update()
+		{
+
+			if (transform.hasChanged)
+			{
+				transform.hasChanged = false;
+				Refresh();
+			}
+		}
+
+		private void LateUpdate()
+		{
+			PositionParticles();
+
 		}
 
 		public void Refresh()
@@ -43,20 +73,112 @@ namespace Week01
 			
 			points = SamplePoints(transform.TransformPoint(Vector3.zero), transform.TransformPoint(dimensions), null, minDistance, frequency, samplingCount).ToArray();
 
-			//Log.Steb("Actual length: " + points.Length);
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-
-			if (transform.hasChanged)
+			if (particleSystem == null)
 			{
-				transform.hasChanged = false;
-				Refresh();
+				particleSystem = GetComponent<ParticleSystem>();
 			}
+			
+			
+			InitializeParticles();
+
 		}
 
+		private void InitializeParticles()
+		{
+			particleSystem.Stop();
+			particleSystem.Clear();
+
+			particleStartTime = Time.time;
+
+			particleSystem.maxParticles = points.Length;
+
+			emitParams = new ParticleSystem.EmitParams[points.Length];
+
+			for (int i = 0; i < emitParams.Length; i++)
+			{
+				float sample = (Noise.Perlin3D(points[i], frequency) + 0.5f);
+
+				//if (sample < 0.5f)
+				{
+					//sample *= 2f;
+
+					emitParams[i].position = points[i];
+					emitParams[i].velocity = Vector3.zero;
+					emitParams[i].startLifetime = particleLifeTime;
+					emitParams[i].startSize = (sample * -1f + 1f) * 1.5f;
+					emitParams[i].rotation = sample * 10f;
+					emitParams[i].velocity = Vector3.up*Mathf.Sin(sample)*0.06f;
+					emitParams[i].startColor = gizmoGradient.Evaluate(sample);
+					//particleSystem.Emit(emit, 1);
+				}
+
+			}
+
+			Helper.RandomizeArray<ParticleSystem.EmitParams>(ref emitParams);
+
+			particleSystem.Play();
+		}
+
+		private void PositionParticles()
+		{
+			if (points == null)
+				return;
+			
+
+			float deltaTime = (Time.time - particleStartTime) % spawnTimeFrame;
+			float rateStart = deltaTime/spawnTimeFrame;
+			float rateEnd = (deltaTime+Time.deltaTime) / spawnTimeFrame;
+			
+			int length = emitParams.Length;
+			int startRange = MathS.FloorToInt(length * rateStart);
+			int endRange = MathS.FloorToInt(length * rateEnd);
+			
+			if (endRange < startRange)
+			{
+				for (int i = startRange; i < length; i++)
+				{
+					particleSystem.Emit(
+						emitParams[i], 1
+					);
+				}
+				for (int i = 0; i < endRange; i++)
+				{
+					particleSystem.Emit(
+						emitParams[i], 1
+					);
+				}
+			}
+			else if (endRange > length)
+			{
+				for (int i = startRange; i < length; i++)
+				{
+					particleSystem.Emit(
+						emitParams[i], 1
+					);
+				}
+				for (int i = 0; i < length - endRange; i++)
+				{
+					particleSystem.Emit(
+						emitParams[i], 1
+					);
+				}
+			}
+			else
+			{
+				for (int i = startRange; i < endRange; i++)
+				{
+					particleSystem.Emit(
+						emitParams[i], 1
+					);
+				}
+			}
+
+			
+
+
+		}
+
+		/*
 		private void OnDrawGizmosSelected()
 		{
 			if (points != null)
@@ -69,7 +191,7 @@ namespace Week01
 				}
 			}
 		}
-
+		*/
 
 		// Poisson Stuff
 		public const int DefaultPointsPerIteration = 30;
@@ -231,7 +353,6 @@ namespace Week01
 
 		private static Vector3 GenerateRandomAround(Vector3 center, float minimumDistance)
 		{
-			
 			//float sample = Noise.Perlin3D(center, FREQUENCY) +0.5f;
 
 			var radius = (minimumDistance + minimumDistance* RandomHelper.NextFloat() * 3f);
@@ -247,13 +368,6 @@ namespace Week01
 				y = MathS.FloorToInt((point.y - origin.y)/cellSize),
 				z = MathS.FloorToInt((point.z - origin.z)/cellSize)
 			};
-		}
-
-		private struct Vector3i
-		{
-			public int x;
-			public int y;
-			public int z;
 		}
 
 		public struct PoissonPoint

@@ -212,9 +212,9 @@ class GradientMakerEditor : EditorWindow {
 	private void OutputGradient(byte[] bytes){
 		// Platform specific file-out location
 		if(Application.platform == RuntimePlatform.OSXEditor){
-			path = Application.dataPath + "/GradientMaker/Gradients/";
+			path = Application.dataPath + "/Extensions/GradientMaker/Gradients/";
 		} else if (Application.platform == RuntimePlatform.WindowsEditor){
-			path = Application.dataPath + "\\GradientMaker\\Gradients\\";
+			path = Application.dataPath + "\\Extensions\\GradientMaker\\Gradients\\";
 		}
 		
 		if(!Directory.Exists(path)){
@@ -236,7 +236,7 @@ class GradientMakerEditor : EditorWindow {
 		if(option){
 			File.WriteAllBytes((path + _fileName + ".png"), bytes);
 			AssetDatabase.Refresh();
-			var outputFile = AssetDatabase.LoadAssetAtPath<Texture>("Assets/GradientMaker/Gradients/" + _fileName + ".png");
+			var outputFile = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Extensions/GradientMaker/Gradients/" + _fileName + ".png");
 			string logString = alreadyExists ? "Gradient Overwritten: " : "Gradient saved: ";
 			Debug.Log(logString + outputFile, outputFile);
 			EditorGUIUtility.PingObject(outputFile);
