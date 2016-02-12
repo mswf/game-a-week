@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 
 namespace Week01
@@ -53,6 +54,10 @@ namespace Week01
 				}
 				else
 					Cursor.lockState = CursorLockMode.Locked;
+			}
+			if (Input.GetKeyDown(KeyCode.R))
+			{
+				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 			}
 
 			if (Input.GetKey(KeyCode.W) || Input.GetMouseButton(0))
