@@ -21,10 +21,13 @@ namespace Week01
 
 		private Rigidbody _rigidbody;
 
+		
 		// Use this for initialization
 		void Start()
 		{
 			_rigidbody = GetComponent<Rigidbody>();
+			_rigidbody.maxAngularVelocity = Mathf.Infinity;
+			//_rigidbody.ma
 		}
 
 		// Update is called once per frame
@@ -48,9 +51,13 @@ namespace Week01
 
 			}
 
+			UpdateRotation();
+
 			cameraParent.localPosition = transform.localPosition;
 
 		}
+
+
 
 		private void MoveForward()
 		{
@@ -64,17 +71,19 @@ namespace Week01
 
 			var alignmentWithTarget = Vector3.Dot(targetForward, cameraForward)*0.5f + 0.5f;
 
-			_rigidbody.AddRelativeForce((transform.InverseTransformDirection(targetForward)) * alignmentWithTarget * moveSpeed * Time.deltaTime, ForceMode.Acceleration);
+			_rigidbody.AddRelativeForce((transform.InverseTransformDirection(currentForward)) * alignmentWithTarget * moveSpeed * Time.deltaTime, ForceMode.Acceleration);
 
 			var targetRotation = new Quaternion();
 			targetRotation.SetLookRotation(targetForward);
 
-	//		transform.rotation = targetRotation;
-		
 			_rigidbody.MoveRotation(targetRotation);
+		}
 
-//			_rigidbody. .AddTorque(targetForward * Vector3.Distance(targetForward, currentForward), ForceMode.Impulse);	
-			
+		private void UpdateRotation()
+		{
+
+
+	
 		}
 	}
 
