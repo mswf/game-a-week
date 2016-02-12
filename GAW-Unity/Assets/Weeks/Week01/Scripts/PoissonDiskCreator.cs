@@ -44,11 +44,26 @@ namespace Week01
 
 		private void OnEnable()
 		{
-			Refresh();
+			//Refresh();
 		}
+
+		private void Awake()
+		{
+			transform.hasChanged = false;
+			
+		}
+
+		private bool _isInitializedOnce = false;
 
 		private void Update()
 		{
+			if (_isInitializedOnce == false && Input.GetKeyUp(KeyCode.Y))
+			{
+				_isInitializedOnce = true;
+		
+				Refresh();
+
+			}
 
 			if (transform.hasChanged)
 			{
@@ -65,6 +80,7 @@ namespace Week01
 
 		public void Refresh()
 		{
+			//float initialTime = Time.realtimeSinceStartup;
 			RandomHelper.Random = new System.Random(seed);
 			
 			_points = SamplePoints(transform.TransformPoint(Vector3.zero), transform.TransformPoint(dimensions), null, minDistance, frequency, samplingCount).ToArray();
@@ -75,6 +91,8 @@ namespace Week01
 			}
 
 			InitializeParticles();
+			//Log.Steb(Time.realtimeSinceStartup - initialTime);
+			transform.hasChanged = false;
 		}
 
 		private void InitializeParticles()
@@ -84,29 +102,40 @@ namespace Week01
 
 			_particleStartTime = Time.time;
 
-			_particleSystem.maxParticles = _points.Length;
 
-			_emitParams = new ParticleSystem.EmitParams[_points.Length];
+			var tempEmitParams = new List<ParticleSystem.EmitParams>(_points.Length / 2);
 
-			for (var i = 0; i < _emitParams.Length; i++)
+			var tempEmitParam = new ParticleSystem.EmitParams();
+
+			for (var i = 0; i < _points.Length; i++)
 			{
 				var sample = Noise.Perlin3D(_points[i], frequency) + 0.5f;
 
-				//if (sample < 0.5f)
+				var color = gizmoGradient.Evaluate(sample);
+
+				if (color.a > 0.0005f)
 				{
 					//sample *= 2f;
 
-					_emitParams[i].position = _points[i];
-					_emitParams[i].velocity = Vector3.zero;
-					_emitParams[i].startLifetime = particleLifeTime;
-					_emitParams[i].startSize = Mathf.Sqrt(sample * -1f + 1f) * particleSize;
-					_emitParams[i].rotation = sample * 10f;
-					_emitParams[i].velocity = Vector3.up*Mathf.Sin(sample)*0.06f;
-					_emitParams[i].startColor = gizmoGradient.Evaluate(sample);
+
+
+					tempEmitParam.position = _points[i];
+					tempEmitParam.velocity = Vector3.zero;
+					tempEmitParam.startLifetime = particleLifeTime;
+					tempEmitParam.startSize = Mathf.Sqrt(sample * -1f + 1f) * particleSize;
+					tempEmitParam.rotation = sample * 10f;
+					tempEmitParam.velocity = Vector3.up*Mathf.Sin(sample)*-0.06f;
+					tempEmitParam.startColor = color;
+
+					tempEmitParams.Add(tempEmitParam);
 					//particleSystem.Emit(emit, 1);
 				}
 
 			}
+
+			_emitParams = tempEmitParams.ToArray();
+			_particleSystem.maxParticles = _emitParams.Length;
+
 
 			Helper.RandomizeArray(ref _emitParams);
 
@@ -202,7 +231,7 @@ namespace Week01
 			};
 
 
-			int guesstimateSize = (int) (settings.gridWidth * settings.gridHeight * settings.gridDepth * cellSize);
+			//int guesstimateSize = (int) (settings.gridWidth * settings.gridHeight * settings.gridDepth * cellSize);
 			//Log.Steb(guesstimateSize);
 			//TODO: proper guesstimate, prolly research this
 			var state = new State()

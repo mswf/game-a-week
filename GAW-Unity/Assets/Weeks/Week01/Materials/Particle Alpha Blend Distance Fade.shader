@@ -8,7 +8,7 @@ Properties {
 Category {
 	Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="AlphaTest"}
 	Blend SrcAlpha OneMinusSrcAlpha
-	ColorMask RGBA
+	ColorMask RGB
 	Cull Off Lighting Off ZWrite Off
 	
 	SubShader {
@@ -35,7 +35,7 @@ Category {
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				fixed4 color : COLOR;
-				float2 texcoord : TEXCOORD0;
+					float2 texcoord : TEXCOORD0;
 				//UNITY_FOG_COORDS(1)
 				#ifdef SOFTPARTICLES_ON
 				float4 projPos : TEXCOORD2;
@@ -54,7 +54,7 @@ Category {
 				#endif
 				o.color = v.color;
 				#ifdef SOFTPARTICLES_ON				
-				o.color.a = o.color.a * (1.0f - o.projPos.z*0.03f);
+				o.color.a = o.color.a * (1.0f - o.projPos.z*0.06f);
 				#endif
 
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
@@ -74,7 +74,7 @@ Category {
 				i.color.a *= fade;
 				#endif
 
-				
+				//i.color.a *= 0.2f;
 				fixed4 col = 2.0f * i.color * _TintColor * tex2D(_MainTex, i.texcoord);
 				//UNITY_APPLY_FOG(i.fogCoord, col);
 				
