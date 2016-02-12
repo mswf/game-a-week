@@ -12,6 +12,7 @@ namespace Week01
 		public Transform cameraHolder;
 		public Transform cameraParent;
 
+		public ParticleSystem _exhaustParticleSystem;
 
 
 		public float moveSpeed = 10f;
@@ -20,13 +21,23 @@ namespace Week01
 		public float maxMagnitudeDelta = 1f;
 
 		private Rigidbody _rigidbody;
+		private float _currentAcceleration = 0f;
+		private ParticleSystem.EmitParams exhaustEmitParams;
+		public MeshRenderer shipMeshRenderer;
+		private Color _initialExhaustColor;
 
-		
+		private const int ExhaustMaterialIndex = 2;
+
 		// Use this for initialization
 		void Start()
 		{
 			_rigidbody = GetComponent<Rigidbody>();
 			_rigidbody.maxAngularVelocity = Mathf.Infinity;
+			exhaustEmitParams = new ParticleSystem.EmitParams();
+			
+
+			_initialExhaustColor = shipMeshRenderer.materials[ExhaustMaterialIndex].GetColor("_EmissionColor");
+
 			//_rigidbody.ma
 		}
 
@@ -38,6 +49,7 @@ namespace Week01
 				if (Cursor.lockState == CursorLockMode.Locked)
 				{
 					Cursor.lockState = CursorLockMode.None;
+					Cursor.visible = true;
 				}
 				else
 					Cursor.lockState = CursorLockMode.Locked;
@@ -55,6 +67,19 @@ namespace Week01
 
 			cameraParent.localPosition = transform.localPosition;
 
+
+
+			var curColor = Color.white;
+			curColor.a = Mathf.Lerp(0.01f, 1f, _currentAcceleration);
+			//exhaustEmitParams.startColor = curColor;
+
+			_exhaustParticleSystem.startColor = curColor;
+			
+			var newColor = Color.Lerp(_initialExhaustColor, Color.white, _currentAcceleration);
+
+			shipMeshRenderer.materials[ExhaustMaterialIndex].SetColor("_EmissionColor", newColor);
+
+			_currentAcceleration *= 0.5f;
 		}
 
 
@@ -69,7 +94,9 @@ namespace Week01
 	//		transform.Translate();
 			//Log.Steb();
 
+
 			var alignmentWithTarget = Vector3.Dot(targetForward, cameraForward)*0.5f + 0.5f;
+			_currentAcceleration = alignmentWithTarget;
 
 			_rigidbody.AddRelativeForce((transform.InverseTransformDirection(currentForward)) * alignmentWithTarget * moveSpeed * Time.deltaTime, ForceMode.Acceleration);
 
@@ -77,6 +104,8 @@ namespace Week01
 			targetRotation.SetLookRotation(targetForward);
 
 			_rigidbody.MoveRotation(targetRotation);
+
+
 		}
 
 		private void UpdateRotation()

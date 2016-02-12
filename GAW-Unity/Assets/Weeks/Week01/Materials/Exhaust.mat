@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Sky - Poisson Disk
-  m_Shader: {fileID: 106, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _SUNDISK_HIGH_QUALITY
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 1000
+  m_Name: Exhaust
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -93,22 +93,6 @@ Material:
         second: 0.5
       data:
         first:
-          name: _Exposure
-        second: 2
-      data:
-        first:
-          name: _SunDisk
-        second: 2
-      data:
-        first:
-          name: _SunSize
-        second: 0.419
-      data:
-        first:
-          name: _AtmosphereThickness
-        second: 0.08
-      data:
-        first:
           name: _Parallax
         second: 0.02
       data:
@@ -118,7 +102,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: 0.5
+        second: 0.914
       data:
         first:
           name: _BumpScale
@@ -142,21 +126,13 @@ Material:
       data:
         first:
           name: _Metallic
-        second: 0
+        second: 0.315
     m_Colors:
       data:
         first:
           name: _EmissionColor
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: 0.16435985, g: 0.2235532, b: 0.2352941, a: 1}
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SkyTint
-        second: {r: 0.6911765, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _GroundColor
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: 0.32799998, g: 0.456, b: 0.472, a: 1}
