@@ -125,65 +125,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 60, y: 34, z: 2}
   m_Center: {x: 30, y: 15, z: -1}
---- !u!21 &104430362
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Explosion
-  m_Shader: {fileID: 4800000, guid: 3ad9cea2715054022ac5b343000f3e16, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 2000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-      data:
-        first:
-          name: _MainTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 89c55a6a75d704c17b5a68a0e7b088f4, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _RampTex
-        second:
-          m_Texture: {fileID: 2800000, guid: fefc6813ed34d4fad819fcf0f35ded02, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-    m_Floats:
-      data:
-        first:
-          name: _Radius
-        second: 50.827408
-      data:
-        first:
-          name: _Heat
-        second: 2.13
-      data:
-        first:
-          name: _NoiseFrequency
-        second: 0.6
-      data:
-        first:
-          name: _ScrollSpeed
-        second: 0.12
-      data:
-        first:
-          name: _Alpha
-        second: 1
-    m_Colors:
-      data:
-        first:
-          name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SpherePos
-        second: {r: 78.3, g: -122, b: 57.1, a: 0}
 --- !u!1 &116032884
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,65 +309,6 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: e52924f9cc8d88941ab146de1cc15a7f, type: 3}
   m_PrefabInternal: {fileID: 433768838}
---- !u!21 &478901343
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Explosion
-  m_Shader: {fileID: 4800000, guid: 3ad9cea2715054022ac5b343000f3e16, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 2000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-      data:
-        first:
-          name: _MainTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 89c55a6a75d704c17b5a68a0e7b088f4, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _RampTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 5ad4102be153500478330e520f96f4ec, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-    m_Floats:
-      data:
-        first:
-          name: _Radius
-        second: 5.733934
-      data:
-        first:
-          name: _Heat
-        second: 2.13
-      data:
-        first:
-          name: _NoiseFrequency
-        second: 1.68
-      data:
-        first:
-          name: _ScrollSpeed
-        second: 0.12
-      data:
-        first:
-          name: _Alpha
-        second: 1
-    m_Colors:
-      data:
-        first:
-          name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SpherePos
-        second: {r: 107.2, g: 1.4, b: -70, a: 0}
 --- !u!1 &487065876
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,7 +391,7 @@ Prefab:
     - target: {fileID: 2300000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 104430362}
+      objectReference: {fileID: 1654062179}
     - target: {fileID: 100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_Name
       value: Pyroclastic Puff (1)
@@ -533,6 +415,10 @@ Prefab:
     - target: {fileID: 100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 13500000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
@@ -4054,6 +3940,65 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!21 &700966950
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Explosion
+  m_Shader: {fileID: 4800000, guid: 3ad9cea2715054022ac5b343000f3e16, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 2000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 89c55a6a75d704c17b5a68a0e7b088f4, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _RampTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 5ad4102be153500478330e520f96f4ec, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Radius
+        second: 5.733934
+      data:
+        first:
+          name: _Heat
+        second: 2.13
+      data:
+        first:
+          name: _NoiseFrequency
+        second: 1.68
+      data:
+        first:
+          name: _ScrollSpeed
+        second: 0.12
+      data:
+        first:
+          name: _Alpha
+        second: 1
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpherePos
+        second: {r: 27.27, g: 31.89, b: 25.56, a: 0}
 --- !u!1001 &747845165
 Prefab:
   m_ObjectHideFlags: 0
@@ -4103,7 +4048,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 460452467eb587d4391580650108bb1f, type: 3}
       propertyPath: m_CastShadows
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 460452467eb587d4391580650108bb1f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4111,7 +4056,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 460452467eb587d4391580650108bb1f, type: 3}
       propertyPath: m_Layer
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 460452467eb587d4391580650108bb1f, type: 3}
       propertyPath: m_IsActive
@@ -9215,10 +9160,14 @@ Prefab:
     - target: {fileID: 2300000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2000443188}
+      objectReference: {fileID: 700966950}
     - target: {fileID: 100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 13500000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
@@ -9390,7 +9339,7 @@ Prefab:
     - target: {fileID: 2300000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 478901343}
+      objectReference: {fileID: 1423609341}
     - target: {fileID: 100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_Name
       value: Pyroclastic Puff (2)
@@ -9398,6 +9347,10 @@ Prefab:
     - target: {fileID: 100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 13500000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
@@ -11058,6 +11011,65 @@ Transform:
   m_Children: []
   m_Father: {fileID: 594820069}
   m_RootOrder: 1
+--- !u!21 &1423609341
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Explosion
+  m_Shader: {fileID: 4800000, guid: 3ad9cea2715054022ac5b343000f3e16, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 2000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 89c55a6a75d704c17b5a68a0e7b088f4, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _RampTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 5ad4102be153500478330e520f96f4ec, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Radius
+        second: 5.733934
+      data:
+        first:
+          name: _Heat
+        second: 2.13
+      data:
+        first:
+          name: _NoiseFrequency
+        second: 1.68
+      data:
+        first:
+          name: _ScrollSpeed
+        second: 0.12
+      data:
+        first:
+          name: _Alpha
+        second: 1
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpherePos
+        second: {r: 107.2, g: 1.4, b: -70, a: 0}
 --- !u!1 &1485398641
 GameObject:
   m_ObjectHideFlags: 0
@@ -11258,6 +11270,65 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
+--- !u!21 &1654062179
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Explosion
+  m_Shader: {fileID: 4800000, guid: 3ad9cea2715054022ac5b343000f3e16, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 2000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 89c55a6a75d704c17b5a68a0e7b088f4, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _RampTex
+        second:
+          m_Texture: {fileID: 2800000, guid: fefc6813ed34d4fad819fcf0f35ded02, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Radius
+        second: 50.827408
+      data:
+        first:
+          name: _Heat
+        second: 2.13
+      data:
+        first:
+          name: _NoiseFrequency
+        second: 0.6
+      data:
+        first:
+          name: _ScrollSpeed
+        second: 0.12
+      data:
+        first:
+          name: _Alpha
+        second: 1
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpherePos
+        second: {r: 78.3, g: -122, b: 57.1, a: 0}
 --- !u!1 &1658845551
 GameObject:
   m_ObjectHideFlags: 0
@@ -14897,65 +14968,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 60, y: 2, z: 60}
   m_Center: {x: 30, y: 31, z: 30}
---- !u!21 &2000443188
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Explosion
-  m_Shader: {fileID: 4800000, guid: 3ad9cea2715054022ac5b343000f3e16, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: 2000
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-      data:
-        first:
-          name: _MainTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 89c55a6a75d704c17b5a68a0e7b088f4, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _RampTex
-        second:
-          m_Texture: {fileID: 2800000, guid: 5ad4102be153500478330e520f96f4ec, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-    m_Floats:
-      data:
-        first:
-          name: _Radius
-        second: 5.733934
-      data:
-        first:
-          name: _Heat
-        second: 2.13
-      data:
-        first:
-          name: _NoiseFrequency
-        second: 1.68
-      data:
-        first:
-          name: _ScrollSpeed
-        second: 0.12
-      data:
-        first:
-          name: _Alpha
-        second: 1
-    m_Colors:
-      data:
-        first:
-          name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SpherePos
-        second: {r: 27.27, g: 31.89, b: 25.56, a: 0}
 --- !u!23 &2010351243 stripped
 MeshRenderer:
   m_PrefabParentObject: {fileID: 2300000, guid: e52924f9cc8d88941ab146de1cc15a7f,
