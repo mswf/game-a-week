@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: f6c2eb047ef7d7941b27e6a3712058dc
+labels:
+- W01
 timeCreated: 1455096351
 licenseType: Free
 DefaultImporter:

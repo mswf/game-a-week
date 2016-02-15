@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 460452467eb587d4391580650108bb1f
+labels:
+- W01
 timeCreated: 1455288623
 licenseType: Free
 ModelImporter:

@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: ee9264ac9edb66f4ba50b76c271318a3
+labels:
+- W01
 timeCreated: 1455200018
 licenseType: Free
 TextureImporter:

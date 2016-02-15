@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: ed0a48d93b9e4fd4cb411cc61298f71a
+labels:
+- W01
 timeCreated: 1455190882
 licenseType: Free
 ShaderImporter:
