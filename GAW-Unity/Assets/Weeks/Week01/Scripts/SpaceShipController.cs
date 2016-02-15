@@ -23,7 +23,7 @@ namespace Week01
 
 		private Rigidbody _rigidbody;
 		private float _currentAcceleration = 0f;
-		private ParticleSystem.EmitParams exhaustEmitParams;
+		//private ParticleSystem.EmitParams exhaustEmitParams;
 		public MeshRenderer shipMeshRenderer;
 		private Color _initialExhaustColor;
 
@@ -34,7 +34,7 @@ namespace Week01
 		{
 			_rigidbody = GetComponent<Rigidbody>();
 			_rigidbody.maxAngularVelocity = Mathf.Infinity;
-			exhaustEmitParams = new ParticleSystem.EmitParams();
+			//exhaustEmitParams = new ParticleSystem.EmitParams();
 			
 
 			_initialExhaustColor = shipMeshRenderer.materials[ExhaustMaterialIndex].GetColor("_EmissionColor");
