@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
@@ -22,13 +22,16 @@ namespace Week02
 
 		private float _originalMuzzleIntensiy;
 
+		private Vector3 _originalCameraPosition;
+
 		// Use this for initialization
 		void Start()
 		{
+			_originalCameraPosition = Camera.main.transform.position;
 			_originalMuzzleIntensiy = muzzleLight.intensity;
 			muzzleLight.intensity = 1f;
 		
-			InvokeRepeating("FireGun", 0f, 2f);	
+			InvokeRepeating("FireGun", 1f + Random.value, 2f);	
 		}
 
 		// Update is called once per frame
@@ -43,22 +46,12 @@ namespace Week02
 
 		private void FireGun()
 		{
-
-
-			_rayToHitTarget.direction = playerController.getHeadPosition() - transform.position;
+			Vector3 shootingDirection = (playerController.getHeadPosition() - transform.position).normalized+ new Vector3(Random.value, Random.value, Random.value)*0.02f;
+			_rayToHitTarget.direction = shootingDirection;
 			_rayToHitTarget.origin = transform.position;
 
 			
-
-			var layerMaskShell = 1 << LayerMask.NameToLayer("PlayerShell");
-			var layerMaskDefault = 1 << LayerMask.NameToLayer("Default");
-			int layerMask = layerMaskShell | layerMaskDefault;
-
-			string[] layers = new string[2];
-			layers[0] = "PlayerShell";
-			layers[1] = "Default";
-
-			//		
+			
 
 
 			playerCollider.enabled = true;
@@ -66,30 +59,58 @@ namespace Week02
 			{
 				if (_rayToHitTargetHitInfo.collider.tag == "Player")
 				{
-					Log.Steb("Hit the player!");
-					Debug.DrawRay(_rayToHitTarget.origin, _rayToHitTarget.direction*_rayToHitTargetHitInfo.distance, Color.red, 0.8f);
+					//Log.Steb("Hit the player!");
+					Debug.DrawRay(_rayToHitTarget.origin, shootingDirection * _rayToHitTargetHitInfo.distance, Color.red, 0.8f);
+					Camera.main.DOShakePosition(0.4f, 1.6f).OnComplete( () =>
+						{
 
+							if (!DOTween.IsTweening(Camera.main))
+							{
+								Camera.main.transform.DOMove(_originalCameraPosition, 0.1f);
+
+							}
+						});
 				}
 				else
 				{
-				Debug.DrawRay(_rayToHitTarget.origin, _rayToHitTarget.direction * _rayToHitTargetHitInfo.distance, Color.black, 0.8f);
+					Debug.DrawRay(_rayToHitTarget.origin, shootingDirection * _rayToHitTargetHitInfo.distance, Color.black, 0.8f);
 
+
+					var impactDistance = Vector3.Distance(target.position, _rayToHitTargetHitInfo.point);
+
+					float minDistance = 5f;
+
+					if (impactDistance < minDistance)
+					{
+						Camera.main.DOShakePosition(0.6f, MathS.Lerp(.6f, 0f, (impactDistance)/ minDistance), 20)
+							.OnComplete(() =>
+							{
+								if (!DOTween.IsTweening(Camera.main))
+								{
+									Camera.main.transform.DOMove(_originalCameraPosition, 0.1f);
+									
+								}
+							});
+
+
+					}
 				}
 
-				var paricle = (GameObject) Instantiate(impactParticleEffect, _rayToHitTargetHitInfo.point - _rayToHitTarget.direction*0.1f, Quaternion.identity);
+				var paricle = (GameObject) Instantiate(impactParticleEffect, _rayToHitTargetHitInfo.point - shootingDirection * 0.1f, Quaternion.identity);
 				paricle.transform.SetParent(_rayToHitTargetHitInfo.collider.gameObject.transform); 
 				//Debug.DrawRay(transform.position, playerController.getHeadPosition() - transform.position, Color.red, 0.5f);
 
 			}
 			else
 			{
-				Debug.DrawRay(_rayToHitTarget.origin, _rayToHitTarget.direction * 100f, Color.white, 5f);
+				Debug.DrawRay(_rayToHitTarget.origin, shootingDirection * 100f, Color.white, 5f);
 
 			}
 			playerCollider.enabled = false;
 
 			muzzleLight.intensity = _originalMuzzleIntensiy;
 			muzzleLight.DOIntensity(1f, 0.5f).SetEase(Ease.OutExpo);
+
 
 		}
 	}
