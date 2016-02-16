@@ -3,12 +3,19 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 
 using DG.Tweening;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine.Assertions.Comparers;
 
 
 namespace Week02
 {
+	public enum PlayerStance
+	{
+		Prone = 0,
+		Crouched = 1,
+		Standing = 2
+	}
+
 	[RequireComponent(typeof(Rigidbody))]
 	public class PlayerController : MonoBehaviour
 	{
@@ -21,11 +28,18 @@ namespace Week02
 
 		private Rigidbody _rigidbody;
 
+		[Range(0.01f, 1f)]
+		public float targetDistanceMultiplier = 1f;
+
+		public PlayerStance currentStance = PlayerStance.Crouched;
+
 		// Use this for initialization
 		void Start()
 		{
 			_rigidbody = GetComponent<Rigidbody>();
 			_rigidbody.maxAngularVelocity = float.PositiveInfinity;
+
+			//_rigidbody.maxDepenetrationVelocity = float.PositiveInfinity;
 
 			DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
 
@@ -71,19 +85,18 @@ namespace Week02
 
 			if (Input.GetMouseButton(0))
 			{
-				_curMousePosition += new Vector3(Input.GetAxis("Mouse X"), 0, Input.GetAxis("Mouse Y"));
+				_curMousePosition += new Vector3(Input.GetAxis("Mouse X")*targetDistanceMultiplier, 0,
+					Input.GetAxis("Mouse Y")*targetDistanceMultiplier);
 
+				playerTarget.position = transform.position + GetCurrentCameraRotation()*_curMousePosition;
 
-
-
-				playerTarget.position = transform.position + GetCurrentCameraRotation() * _curMousePosition;
-
+				currentStance = PlayerStance.Standing;
 			}
 
 			if (Input.GetMouseButtonUp(0))
-			{
+			{ 
 
-				_rigidbody.angularVelocity = Vector3.zero;
+					_rigidbody.angularVelocity = Vector3.zero;
 				_rigidbody.velocity = Vector3.zero;
 
 				Vector3 targetEndpoint = transform.position + GetCurrentCameraRotation() * _curMousePosition;
@@ -110,16 +123,47 @@ namespace Week02
 						.SetEase(Ease.Linear);
 				}
 
-				_curMousePosition = Vector3.zero;
+				//_curMousePosition *= 0.95f;
 
+				currentStance = PlayerStance.Crouched;
+
+				_curMousePosition = Vector3.zero;
 			}
 
+			if (_rigidbody.velocity.magnitude < 0.2f)
+			{
+				_rigidbody.angularVelocity *= 0.9f;
+			}
 			
 		}
 
 		private Quaternion GetCurrentCameraRotation()
 		{
 			return Quaternion.Euler(0, 45f, 0);
+		}
+
+		public Vector3 getHeadPosition()
+		{
+			float upMultiplier;
+
+			switch (currentStance)
+			{
+				case PlayerStance.Prone:
+					upMultiplier = 0.125f;
+					break;
+				case PlayerStance.Crouched:
+					upMultiplier = 0.25f;
+
+					break;
+				case PlayerStance.Standing:
+					upMultiplier = 1f;
+
+					break;
+				default:
+					throw new System.ArgumentOutOfRangeException();
+			}
+
+			return transform.position + Vector3.up*upMultiplier;
 		}
 	}
 
