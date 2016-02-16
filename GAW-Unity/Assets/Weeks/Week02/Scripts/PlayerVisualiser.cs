@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 namespace Week02
@@ -10,6 +9,8 @@ namespace Week02
 		public Transform playerControllerTransform;
 		public PlayerController playerController;
 
+		public Transform capsuleVisualTransform;
+
 		private void LateUpdate()
 		{
 			transform.localPosition = playerControllerTransform.localPosition - Vector3.up*0.5f;
@@ -17,18 +18,23 @@ namespace Week02
 			switch (playerController.currentStance)
 			{
 				case PlayerStance.Prone:
-					transform.localScale = new Vector3(1f, 0.25f, 1f);
+					capsuleVisualTransform.localScale = new Vector3(1f, 0.25f, 1f);
+					capsuleVisualTransform.localPosition = new Vector3(0f, 0.25f, 0f);
+
 					break;
 				case PlayerStance.Crouched:
-					transform.localScale = new Vector3(1f, 0.5f, 1f);
+					capsuleVisualTransform.localScale = new Vector3(1f, 0.5f, 1f);
+					capsuleVisualTransform.localPosition = new Vector3(0f, 0.5f, 0f);
+
 
 					break;
 				case PlayerStance.Standing:
-					transform.localScale = new Vector3(1f, 1f, 1f);
+					capsuleVisualTransform.localScale = new Vector3(1f, 1f, 1f);
+					capsuleVisualTransform.localPosition = new Vector3(0f, 1f, 0f);
 
 					break;
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new System.ArgumentOutOfRangeException();
 			}
 		}
 

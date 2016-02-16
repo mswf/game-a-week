@@ -111,7 +111,7 @@ namespace Week02
 				_rigidbody.AddTorque(offsetThisFrame * rotationSpeed, ForceMode.VelocityChange);
 
 
-				if (false)
+/*
 				{
 					if (movementTween != null)
 					{
@@ -122,6 +122,7 @@ namespace Week02
 						//.SetEase(Ease.InOutQuad);
 						.SetEase(Ease.Linear);
 				}
+*/
 
 				//_curMousePosition *= 0.95f;
 

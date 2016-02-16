@@ -27,11 +27,11 @@ namespace Week02
 		// Use this for initialization
 		void Start()
 		{
-			_originalCameraPosition = Camera.main.transform.position;
+			_originalCameraPosition = Camera.main.transform.localPosition;
 			_originalMuzzleIntensiy = muzzleLight.intensity;
 			muzzleLight.intensity = 1f;
 		
-			InvokeRepeating("FireGun", 1f + Random.value, 2f);	
+			InvokeRepeating("FireGun", 1f + Random.value, 1f);	
 		}
 
 		// Update is called once per frame
@@ -66,7 +66,7 @@ namespace Week02
 
 							if (!DOTween.IsTweening(Camera.main))
 							{
-								Camera.main.transform.DOMove(_originalCameraPosition, 0.1f);
+								Camera.main.transform.DOLocalMove(_originalCameraPosition, Vector3.Distance(_originalCameraPosition, Camera.main.transform.localPosition)*0.5f);
 
 							}
 						});
@@ -87,7 +87,7 @@ namespace Week02
 							{
 								if (!DOTween.IsTweening(Camera.main))
 								{
-									Camera.main.transform.DOMove(_originalCameraPosition, 0.1f);
+									Camera.main.transform.DOLocalMove(_originalCameraPosition, Vector3.Distance(_originalCameraPosition, Camera.main.transform.localPosition) * 0.5f);
 									
 								}
 							});
