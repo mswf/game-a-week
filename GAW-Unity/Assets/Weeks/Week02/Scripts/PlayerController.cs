@@ -39,6 +39,9 @@ namespace Week02
 			_rigidbody = GetComponent<Rigidbody>();
 			_rigidbody.maxAngularVelocity = float.PositiveInfinity;
 
+			//TODO: Check this out, you idiot:
+			//https://www.youtube.com/playlist?list=PL223C1C6D1914C8CA
+
 			//_rigidbody.maxDepenetrationVelocity = float.PositiveInfinity;
 
 			DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
