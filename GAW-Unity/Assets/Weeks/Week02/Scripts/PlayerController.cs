@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 
 using DG.Tweening;
+using LunarPluginInternal;
 //using UnityEditor;
 using UnityEngine.Assertions.Comparers;
 
@@ -70,7 +71,14 @@ namespace Week02
 		private Vector3 _prevMousePosition;
 
 		private Vector3 _curMousePosition;
-		
+
+
+		private bool _isTargetting = false;
+		private bool _isMoving = false;
+
+		public float startMovementThreshold = 1f;
+		public float triggerMovementThreshold = 1f;
+		public float stopMovingThreshold = 1f;
 
 		// Update is called once per frame
 		void Update()
@@ -86,18 +94,43 @@ namespace Week02
 					Cursor.lockState = CursorLockMode.Locked;
 			}
 
-			if (Input.GetMouseButton(0))
+			var mouseMovementThisFrame = new Vector3(Input.GetAxis("Mouse X")*targetDistanceMultiplier, 0,
+				Input.GetAxis("Mouse Y")*targetDistanceMultiplier);
+
+
+			if (_rigidbody.velocity.magnitude < stopMovingThreshold)
 			{
-				_curMousePosition += new Vector3(Input.GetAxis("Mouse X")*targetDistanceMultiplier, 0,
-					Input.GetAxis("Mouse Y")*targetDistanceMultiplier);
+				_isMoving = false;
+
+			}
+
+			if (_isTargetting == false && _isMoving == false)
+			{
+				if (mouseMovementThisFrame.magnitude > startMovementThreshold)
+				{
+					_isTargetting = true;
+				}
+			}
+
+
+
+			if (_isTargetting)
+			{
+				_curMousePosition += mouseMovementThisFrame;
 
 				playerTarget.position = transform.position + GetCurrentCameraRotation()*_curMousePosition;
 
 				currentStance = PlayerStance.Standing;
+
+				if (mouseMovementThisFrame.magnitude < triggerMovementThreshold)
+				{
+					_isMoving = true;
+				}
 			}
 
-			if (Input.GetMouseButtonUp(0))
-			{ 
+			if (_isTargetting && _isMoving)
+			{
+				_isTargetting = false;
 
 					_rigidbody.angularVelocity = Vector3.zero;
 				_rigidbody.velocity = Vector3.zero;
@@ -133,6 +166,8 @@ namespace Week02
 
 				_curMousePosition = Vector3.zero;
 			}
+
+
 
 			if (_rigidbody.velocity.magnitude < 0.2f)
 			{

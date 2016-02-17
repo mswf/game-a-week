@@ -211,6 +211,9 @@ MonoBehaviour:
   rotationSpeed: 10
   targetDistanceMultiplier: 0.095
   currentStance: 1
+  startMovementThreshold: 0.1
+  triggerMovementThreshold: 0.01
+  stopMovingThreshold: 0.5
 --- !u!54 &27141801
 Rigidbody:
   m_ObjectHideFlags: 0
