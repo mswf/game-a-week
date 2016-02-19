@@ -94,43 +94,18 @@ namespace Week02
 					Cursor.lockState = CursorLockMode.Locked;
 			}
 
-			var mouseMovementThisFrame = new Vector3(Input.GetAxis("Mouse X")*targetDistanceMultiplier, 0,
+			if (Input.GetMouseButton(0))
+			{
+				_curMousePosition += new Vector3(Input.GetAxis("Mouse X")*targetDistanceMultiplier, 0,
 				Input.GetAxis("Mouse Y")*targetDistanceMultiplier);
-
-
-			if (_rigidbody.velocity.magnitude < stopMovingThreshold)
-			{
-				_isMoving = false;
-
-			}
-
-			if (_isTargetting == false && _isMoving == false)
-			{
-				if (mouseMovementThisFrame.magnitude > startMovementThreshold)
-				{
-					_isTargetting = true;
-				}
-			}
-
-
-
-			if (_isTargetting)
-			{
-				_curMousePosition += mouseMovementThisFrame;
 
 				playerTarget.position = transform.position + GetCurrentCameraRotation()*_curMousePosition;
 
 				currentStance = PlayerStance.Standing;
-
-				if (mouseMovementThisFrame.magnitude < triggerMovementThreshold)
-				{
-					_isMoving = true;
-				}
 			}
 
-			if (_isTargetting && _isMoving)
+			if (Input.GetMouseButtonUp(0))
 			{
-				_isTargetting = false;
 
 					_rigidbody.angularVelocity = Vector3.zero;
 				_rigidbody.velocity = Vector3.zero;
