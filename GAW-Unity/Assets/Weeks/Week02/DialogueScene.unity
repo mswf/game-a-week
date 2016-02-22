@@ -1419,10 +1419,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sourceText:
-  - {fileID: 4900000, guid: 8d757978c1487694b9c2452d3d082132, type: 3}
+  - {fileID: 4900000, guid: 7a0cc7e897d6b4bd2a1042f854a75acf, type: 3}
   variableStorage: {fileID: 1816689514}
   dialogueUI: {fileID: 1816689515}
-  startNode: Introduction
+  startNode: Start
   startAutomatically: 1
 --- !u!4 &1816689517
 Transform:

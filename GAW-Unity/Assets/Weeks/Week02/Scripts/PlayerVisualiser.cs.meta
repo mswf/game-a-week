@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: a535e7893fd34e24885f0af64027c9d4
+labels:
+- W02
 timeCreated: 1455620261
 licenseType: Free
 MonoImporter:

@@ -13,7 +13,7 @@ namespace Week02
 
 		// A default value to apply when the object wakes up, or 
 		// when ResetToDefaults is called
-		[System.Serializable]
+		[System.Serializable]   
 		public class DefaultVariable
 		{
 			public string name;
