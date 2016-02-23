@@ -25,10 +25,12 @@ namespace Week03
 
 		public float attractorProximity = 10f;
 
+		private Transform _transform;
 
 		// Use this for initialization
 		void Start()
 		{
+			_transform = GetComponent<Transform>();
 			rigidbody2D = GetComponent<Rigidbody2D>();
 			transform = GetComponent<Transform>();
 			collider = GetComponent<Collider2D>();
@@ -95,7 +97,7 @@ namespace Week03
 
 			foreach (var atom in atoms)
 			{
-				var distance = (Vector2)(transform.position - atom.transform.position);
+				var distance = (Vector2)(_transform.position - atom.transform.position);
 				distance -= distance.normalized* MinDistance;
 				var force = -distance * tightness - (damping * (rigidbody2D.velocity - atom.rigidbody2D.velocity));
 
@@ -105,11 +107,11 @@ namespace Week03
 				collider.enabled = false;
 				if (drawBridges) 
 				{
-					Vector2 rayDirection = (atom.transform.position - transform.position);
+					Vector2 rayDirection = (atom.transform.position - _transform.position);
 					
 
-					var hitInfo = Physics2D.Raycast(transform.position, rayDirection);
-					Debug.DrawRay(transform.position, rayDirection, Color.black, dt);
+					var hitInfo = Physics2D.Raycast(_transform.position, rayDirection);
+					Debug.DrawRay(_transform.position, rayDirection, Color.black, dt);
 
 					if (hitInfo)
 					{
