@@ -45,7 +45,7 @@ namespace Week03
 					var offset = rigidBody.position - worldPoint2D;
 					rigidBody.AddForce(offset.normalized * (offset.magnitude - maxRippleSize) * 50f *-1f);
 
-					var color = new Color(0,1,0, (offset.magnitude / maxRippleSize) *-1f+1f);
+					var color = new Color(0,1,0, (offset.magnitude / maxRippleSize) *-.9f+1f);
 
 					Debug.DrawRay(worldPoint, offset, color, dt);
 

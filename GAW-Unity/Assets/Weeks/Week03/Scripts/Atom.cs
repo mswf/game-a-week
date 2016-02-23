@@ -9,10 +9,8 @@ namespace Week03
 	[RequireComponent(typeof(Rigidbody2D))]
 	public class Atom : MonoBehaviour
 	{
-		public Atom[] atoms;
-
-		public float tightness = 0.5f;
-		public float damping = 0.5f;
+		public List<Connection> connections;
+		public List<Atom> neighbours;
 
 
 		public new Rigidbody2D rigidbody2D;
@@ -20,22 +18,18 @@ namespace Week03
 		public new Collider2D collider;
 
 		private const float MinDistance = 10f;
-
 		public bool drawBridges = false;
 
 		public float attractorProximity = 10f;
 
-		private Transform _transform;
-
 		// Use this for initialization
-		void Start()
+		void Awake()
 		{
-			_transform = GetComponent<Transform>();
 			rigidbody2D = GetComponent<Rigidbody2D>();
 			transform = GetComponent<Transform>();
 			collider = GetComponent<Collider2D>();
 
-			UpdateAtoms(ref atoms, transform.position, attractorProximity);
+
 			/*
 			foreach (var atom in GameObject.FindObjectsOfType<Atom>())
 			{
@@ -50,6 +44,64 @@ namespace Week03
 			//rigidbody2D.centerOfMass = Vector2.down;
 		}
 
+		void Start()
+		{
+			UpdateConnections();
+
+		}
+
+
+		private void Update()
+		{
+			if (UnityEngine.Random.value > 0.97f)
+			{
+				Connection.DisconnectAllNeighbours(this);
+				UpdateConnections();
+			}	
+		}
+
+		private const int MinNeighbours = 3;
+
+		private void UpdateConnections()
+		{
+			//Connection.DisconnectAllNeighbours(this);
+
+
+			Atom[] atoms = new Atom[0];
+
+			float colliderSize = 1.28f;
+			UpdateAtoms(ref atoms, transform.position, colliderSize*2f);
+
+			if (atoms.Length < MinNeighbours)
+			{
+				UpdateAtoms(ref atoms, transform.position, colliderSize * 4f);
+
+				if (atoms.Length < MinNeighbours)
+				{
+					UpdateAtoms(ref atoms, transform.position, colliderSize * 6f);
+					if (atoms.Length < MinNeighbours)
+					{
+						UpdateAtoms(ref atoms, transform.position, colliderSize * 8f);
+						if (atoms.Length < MinNeighbours)
+						{
+							UpdateAtoms(ref atoms, transform.position, colliderSize * 10f);
+							if (atoms.Length < MinNeighbours)
+							{
+								UpdateAtoms(ref atoms, transform.position, colliderSize * 12f);
+
+							}
+						}
+					}
+				}
+			}
+
+
+			foreach (var atom in atoms)
+			{
+				Connection.Connect(this, atom);
+			}
+		}
+
 		private static readonly Color FadedWhite = new Color(1,1,1,0.1f);
 
 		private static List<Atom> _cachedAtomList = new List<Atom>(); 
@@ -58,7 +110,7 @@ namespace Week03
 		{
 			_cachedAtomList.Clear();
 
-			int count = atoms.Length;
+			//int count = atoms.Length;
 
 			for (int index = 0; index < atoms.Length; index++)
 			{
@@ -67,16 +119,16 @@ namespace Week03
 
 			foreach (var colliderInCircle in Physics2D.OverlapCircleAll(position, radius))
 			{
-				if (count > 8)
-				{
-					break;
-				}
+				//if (count > 8)
+				//{
+					//break;
+				//}
 
 				var atom = colliderInCircle.GetComponent<Atom>();
 				if (atom != null && !_cachedAtomList.Contains(atom))
 				{
 					_cachedAtomList.Add(atom);
-					count++;
+					//count++;
 				}
 
 
@@ -85,58 +137,9 @@ namespace Week03
 			atoms = _cachedAtomList.ToArray();
 		}
 
-
-		private void FixedUpdate()
+		private void OnDestroy()
 		{
-			var dt = Time.fixedDeltaTime;
-
-			//DebugExtension.DebugCircle(transform.position, Vector3.forward, FadedWhite, attractorProximity, dt);
-
-			//UpdateAtoms(ref atoms, transform.position, attractorProximity);
-
-
-			foreach (var atom in atoms)
-			{
-				var distance = (Vector2)(_transform.position - atom.transform.position);
-				distance -= distance.normalized* MinDistance;
-				var force = -distance * tightness - (damping * (rigidbody2D.velocity - atom.rigidbody2D.velocity));
-
-				rigidbody2D.AddForce(force * dt, ForceMode2D.Force);
-
-
-				collider.enabled = false;
-				if (drawBridges) 
-				{
-					Vector2 rayDirection = (atom.transform.position - _transform.position);
-					
-
-					var hitInfo = Physics2D.Raycast(_transform.position, rayDirection);
-					Debug.DrawRay(_transform.position, rayDirection, Color.black, dt);
-
-					if (hitInfo)
-					{
-
-						var atomComponent = hitInfo.collider.GetComponent<Atom>();
-						if (atomComponent != null && atomComponent == atom)
-						{
-
-							
-						}
-					}
-
-				}
-				collider.enabled = true;
-			}
-
-
-
-
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-
+			Connection.DisconnectAllNeighbours(this);
 		}
 	}
 
