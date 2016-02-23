@@ -72,10 +72,10 @@ namespace Week02
 
 		private Vector3 _curMousePosition;
 
-
+		/*
 		private bool _isTargetting = false;
 		private bool _isMoving = false;
-
+		*/
 		public float startMovementThreshold = 1f;
 		public float triggerMovementThreshold = 1f;
 		public float stopMovingThreshold = 1f;
