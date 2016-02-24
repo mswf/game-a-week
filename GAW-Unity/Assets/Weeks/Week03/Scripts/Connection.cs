@@ -19,9 +19,9 @@ namespace Week03
 		public float currentStress;
 		public float maxStress;
 
-		public float preferredDistance = 10f;
+		public float preferredDistance = 20f;
 
-		public float tightness = 1000f;
+		public float tightness = 300f;
 		public float damping = 200f;
 
 		private const int MaxNeighbours = 12;

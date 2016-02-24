@@ -79,7 +79,7 @@ namespace Week03
 
 			Atom[] atoms = new Atom[0];
 
-			float colliderSize = 1.28f;
+			float colliderSize = 1.28f*2f;
 			UpdateAtoms(ref atoms, transform.position, colliderSize*2f);
 
 			if (atoms.Length < MinNeighbours)

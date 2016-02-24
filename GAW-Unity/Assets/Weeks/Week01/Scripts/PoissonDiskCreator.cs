@@ -50,7 +50,9 @@ namespace Week01
 		private void Awake()
 		{
 			transform.hasChanged = false;
-			
+			_isInitializedOnce = true;
+
+			Refresh();
 		}
 
 		private bool _isInitializedOnce = false;
