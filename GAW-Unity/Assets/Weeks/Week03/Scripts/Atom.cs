@@ -17,10 +17,15 @@ namespace Week03
 		public new Transform transform;
 		public new Collider2D collider;
 
+		public new SpriteRenderer spriteRenderer;
+
+
 		private const float MinDistance = 10f;
 		public bool drawBridges = false;
 
 		public float attractorProximity = 10f;
+
+		private Color spriteColor;
 
 		// Use this for initialization
 		void Awake()
@@ -29,6 +34,8 @@ namespace Week03
 			transform = GetComponent<Transform>();
 			collider = GetComponent<Collider2D>();
 
+			spriteRenderer = GetComponent<SpriteRenderer>();
+			spriteColor = spriteRenderer.color;
 
 			/*
 			foreach (var atom in GameObject.FindObjectsOfType<Atom>())
@@ -57,7 +64,10 @@ namespace Week03
 			{
 				Connection.DisconnectAllNeighbours(this);
 				UpdateConnections();
-			}	
+			}
+
+			spriteColor.a = (rigidbody2D.velocity.magnitude-1f)/20f;
+			spriteRenderer.color = spriteColor;
 		}
 
 		private const int MinNeighbours = 3;
@@ -88,7 +98,15 @@ namespace Week03
 							if (atoms.Length < MinNeighbours)
 							{
 								UpdateAtoms(ref atoms, transform.position, colliderSize * 12f);
+								if (atoms.Length < MinNeighbours)
+								{
+									UpdateAtoms(ref atoms, transform.position, colliderSize * 15f);
+									if (atoms.Length < MinNeighbours)
+									{
+										UpdateAtoms(ref atoms, transform.position, colliderSize * 20f);
 
+									}
+								}
 							}
 						}
 					}
