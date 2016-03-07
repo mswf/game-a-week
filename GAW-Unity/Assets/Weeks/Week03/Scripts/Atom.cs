@@ -17,7 +17,7 @@ namespace Week03
 		public new Transform transform;
 		public new Collider2D collider;
 
-		public new SpriteRenderer spriteRenderer;
+		public SpriteRenderer spriteRenderer;
 
 
 		private const float MinDistance = 10f;
@@ -62,7 +62,7 @@ namespace Week03
 		{
 			if (UnityEngine.Random.value > 0.97f)
 			{
-				Connection.DisconnectAllNeighbours(this);
+				//Connection.DisconnectAllNeighbours(this);
 				UpdateConnections();
 			}
 

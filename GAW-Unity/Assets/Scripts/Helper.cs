@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 using System.Collections.Generic;
@@ -235,5 +236,42 @@ public class MathS
 	public static float Vector3DistanceSquared(Vector3 pointA, Vector3 pointB)
 	{
 		return (float)System.Math.Sqrt(Vector3.Distance(pointA, pointB));
+	}
+
+
+	// source: http://theinstructionlimit.com/squaring-the-thumbsticks
+	public static Vector2 CircleToSquare(Vector2 point, float innerRoundness = 0f)
+	{
+		const float Pi = Mathf.PI;
+		const float PiOverFour = Mathf.PI/4f;
+
+		// Determine the theta angle
+		var angle = Mathf.Atan2(point.y, point.x) + Pi;
+
+		Vector2 squared;
+
+		// Scale according to which wall we're clamping to
+		// X+ wall
+		if (angle <= PiOverFour || angle > 7f*PiOverFour)
+			squared = point*(1f/Mathf.Cos(angle));
+		// Y+ wall
+		else if (angle > PiOverFour && angle <= 3f*PiOverFour)
+			squared = point*(1f/Mathf.Sin(angle));
+		// X- wall
+		else if (angle > 3f*PiOverFour && angle <= 5f*PiOverFour)
+			squared = point*(-1f/Mathf.Cos(angle));
+		// Y- wall
+		else if (angle > 5f*PiOverFour && angle <= 7f*PiOverFour)
+			squared = point*(-1f/Mathf.Sin(angle));
+		else throw new System.InvalidOperationException("Invalid angle...?");
+
+		// Early-out for a perfect square output
+		if (innerRoundness == 0f)
+			return squared;
+
+		// Find the inner-roundness scaling factor and LERP
+		var length = point.magnitude;
+		var factor = Mathf.Pow(length, innerRoundness);
+		return Vector2Lerp(point, squared, factor);
 	}
 }

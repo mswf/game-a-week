@@ -17,21 +17,36 @@ namespace Week03
 		// Use this for initialization
 		void Start()
 		{
+			
+
 			_camera = GetComponent<Camera>();
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
-			if (Input.GetMouseButton(0))
+
+			//Debug.developerConsoleVisible = true;
+			
+
+			var touches = Input.touches;
+
+			if (touches.Length > 0)
 			{
-				ProcessInputPoint(Input.mousePosition);
+				Debug.LogError("Registering: " + touches.Length + " touch points");
+				foreach (var touch in touches)
+				{
+					ProcessInputPoint(touch.position);
+				}
+			}
+			else
+			{
+				if (Input.GetMouseButton(0))
+				{
+					ProcessInputPoint(Input.mousePosition);
+				}
 			}
 
-			foreach (var touch in Input.touches)
-			{
-				ProcessInputPoint(touch.position);
-			}
 		}
 
 		private void ProcessInputPoint(Vector3 inputPosition)
@@ -53,6 +68,12 @@ namespace Week03
 				var rigidBody = colliderInCircle.GetComponent<Rigidbody2D>();
 
 				var offset = rigidBody.position - worldPoint2D;
+
+				foreach (var VARIABLE in colliderInCircle.GetComponent<Atom>().connections)
+				{
+					VARIABLE.lifeTimeLeft += dt* (offset.magnitude - maxRippleSize);
+				}
+
 				rigidBody.AddForce(offset.normalized * (offset.magnitude - maxRippleSize) * 50f * -1f);
 
 				var color = new Color(0, 1, 0, (offset.magnitude / maxRippleSize) * -.9f + 1f);

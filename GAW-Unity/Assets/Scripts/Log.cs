@@ -8,7 +8,12 @@ public class Log : MonoBehaviour {
 
 	public static void Steb(object msg)
 	{
-		Debug.Log(string.Format("<color='black'>Steb: {0}</color>", msg));
+		Debug.LogFormat("Steb: {0}", msg);
+	}
+
+	public static void StebWarning(object msg)
+	{
+		Debug.LogWarningFormat("Steb: {0}", msg);
 	}
 
 	public static void Arny(object msg)

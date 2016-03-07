@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/weee/dev/projects/unity/lunar-unity-console-builder/temp/repo/Native/Android/LunarConsole/lunarConsole/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="lunar_console_color_base_button_highlighted">#ff595959</color>
+    <color name="lunar_console_color_cell_background_dark">#ff373737</color>
+    <color name="lunar_console_color_cell_background_light">#ff3c3c3c</color>
+    <color name="lunar_console_color_cell_text">#ffb1b1b1</color>
+    <color name="lunar_console_color_cell_text_location">#ff666666</color>
+    <color name="lunar_console_color_collapsed_background">#ff424242</color>
+    <color name="lunar_console_color_exception_bar_background">#ff3C2C2C</color>
+    <color name="lunar_console_color_exception_bar_text">#ffA27374</color>
+    <color name="lunar_console_color_fake_status_bar">#ff000000</color>
+    <color name="lunar_console_color_fake_status_bar_text">#ffffffff</color>
+    <color name="lunar_console_color_log_button_background">#ffb1b1b1</color>
+    <color name="lunar_console_color_log_button_selected_background">#ff595959</color>
+    <color name="lunar_console_color_table_background">#ff373737</color>
+    <color name="lunar_console_color_table_title_background">#ff2d2e29</color>
+    <color name="lunar_console_color_warning_background">#ff6F6E55</color>
+    <color name="lunar_console_color_warning_text">#ffC7C7C7</color>
+    <!-- From: file:/Users/weee/dev/projects/unity/lunar-unity-console-builder/temp/repo/Native/Android/LunarConsole/lunarConsole/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="lunar_layout_console_entry_margin">6dp</dimen>
+    <dimen name="lunar_layout_console_stacktrace_margin">6dp</dimen>
+    <!-- From: file:/Users/weee/dev/projects/unity/lunar-unity-console-builder/temp/repo/Native/Android/LunarConsole/lunarConsole/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">LunarConsole</string>
+    <string name="lunar_console_log_details_dialog_button_copy_to_clipboard">Copy to Clipboard</string>
+    <string name="lunar_console_log_details_dialog_no_stacktrace_warning">No stack trace
+        found.\n\nMake sure \"Development Build\" checkbox is checked under \"Build Settings\"
+        (File ▶ Build Settings...)</string>
+    <string name="lunar_console_more_menu_collapse">Collapse</string>
+    <string name="lunar_console_overflow_warning_text">Too much output: %1$d item(s) trimmed</string>
+    <string name="lunar_console_title_fake_status_bar">Lunar Console v%1$s</string>
+    <!-- From: file:/Users/weee/dev/projects/unity/lunar-unity-console-builder/temp/repo/Native/Android/LunarConsole/lunarConsole/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="lunar_console_base_button_style">
+        <item name="android:minHeight">48dip</item>
+        <item name="android:minWidth">48dip</item>
+        <item name="android:background">@drawable/lunar_console_base_button_selector</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="lunar_console_base_text_style">
+        <item name="android:textColor">@color/lunar_console_color_cell_text</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    </style>
+    <style name="lunar_console_fake_status_bar_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/lunar_console_color_fake_status_bar</item>
+        <item name="android:textColor">@color/lunar_console_color_fake_status_bar_text</item>
+    </style>
+    <style name="lunar_console_filter_edit_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/lunar_console_shape_edit_text</item>
+        <item name="android:imeOptions">actionSearch</item>
+        <item name="android:lines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/lunar_console_color_cell_text</item>
+        <item name="android:textColorHighlight">@color/lunar_console_color_cell_text</item>
+    </style>
+    <style name="lunar_console_log_button_style" parent="lunar_console_base_button_style">
+        <item name="android:text">999+</item>
+        <item name="android:textColor">#ffb1b1b1</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:layout_width">66dp</item>
+        <item name="android:layout_height">30dp</item>
+    </style>
+    <style name="lunar_console_log_details_collapsed_style" parent="lunar_console_base_text_style">
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:background">@drawable/lunar_console_shape_collapse_text_background</item>
+    </style>
+    <style name="lunar_console_log_details_message_style" parent="lunar_console_base_text_style"/>
+    <style name="lunar_console_log_details_stacktrace_style" parent="lunar_console_base_text_style">
+        <item name="android:textSize">10sp</item>
+    </style>
+    <style name="lunar_console_log_entry_message_style" parent="lunar_console_base_text_style"/>
+</resources>
