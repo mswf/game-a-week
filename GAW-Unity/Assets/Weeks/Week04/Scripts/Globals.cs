@@ -14,6 +14,8 @@ namespace Week04
 		public static InputManager inputManager;	
 		public static WorldInput worldInput;
 		public static CameraController cameraController;
+		
+		public static Playfield playfield;
 
 
 		public static void Reset()
@@ -24,6 +26,7 @@ namespace Week04
 			worldInput = null;
 			cameraController = null;
 
+			playfield = null;
 		}
 	}
 
