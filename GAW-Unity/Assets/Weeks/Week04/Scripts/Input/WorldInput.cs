@@ -30,9 +30,17 @@ namespace Week04
 			if (touches.Length > 0)
 			{
 				Debug.LogError("Registering: " + touches.Length + " touch points");
+
+				if (touches.Length == 1)
+				{
+					ProcessInputPoint(touches[0].position);
+				}
+				else
+				{
+					ProcessScrollPoint(Input.mousePosition);
+				}
 				foreach (var touch in touches)
 				{
-					ProcessInputPoint(touch.position);
 				}
 			}
 			else
@@ -51,13 +59,10 @@ namespace Week04
 			var dt = Time.deltaTime;
 
 			inputPosition.z = 10f;
-			//_camera.ScreenToViewportPoint()
-			var worldPoint = _camera.ScreenToWorldPoint(inputPosition);
+			var worldDirection = _camera.ScreenToWorldPoint(inputPosition) - transform.position;
 
-			var worldDirection = _camera.ScreenToWorldPoint(inputPosition);
-
-			var ray = new Ray(transform.position, worldDirection - transform.position);
-			var rayCastHit = new RaycastHit();
+			var ray = new Ray(transform.position, worldDirection);
+			RaycastHit rayCastHit;
 
 			if (Physics.Raycast(ray, out rayCastHit))
 			{
@@ -94,6 +99,11 @@ namespace Week04
 				*/
 			}
 
+		}
+
+		private void ProcessScrollPoint(Vector3 inputPosition)
+		{
+			
 		}
 	}
 }

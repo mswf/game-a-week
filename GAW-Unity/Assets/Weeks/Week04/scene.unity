@@ -1698,7 +1698,7 @@ GameObject:
   - 33: {fileID: 999960947}
   - 136: {fileID: 999960946}
   - 23: {fileID: 999960945}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1922,7 +1922,7 @@ GameObject:
   - 33: {fileID: 1466500484}
   - 136: {fileID: 1466500483}
   - 23: {fileID: 1466500482}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Capsule (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2414,7 +2414,7 @@ GameObject:
   - 33: {fileID: 1856457321}
   - 136: {fileID: 1856457320}
   - 23: {fileID: 1856457319}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Capsule (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
