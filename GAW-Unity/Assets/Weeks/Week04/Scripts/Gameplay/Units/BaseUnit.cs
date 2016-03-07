@@ -4,8 +4,17 @@ using System.Collections;
 
 namespace Week04
 {
-	public class Unit : MonoBehaviour
+	public class BaseUnit : MonoBehaviour
 	{
+		[SerializeField]
+		private Faction faction;
+
+		public void InitializeUnit(Faction unitFaction)
+		{
+			faction = unitFaction;
+		}
+
+		// Set up all internal references to this 
 		private void Awake()
 		{
 			
@@ -23,4 +32,7 @@ namespace Week04
 
 		}
 	}
+
+
+	
 }

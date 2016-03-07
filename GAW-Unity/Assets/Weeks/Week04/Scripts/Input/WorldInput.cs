@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+//using UnityEngine.EventSystems;
 
 namespace Week04
 {
@@ -12,7 +13,10 @@ namespace Week04
 
 		// Use this for early referencing
 		private void Awake()
+
 		{
+			Globals.worldInput = this;
+
 			_camera = GetComponent<Camera>();
 		}
 
@@ -37,10 +41,7 @@ namespace Week04
 				}
 				else
 				{
-					ProcessScrollPoint(Input.mousePosition);
-				}
-				foreach (var touch in touches)
-				{
+					ProcessInputPoint(Input.mousePosition);
 				}
 			}
 			else

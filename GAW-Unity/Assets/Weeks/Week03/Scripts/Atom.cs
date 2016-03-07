@@ -120,8 +120,6 @@ namespace Week03
 			}
 		}
 
-		private static readonly Color FadedWhite = new Color(1,1,1,0.1f);
-
 		private static List<Atom> _cachedAtomList = new List<Atom>(); 
 
 		private static void UpdateAtoms(ref Atom[] atoms, Vector3 position, float radius)

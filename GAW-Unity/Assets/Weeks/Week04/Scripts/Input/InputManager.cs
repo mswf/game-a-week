@@ -11,6 +11,8 @@ namespace Week04
 		private void Awake()
 		{
 
+			Globals.inputManager = this;
+
 		}
 
 		// Use this for initialization

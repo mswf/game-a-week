@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 
 public static class Helper
@@ -225,9 +226,7 @@ public class MathS
 							v1.z + (v2.z - v1.z) * value,
 							v1.w + (v2.w - v1.w) * value);
 	}
-
-
-
+	
 	public static float Vector2DistanceSquared(Vector2 pointA, Vector2 pointB)
 	{
 		return (float) System.Math.Sqrt(Vector2.Distance(pointA, pointB));
