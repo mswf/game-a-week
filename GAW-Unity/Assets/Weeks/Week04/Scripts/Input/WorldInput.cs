@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
+
 //using UnityEngine.EventSystems;
 
 namespace Week04
@@ -38,6 +40,10 @@ namespace Week04
 				if (touches.Length == 1)
 				{
 					ProcessInputPoint(touches[0].position);
+				}
+				else if (touches.Length >= 4)
+				{
+					SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 				}
 				else
 				{

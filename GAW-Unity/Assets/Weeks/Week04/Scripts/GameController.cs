@@ -12,8 +12,13 @@ namespace Week04
 
 		private void Awake()
 		{
+			Globals.gameController = this;
+
 			#region SetupAndroidScreen
-			Screen.orientation = ScreenOrientation.LandscapeRight;
+			if (Screen.orientation == ScreenOrientation.Portrait ||
+				Screen.orientation == ScreenOrientation.PortraitUpsideDown)
+				Screen.orientation = ScreenOrientation.Landscape;
+			
 			Screen.orientation = ScreenOrientation.AutoRotation;
 
 			Screen.autorotateToLandscapeLeft = true;
@@ -24,9 +29,6 @@ namespace Week04
 
 			Screen.orientation = ScreenOrientation.AutoRotation;
 			#endregion
-
-			Globals.gameController = this;
-
 
 			{
 				var playerFaction = new Faction("Player Army")

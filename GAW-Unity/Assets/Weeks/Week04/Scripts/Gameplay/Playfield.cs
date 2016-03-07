@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEngine.SceneManagement;
 
 namespace Week04
 {
@@ -15,6 +16,11 @@ namespace Week04
 		private void Awake()
 		{
 			Globals.playfield = this;
+
+			if (!Application.isEditor)
+			{
+				drawDebug = false;
+			}
 		}
 
 		public void AddUnit(BaseUnit unit)
@@ -46,7 +52,7 @@ namespace Week04
 
 		private void LateUpdate () 
 		{
-			if (drawDebug)
+			if ( drawDebug)
 			{
 				var dt = Time.deltaTime;
 
