@@ -17,10 +17,10 @@ namespace Week04
 	{
 
 		[Header("Debug Variables")]
-		[SerializeField]
-		private string fromFactionName;
-		[SerializeField]
-		private string toFactionName;
+		[ReadOnlyAttribute]
+		public string fromFactionName;
+		[ReadOnlyAttribute]
+		public string toFactionName;
 
 		[SerializeField]
 		public RelationType currentRelation;
