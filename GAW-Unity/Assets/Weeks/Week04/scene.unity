@@ -2780,7 +2780,6 @@ MonoBehaviour:
     allowMouseInput: 0
   - trackGameCamera: 0
     allowMouseInput: 1
-  trackGame: 1
 --- !u!1 &898463171
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
-using UnityEditor;
+//using UnityEditor;
 
 
 [Serializable]
@@ -20,29 +20,45 @@ public class SceneCameraScript : MonoBehaviour
 
 	public SceneViewSettings[] sceneViewSettings;
 
-	public bool trackGame = false;
-
-
 	// Use this for early referencing
 	private void Awake()
 	{
-		if (sceneViewSettings.Length != SceneView.sceneViews.Count)
-			sceneViewSettings = new SceneViewSettings[SceneView.sceneViews.Count];
+		if (!Application.isEditor)
+		{
+			enabled = false;
+			return;
+		}
+
+#if UNITY_EDITOR
+		if (sceneViewSettings.Length != UnityEditor.SceneView.sceneViews.Count)
+			sceneViewSettings = new SceneViewSettings[UnityEditor.SceneView.sceneViews.Count];
+		#endif
 	}
 
+	private void Start()
+	{
+		if (!Application.isEditor)
+		{
+			enabled = false;
+			return;
+		}
+	}
+
+#if UNITY_EDITOR
 	// Update is called once per frame
 	private void Update ()
 	{
+
 		_mainGameCamera = Camera.main;
 
-		var sceneViews = SceneView.sceneViews;
+		var sceneViews = UnityEditor.SceneView.sceneViews;
 
-		if (sceneViewSettings == null || sceneViewSettings.Length != SceneView.sceneViews.Count)
-			sceneViewSettings = new SceneViewSettings[SceneView.sceneViews.Count];
+		if (sceneViewSettings == null || sceneViewSettings.Length != sceneViews.Count)
+			sceneViewSettings = new SceneViewSettings[sceneViews.Count];
 
 		for (int i = 0; i < sceneViewSettings.Length; i++)
 		{
-			var sceneView = (SceneView)sceneViews[i];
+			var sceneView = (UnityEditor.SceneView)sceneViews[i];
 			bool needsRepaint = false;
 
 			if (sceneViewSettings[i].trackGameCamera)
@@ -64,4 +80,6 @@ public class SceneCameraScript : MonoBehaviour
 			
 		}
 	}
+#endif
+
 }
