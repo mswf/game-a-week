@@ -17,6 +17,12 @@ namespace Week04
 			Globals.cameraController = this;
 
 			_camera = GetComponent<Camera>();
+			_camera.fieldOfView = _camera.fieldOfView;
+		}
+
+		private void OnEnable()
+		{
+			Globals.cameraController = this;
 		}
 
 		// Use this for initialization
@@ -26,7 +32,7 @@ namespace Week04
 		}
 		
 		// Update is called once per frame
-		private void Update () 
+		public void UpdateInput () 
 		{
 			if (Input.GetKey(KeyCode.A))
 			{

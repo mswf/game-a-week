@@ -1,27 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Net;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Week04
 {
-	[RequireComponent(typeof(Image), typeof(Button))]
-	public class CameraScrollButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+	[RequireComponent(typeof(Image))]
+	public class CameraScrollButton : Button
 	{
-
-		private Image _image;
-		private Button _button;
-
 		public ScrollDirection scrollDirection = ScrollDirection.ToLeft;
 
 		private bool _isHeldDown = false;
 
 		// Use this for early referencing
-		private void Awake()
+		protected override void Awake()
 		{
-			_image = GetComponent<Image>();
-			_button = GetComponent<Button>();
-
+			base.Awake();
 		}
 
 		// Update is called once per frame
@@ -29,6 +24,12 @@ namespace Week04
 		{
 			if (_isHeldDown)
 			{
+				if (Globals.inputManager.IsCameraMovable() == false)
+				{
+					_isHeldDown = false;
+					return;
+				}
+
 				var scrollSpeed = CameraController.DefaultScrollSpeed * Time.deltaTime;
 				if (scrollDirection == ScrollDirection.ToLeft)
 				{
@@ -39,14 +40,21 @@ namespace Week04
 			}
 		}
 
-		public void OnPointerDown(PointerEventData eventData)
+		public override void OnPointerDown(PointerEventData eventData)
 		{
-			_isHeldDown = true;
+			if (Globals.inputManager.IsCameraMovable())
+			{
+				_isHeldDown = true;
+
+				base.OnPointerDown(eventData);
+			}
 		}
 
-		public void OnPointerUp(PointerEventData eventData)
+		public override void OnPointerUp(PointerEventData eventData)
 		{
 			_isHeldDown = false;
+			base.OnPointerUp(eventData);
+
 		}
 	}
 }

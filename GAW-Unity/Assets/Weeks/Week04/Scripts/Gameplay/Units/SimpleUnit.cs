@@ -13,8 +13,20 @@ namespace Week04
 		{
 			var dt = Time.deltaTime;
 
+			if (faction.controlType == ControlType.Player)
+			{
+				var pFaction = (PlayerFaction) faction;
 
-			_currentPosition.x += movementSpeed*dt;
+				if (pFaction.globalCommandState == PlayerFaction.CommandState.Advance)
+					_currentPosition.x += movementSpeed * dt;
+				else
+					_currentPosition.x -= movementSpeed * dt;
+
+			}
+			else
+			{
+				_currentPosition.x += movementSpeed*dt;
+			}
 
 			Globals.playfield.ChangeUnitPosition(this, _currentPosition.x);
 

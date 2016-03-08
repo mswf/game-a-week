@@ -10,6 +10,10 @@ namespace Week04
 
 		public List<Faction> factions;
 
+		public PlayerFaction localPlayerFaction;
+
+		public List<UnitBuildInstructions> availablePlayerUnits; 
+
 		private void Awake()
 		{
 			Globals.gameController = this;
@@ -31,7 +35,7 @@ namespace Week04
 			#endregion
 
 			{
-				var playerFaction = new Faction("Player Army")
+				var playerFaction = new PlayerFaction("Player Army")
 				{
 					controlType = ControlType.Player,
 					teamColor = Color.cyan
@@ -72,14 +76,22 @@ namespace Week04
 					if (faction != defenderFaction)
 						Assert.IsTrue(defenderFaction.relationships.ContainsKey(faction));
 				}
-				#endif
+#endif
+				localPlayerFaction = playerFaction;
+				localPlayerFaction.availableUnits = availablePlayerUnits;
+				Globals.playerFaction = playerFaction;
 			}
+		}
+
+		private void OnEnable()
+		{
+			Globals.gameController = this;
 		}
 
 		// Use this for initialization
 		private void Start()
 		{
-	
+			Globals.UI.buildUnitButtonManager.OnOptionsChanged();
 		}
 
 		// Update is called once per frame

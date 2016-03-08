@@ -23,6 +23,11 @@ namespace Week04
 			}
 		}
 
+		private void OnEnable()
+		{
+			Globals.playfield = this;
+		}
+
 		public void AddUnit(BaseUnit unit)
 		{
 			var initialPosition = unit.GetInitialPosition();
@@ -60,7 +65,7 @@ namespace Week04
 
 				for (float i = 0; i < debugLineEndPosition.x; i += tickmarkSpacing)
 				{
-					Debug.DrawRay(new Vector3(i, 0), Vector3.forward, Color.black, dt, false);
+					Debug.DrawRay(new Vector3(i, 0), Vector3.forward*3f, Color.black, dt, false);
 				}
 
 				foreach (KeyValuePair<BaseUnit, float> unitPosition in unitPositions)

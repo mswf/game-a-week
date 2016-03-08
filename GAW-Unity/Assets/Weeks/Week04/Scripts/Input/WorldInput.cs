@@ -15,11 +15,15 @@ namespace Week04
 
 		// Use this for early referencing
 		private void Awake()
-
 		{
 			Globals.worldInput = this;
 
 			_camera = GetComponent<Camera>();
+		}
+		
+		private void OnEnable()
+		{
+			Globals.worldInput = this;
 		}
 
 		// Use this for initialization
@@ -41,7 +45,7 @@ namespace Week04
 				{
 					ProcessInputPoint(touches[0].position);
 				}
-				else if (touches.Length >= 4)
+				else if (touches.Length >= 4 || Input.GetKeyDown(KeyCode.R))
 				{
 					SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 				}
@@ -84,9 +88,10 @@ namespace Week04
 
 			}
 			
+			/*
 			foreach (var colliderInCircle in Physics.OverlapSphere(rayCastHit.point, inputWorldSize))
 			{
-			/*
+			
 				var rigidBody = colliderInCircle.GetComponent<Rigidbody2D>();
 
 				var offset = rigidBody.position - worldPoint2D;
@@ -103,8 +108,9 @@ namespace Week04
 				Debug.DrawRay(worldPoint, offset, color, dt);
 
 
-				*/
+				
 			}
+			*/
 
 		}
 

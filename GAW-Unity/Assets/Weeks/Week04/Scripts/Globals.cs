@@ -1,21 +1,28 @@
 ﻿
-//#define DEBUG_W04
-
 using UnityEngine;
 using System.Collections;
 
 namespace Week04
 {
-
 	public static class Globals
 	{
+		public class UIGlobals
+		{
+			public BuildUnitButtonManager buildUnitButtonManager;
+		}
+
+		public static UIGlobals UI = new UIGlobals();
+
 		public static GameController gameController;
 
-		public static InputManager inputManager;	
+		public static PlayerFaction playerFaction;
+
+		public static InputManager inputManager;
 		public static WorldInput worldInput;
 		public static CameraController cameraController;
-		
+
 		public static Playfield playfield;
+		public static UnitBuilder unitBuilder;
 
 
 		public static void Reset()
@@ -27,6 +34,8 @@ namespace Week04
 			cameraController = null;
 
 			playfield = null;
+
+			UI = new UIGlobals();
 		}
 	}
 

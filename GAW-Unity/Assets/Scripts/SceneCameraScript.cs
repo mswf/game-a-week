@@ -15,7 +15,6 @@ public class SceneViewSettings
 [ExecuteInEditMode]
 public class SceneCameraScript : MonoBehaviour
 {
-	private Camera _sceneViewCamera;
 	private Camera _mainGameCamera;
 
 	public SceneViewSettings[] sceneViewSettings;
@@ -30,9 +29,9 @@ public class SceneCameraScript : MonoBehaviour
 		}
 
 #if UNITY_EDITOR
-		if (sceneViewSettings.Length != UnityEditor.SceneView.sceneViews.Count)
+		if (sceneViewSettings == null || sceneViewSettings.Length != UnityEditor.SceneView.sceneViews.Count)
 			sceneViewSettings = new SceneViewSettings[UnityEditor.SceneView.sceneViews.Count];
-		#endif
+#endif
 	}
 
 	private void Start()
@@ -46,7 +45,7 @@ public class SceneCameraScript : MonoBehaviour
 
 #if UNITY_EDITOR
 	// Update is called once per frame
-	private void Update ()
+	private void LateUpdate ()
 	{
 
 		_mainGameCamera = Camera.main;
