@@ -53,7 +53,8 @@ namespace Week04
 		// Use this for initialization
 		private void Start()
 		{
-
+			if (_currentHealth == 0)
+				_currentHealth = 20;
 			Globals.playfield.AddUnit(this);
 		}
 
@@ -65,7 +66,7 @@ namespace Week04
 
 		private float _timeSincePreviousAttack = 0f;
 
-		private BaseUnit _currentTarget;
+		protected BaseUnit _currentTarget;
 
 		// Update is called once per frame
 		private void Update()
@@ -90,9 +91,25 @@ namespace Week04
 					break;
 				case UnitStates.Targetting:
 
-					if (CanTarget(_currentTarget) == false)
+					if (CanTarget(_currentTarget) == false && ShouldTarget(_currentTarget))
 					{
-						Log.Steb("Cant target anymore");
+						_currentTarget = null;
+						state = UnitStates.Moving;
+						goto default;
+					}
+
+					if (IsInRange(_currentTarget))
+					{
+						state = UnitStates.Attacking;
+						goto case UnitStates.Attacking;
+					}
+
+					UpdateTargetting(dt);
+
+					break;
+				case UnitStates.Attacking:
+					if (CanTarget(_currentTarget) == false && ShouldTarget(_currentTarget))
+					{
 						_currentTarget = null;
 						state = UnitStates.Moving;
 						goto default;
@@ -103,8 +120,8 @@ namespace Week04
 						AttackUnit(_currentTarget);
 					}
 
-					break;
-				case UnitStates.Attacking:
+					UpdateAttack(dt);
+
 					break;
 				default:
 					break;
@@ -114,11 +131,29 @@ namespace Week04
 		protected abstract void UpdateMovement(float dt);
 		protected abstract void UpdateTargetting(float dt);
 		protected abstract void UpdateAttack(float dt);
-		
 
-		public bool CanTarget(BaseUnit target)
+		public bool ShouldTarget(BaseUnit potentialTarget)
 		{
-			return target.IsAlive();
+			if (faction == potentialTarget.faction)
+				return false;
+
+
+			// TODO calculate faction logic here
+			return true;
+		}
+
+
+		public bool CanTarget(BaseUnit potentialTarget)
+		{
+			return potentialTarget.IsAlive();
+		}
+
+		public bool IsInRange(BaseUnit targetUnit)
+		{
+			if (Mathf.Abs(Globals.playfield.GetUnitPosition(targetUnit) - _currentPosition.x) < 3f)
+				return true;
+			
+			return false;
 		}
 
 		public bool IsReadyForAttack()
@@ -146,26 +181,29 @@ namespace Week04
 		{
 			_currentHealth -= 5;
 
-			if (_currentHealth <= 0)
+			if (IsAlive() == false)
 			{
 				Log.Steb("Blergh unit died");
+				OnUnitDeath();
+
 			}
+		}
+
+		public void OnUnitDeath()
+		{
+			GameObject.Destroy(this.gameObject);
 		}
 
 		public BaseUnit GetNearTarget()
 		{
 			var potentialTargets = GetUnitsWithinCircularRange(5f, _currentPosition);
 
-			if (potentialTargets.Length == 0)
-				return null;
-
-			if (potentialTargets[0] != this)
-				return potentialTargets[0];
-			else if (potentialTargets.Length > 1)
-				return potentialTargets[1];
-			else
-				return null;
-
+			for (int i = 0; i < potentialTargets.Length; i++)
+			{
+				if (ShouldTarget(potentialTargets[i]) && CanTarget(potentialTargets[i]))
+					return potentialTargets[i];
+			}
+			return null;
 		}
 
 		#endregion
@@ -178,12 +216,12 @@ namespace Week04
 			}
 			return _currentPosition.x;
 		}
+
+		private static Collider[] collidersForPhysicsTest = new Collider[40];
 		
 		protected BaseUnit[] GetUnitsWithinCircularRange(float radius, Vector3 position)
 		{
-			BaseUnit[] units;
-			
-			Collider[] collidersForPhysicsTest = new Collider[10];
+			BaseUnit[] units;	
 
 			int numCollidersInRange = Physics.OverlapSphereNonAlloc(position, radius, collidersForPhysicsTest);
 
@@ -219,10 +257,8 @@ namespace Week04
 
 			for (int i = 0; i < colliderCount; i++)
 			{
-				//Log.Steb(colliders[i].tag);
 				if (colliders[i].CompareTag(UNIT_COLLIDER_TAG))
 				{
-					//Log.Steb("Found unit with tag");
 					UnitBuffer.Add(colliders[i].GetComponent<UnitCollider>().unit);
 				}
 			}

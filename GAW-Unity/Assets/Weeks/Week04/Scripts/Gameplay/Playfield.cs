@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -45,6 +46,11 @@ namespace Week04
 			unitPositions[unit] = newPosition;
 		}
 
+		public float GetUnitPosition(BaseUnit unit)
+		{
+			return unitPositions[unit];
+		}
+
 		// Use this for initialization
 		private void Start () 
 		{
@@ -54,6 +60,11 @@ namespace Week04
 		private readonly Vector3 debugLineEndPosition = new Vector3(100f,0,0);
 
 		private const float tickmarkSpacing = 10f;
+
+
+		private static readonly Color MovingColor = Color.green;
+		private static readonly Color TargettingColor = Color.yellow;
+		private static readonly Color AttackingColor = Color.red;
 
 		private void LateUpdate () 
 		{
@@ -71,7 +82,32 @@ namespace Week04
 				foreach (KeyValuePair<BaseUnit, float> unitPosition in unitPositions)
 				{
 					Debug.DrawLine(new Vector3(unitPosition.Value, 0f), unitPosition.Key._currentPosition, Color.gray, dt, true);
-					DebugExtension.DebugCircle(unitPosition.Key._currentPosition, Color.yellow, 1f, dt, false);
+					const float inner_0 = 1f;
+					const float inner_1 = 0.98f;
+					const float inner_2 = 0.96f;
+					
+					switch (unitPosition.Key.state)
+					{
+						case UnitStates.Moving:
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, MovingColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, MovingColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, MovingColor, inner_2, dt, false);
+
+							break;
+						case UnitStates.Targetting:
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, TargettingColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, TargettingColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, TargettingColor, inner_2, dt, false);
+							break;
+						case UnitStates.Attacking:
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, AttackingColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, AttackingColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, AttackingColor, inner_2, dt, false);
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+
 				}
 			}
 		}

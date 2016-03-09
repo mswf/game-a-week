@@ -33,12 +33,23 @@ namespace Week04
 
 		protected override void UpdateTargetting(float dt)
 		{
-			throw new System.NotImplementedException();
+			var targetPosition = Globals.playfield.GetUnitPosition(_currentTarget);
+
+			var ownPosition = _currentPosition.x;
+
+			var distanceToTarget = targetPosition - ownPosition;
+
+			var movement = Mathf.Min(Mathf.Abs(distanceToTarget), movementSpeed*dt);
+
+			_currentPosition.x += movement * Mathf.Sign(distanceToTarget);
+			Globals.playfield.ChangeUnitPosition(this, _currentPosition.x);
+
+			_transform.localPosition = _currentPosition;
 		}
 
 		protected override void UpdateAttack(float dt)
 		{
-			throw new System.NotImplementedException();
+			//throw new System.NotImplementedException();
 		}
 	}
 }
