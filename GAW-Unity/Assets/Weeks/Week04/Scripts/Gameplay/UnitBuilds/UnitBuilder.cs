@@ -18,7 +18,7 @@ namespace Week04
 				unit = GameObject.Instantiate(unitBuilds[buildInstructions.type]);
 
 			var unitComponent = unit.GetComponent<BaseUnit>();
-			unitComponent.InitializeUnit(faction);
+			unitComponent.InitializeUnit(faction, buildInstructions);
 
 			return unit;
 		}

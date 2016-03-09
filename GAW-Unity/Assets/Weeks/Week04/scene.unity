@@ -2680,7 +2680,7 @@ MonoBehaviour:
   - unitName: TestUnit
     description: Da Bomb
     type: 0
-    health: 10
+    health: 200
     buildCost: 0
     prefab: {fileID: 148294, guid: 2eea4c85b51fd5941b7e752258e02eb2, type: 2}
 --- !u!114 &894090008

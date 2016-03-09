@@ -21,7 +21,7 @@ namespace Week04
 		public UnitType type;
 
 		[Header("Stats")]
-		public double health = 20;
+		public int health = 200;
 		public double buildCost = 100;
 
 		[Header("Visual")]

@@ -86,6 +86,13 @@ namespace Week04
 		private void OnEnable()
 		{
 			Globals.gameController = this;
+
+			foreach (var faction in factions)
+			{
+				if (faction.controlType == ControlType.Player)
+					Globals.playerFaction = (PlayerFaction) faction;
+			}
+
 		}
 
 		// Use this for initialization

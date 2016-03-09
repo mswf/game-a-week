@@ -27,9 +27,10 @@ GameObject:
   - 33: {fileID: 3397638}
   - 136: {fileID: 13642062}
   - 23: {fileID: 2354612}
+  - 114: {fileID: 11444466}
   m_Layer: 8
   m_Name: Capsule
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -92,6 +93,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 162526}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &11444466
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 162526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef11ae9e67b1444bb553433e8bc00a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unit: {fileID: 11478558}
 --- !u!114 &11478558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -107,7 +120,19 @@ MonoBehaviour:
     name: 
     controlType: 1
     teamColor: {r: 0, g: 0, b: 0, a: 0}
-  movementSpeed: 5
+  _currentPosition: {x: 0, y: 0, z: 0}
+  _transform: {fileID: 0}
+  _currentHealth: 0
+  _buildInstructions:
+    unitName: 
+    description: 
+    type: 0
+    health: 200
+    buildCost: 100
+    prefab: {fileID: 0}
+  state: 0
+  attackSpeed: 2
+  movementSpeed: 1
 --- !u!136 &13642062
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -130,6 +155,38 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: faction.controlType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Unit
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: movementSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: unit
+      value: 
+      objectReference: {fileID: 11478558}
+    - target: {fileID: 0}
+      propertyPath: m_Constraints
+      value: 116
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Mass
+      value: 192.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Drag
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_CollisionDetection
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

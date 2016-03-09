@@ -3,19 +3,17 @@ using System.Collections;
 
 namespace Week04
 {
+	[SelectionBase]
 	public class SimpleUnit : BaseUnit
 	{
 
-		public float movementSpeed = 5f;
+		public float movementSpeed = 1f;
 
-		// Update is called once per frame
-		private void Update ()
+		protected override void UpdateMovement(float dt)
 		{
-			var dt = Time.deltaTime;
-
 			if (faction.controlType == ControlType.Player)
 			{
-				var pFaction = (PlayerFaction) faction;
+				var pFaction = (PlayerFaction)faction;
 
 				if (pFaction.globalCommandState == PlayerFaction.CommandState.Advance)
 					_currentPosition.x += movementSpeed * dt;
@@ -25,13 +23,22 @@ namespace Week04
 			}
 			else
 			{
-				_currentPosition.x += movementSpeed*dt;
+				_currentPosition.x += movementSpeed * dt;
 			}
 
 			Globals.playfield.ChangeUnitPosition(this, _currentPosition.x);
 
 			_transform.localPosition = _currentPosition;
+		}
 
+		protected override void UpdateTargetting(float dt)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		protected override void UpdateAttack(float dt)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
