@@ -41,6 +41,11 @@ namespace Week04
 			_currentHealth = template.health;
 
 			_buildInstructions = template;
+
+
+			if (_currentHealth == 0)
+				_currentHealth = 200;
+			Globals.playfield.AddUnit(this);
 		}
 
 		// Set up all internal references to this 
@@ -50,14 +55,15 @@ namespace Week04
 			_currentPosition = _transform.localPosition;
 		}
 
-		// Use this for initialization
 		private void Start()
 		{
-			if (_currentHealth == 0)
-				_currentHealth = 20;
-			Globals.playfield.AddUnit(this);
+			if ( Globals.gameController.factions.Contains(faction) == false)
+			{
+				Debug.LogWarning("Unit without a faction!!!!");
+				InitializeUnit(faction, new UnitBuildInstructions());
+				_currentHealth = 200;
+			}
 		}
-
 
 		#region UnitInteractions
 
@@ -191,6 +197,8 @@ namespace Week04
 
 		public void OnUnitDeath()
 		{
+			Globals.playfield.RemoveUnit(this);
+
 			GameObject.Destroy(this.gameObject);
 		}
 

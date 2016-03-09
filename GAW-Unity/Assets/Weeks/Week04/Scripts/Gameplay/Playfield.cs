@@ -111,5 +111,10 @@ namespace Week04
 				}
 			}
 		}
+
+		public void RemoveUnit(BaseUnit baseUnit)
+		{
+			unitPositions.Remove(baseUnit);
+		}
 	}
 }

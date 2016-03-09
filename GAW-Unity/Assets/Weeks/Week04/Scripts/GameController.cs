@@ -66,7 +66,7 @@ namespace Week04
 				factions.Add(civilianFaction);
 				factions.Add(defenderFaction);
 
-				#if DEBUG
+#if UNITY_EDITOR
 				foreach (var faction in factions)
 				{
 					if (faction != playerFaction)
@@ -77,6 +77,7 @@ namespace Week04
 						Assert.IsTrue(defenderFaction.relationships.ContainsKey(faction));
 				}
 #endif
+
 				localPlayerFaction = playerFaction;
 				localPlayerFaction.availableUnits = availablePlayerUnits;
 				Globals.playerFaction = playerFaction;

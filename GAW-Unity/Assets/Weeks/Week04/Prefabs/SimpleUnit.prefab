@@ -117,9 +117,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faction:
-    name: 
+    name: Default Name
     controlType: 1
-    teamColor: {r: 0, g: 0, b: 0, a: 0}
+    teamColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _currentPosition: {x: 0, y: 0, z: 0}
   _transform: {fileID: 0}
   _currentHealth: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
     prefab: {fileID: 0}
   state: 0
   attackSpeed: 2
-  movementSpeed: 1
+  movementSpeed: 2.99
 --- !u!136 &13642062
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -163,7 +163,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: movementSpeed
-      value: 1
+      value: 2.99
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: unit

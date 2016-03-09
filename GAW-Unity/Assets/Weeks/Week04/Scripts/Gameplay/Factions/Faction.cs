@@ -14,7 +14,7 @@ namespace Week04
 	[System.Serializable]
 	public class Faction // : UnityEngine.Object
 	{
-		public string name;
+		public string name = "NULL";
 
 		public ControlType controlType = ControlType.Civilian;
 		public Color teamColor = Color.gray;
