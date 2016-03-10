@@ -60,7 +60,7 @@ public class SceneCameraScript : MonoBehaviour
 			var sceneView = (UnityEditor.SceneView)sceneViews[i];
 			bool needsRepaint = false;
 
-			if (sceneViewSettings[i].trackGameCamera)
+			if (sceneViewSettings[i].trackGameCamera != null)
 			{
 				sceneView.pivot = _mainGameCamera.transform.position;
 				sceneView.rotation = _mainGameCamera.transform.rotation;
@@ -69,7 +69,7 @@ public class SceneCameraScript : MonoBehaviour
 				needsRepaint = true;
 			}
 
-			if (!sceneViewSettings[i].allowMouseInput)
+			if (sceneViewSettings[i] != null && !sceneViewSettings[i].allowMouseInput)
 			{
 				sceneView.wantsMouseMove = false;
 			}
