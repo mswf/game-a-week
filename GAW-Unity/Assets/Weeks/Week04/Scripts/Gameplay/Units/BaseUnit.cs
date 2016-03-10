@@ -40,7 +40,7 @@ namespace Week04
 
 		[Header("Loot")]
 		[SerializeField, ReadOnlyAttribute]
-		public LootContainer lootContainer;
+		public ResourceContainer resourceContainer;
 		private LootableStatus _lootableStatus = LootableStatus.Emptied;
 
 		public LootableStatus GetLootableStatus()
@@ -50,7 +50,7 @@ namespace Week04
 
 		public bool ContainsLoot()
 		{
-			return lootContainer.ContainsLoot();
+			return resourceContainer.ContainsLoot();
 		}
 
 		#endregion
@@ -217,7 +217,7 @@ namespace Week04
 			if (target.IsAlive())
 				target.ReceiveAttack(this);
 			else
-				lootContainer += target.ReceiveLootStrike(this);
+				resourceContainer += target.ReceiveLootStrike(this);
 
 
 			_timeSincePreviousAttack = 0f;
@@ -234,15 +234,15 @@ namespace Week04
 			}
 		}
 
-		public LootContainer ReceiveLootStrike(BaseUnit attacker)
+		public ResourceContainer ReceiveLootStrike(BaseUnit attacker)
 		{
-			var takenLoot = new LootContainer();
+			var takenLoot = new ResourceContainer();
 
 			Log.Steb("Getting a lootstrike " + _buildInstructions.unitName);
 
-			foreach (LootType lootType in Enum.GetValues(typeof(LootType)))
+			foreach (ResourceType lootType in Enum.GetValues(typeof(ResourceType)))
 			{
-				var takenAmount = lootContainer.Subtract(lootType, 30d);
+				var takenAmount = resourceContainer.Subtract(lootType, 30d);
 
 				Log.Steb("Took " + takenAmount + " of type " + lootType.ToString());
 

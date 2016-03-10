@@ -22,16 +22,20 @@ namespace Week04
 		[SerializeField]
 		public Dictionary<Faction, Relationship> relationships;
 
+		public ResourceContainer resources;
+
 		public Faction(string factionName)
 		{
 			this.name = factionName;
 			relationships = new Dictionary<Faction, Relationship>();
+			resources = new ResourceContainer();
 		}
 
 		protected Faction()
 		{
 			this.name = "Default Name";
 			relationships = new Dictionary<Faction, Relationship>();
+			resources = new ResourceContainer();
 		}
 
 		public Relationship DefineRelationshipTo(Faction otherFaction, RelationType currentRelation)
@@ -57,6 +61,11 @@ namespace Week04
 		{
 			this.name = factionName;
 			relationships = new Dictionary<Faction, Relationship>();
+			resources = new ResourceContainer();
+
+			resources.Add(ResourceType.Gold, 100d);
+			resources.Add(ResourceType.Food, 50d);
+
 		}
 
 		public CommandState globalCommandState = CommandState.Advance;

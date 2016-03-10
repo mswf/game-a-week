@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace Week04
 {
-	public enum LootType
+	public enum ResourceType
 	{
 		Gold,
 		Food
@@ -14,15 +14,15 @@ namespace Week04
 
 
 	[System.Serializable]
-	public class LootContainer
+	public class ResourceContainer
 	{
 		[System.Serializable]
-		protected struct LootElement
+		protected struct Resource
 		{
-			public LootType type;
+			public ResourceType type;
 			public double amount;
 
-			public LootElement(LootType type, double amount)
+			public Resource(ResourceType type, double amount)
 			{
 				this.type = type;
 				this.amount = amount;
@@ -30,25 +30,25 @@ namespace Week04
 		}
 
 		[SerializeField]
-		protected List<LootElement> lootDictionary;
+		protected List<Resource> resourceList;
 		
-		public LootContainer()
+		public ResourceContainer()
 		{
-			lootDictionary = new List<LootElement>();
+			resourceList = new List<Resource>();
 		}
 		
-		public double Get(LootType type)
+		public double Get(ResourceType type)
 		{
-			for (var i = 0; i < lootDictionary.Count; i++)
+			for (var i = 0; i < resourceList.Count; i++)
 			{
-				if (lootDictionary[i].type == type)
-					return lootDictionary[i].amount;
+				if (resourceList[i].type == type)
+					return resourceList[i].amount;
 			}
 
 			return 0d;
 		}
 
-		public double this[LootType type]
+		public double this[ResourceType type]
 		{
 			get
 			{
@@ -62,9 +62,9 @@ namespace Week04
 
 		public bool ContainsLoot()
 		{
-			for (var i = 0; i < lootDictionary.Count; i++)
+			for (var i = 0; i < resourceList.Count; i++)
 			{
-				if (lootDictionary[i].amount > 0d)
+				if (resourceList[i].amount > 0d)
 				{
 					return true;
 				}
@@ -73,11 +73,11 @@ namespace Week04
 			return false;
 		}
 
-		private double _Change(LootType type, double amount)
+		private double _Change(ResourceType type, double amount)
 		{
-			for (var i = 0; i < lootDictionary.Count; i++)
+			for (var i = 0; i < resourceList.Count; i++)
 			{
-				var lootElement = lootDictionary[i];
+				var lootElement = resourceList[i];
 				if (lootElement.type == type)
 				{
 					double removedAmount;
@@ -95,7 +95,7 @@ namespace Week04
 						lootElement.amount += amount;
 					}
 
-					lootDictionary[i] = lootElement;
+					resourceList[i] = lootElement;
 					
 					return removedAmount;
 				}
@@ -103,64 +103,64 @@ namespace Week04
 
 			if (amount > 0d)
 			{
-				lootDictionary.Add(new LootElement(type, amount));
+				resourceList.Add(new Resource(type, amount));
 				return amount;
 			}
 
 			return 0d;
 		}
 
-		public double Add(LootType type, double amount)
+		public double Add(ResourceType type, double amount)
 		{
 			return _Change(type, amount);
 		}
 
-		public double Subtract(LootType type, double amount)
+		public double Subtract(ResourceType type, double amount)
 		{
 			return _Change(type, amount*-1d) *-1d;
 		}
 
-		public static LootContainer operator +(LootContainer a, LootContainer b)
+		public static ResourceContainer operator +(ResourceContainer a, ResourceContainer b)
 		{
-			var newContainer = new LootContainer();
+			var newContainer = new ResourceContainer();
 
-			for (var i = 0; i < a.lootDictionary.Count; i++)
+			for (var i = 0; i < a.resourceList.Count; i++)
 			{
-				newContainer.Add(a.lootDictionary[i].type, a.lootDictionary[i].amount);
+				newContainer.Add(a.resourceList[i].type, a.resourceList[i].amount);
 			}
 
-			for (var i = 0; i < b.lootDictionary.Count; i++)
+			for (var i = 0; i < b.resourceList.Count; i++)
 			{
-				newContainer.Add(b.lootDictionary[i].type, b.lootDictionary[i].amount);
+				newContainer.Add(b.resourceList[i].type, b.resourceList[i].amount);
 			}
 
 			return newContainer;
 		}
 
-		public static LootContainer operator -(LootContainer a, LootContainer b)
+		public static ResourceContainer operator -(ResourceContainer a, ResourceContainer b)
 		{
-			var newContainer = new LootContainer();
+			var newContainer = new ResourceContainer();
 
-			for (var i = 0; i < a.lootDictionary.Count; i++)
+			for (var i = 0; i < a.resourceList.Count; i++)
 			{
-				newContainer.Add(a.lootDictionary[i].type, a.lootDictionary[i].amount);
+				newContainer.Add(a.resourceList[i].type, a.resourceList[i].amount);
 			}
 
-			for (var i = 0; i < b.lootDictionary.Count; i++)
+			for (var i = 0; i < b.resourceList.Count; i++)
 			{
-				newContainer.Subtract(b.lootDictionary[i].type, b.lootDictionary[i].amount);
+				newContainer.Subtract(b.resourceList[i].type, b.resourceList[i].amount);
 			}
 
 			return newContainer;
 		}
 
-		public static LootContainer operator -(LootContainer a)
+		public static ResourceContainer operator -(ResourceContainer a)
 		{
-			var newContainer = new LootContainer();
+			var newContainer = new ResourceContainer();
 
-			for (var i = 0; i < a.lootDictionary.Count; i++)
+			for (var i = 0; i < a.resourceList.Count; i++)
 			{
-				newContainer.Subtract(a.lootDictionary[i].type, a.lootDictionary[i].amount);
+				newContainer.Subtract(a.resourceList[i].type, a.resourceList[i].amount);
 			}
 
 			return newContainer;
@@ -171,11 +171,11 @@ namespace Week04
 	public class LootHolder : MonoBehaviour
 	{
 		[SerializeField]
-		private LootContainer _initialLootContainer;
+		private ResourceContainer _initialResourceContainer;
 
 		private void Awake()
 		{
-			GetComponent<BaseUnit>().lootContainer += _initialLootContainer;
+			GetComponent<BaseUnit>().resourceContainer += _initialResourceContainer;
 
 
 			//GetComponent<BaseUnit>().attackSpeed = 5000f;
