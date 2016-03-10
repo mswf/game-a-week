@@ -39,11 +39,16 @@ namespace Week04
 
 			if (touches.Length > 0)
 			{
-				Debug.LogError("Registering: " + touches.Length + " touch points");
+				//Debug.LogError("Registering: " + touches.Length + " touch points");
 
 				if (touches.Length == 1)
 				{
 					ProcessInputPoint(touches[0].position);
+				}
+				else if (touches.Length == 3 || Input.GetKeyDown(KeyCode.P))
+				{
+					LunarConsole.LunarConsole.Show();
+					//SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 				}
 				else if (touches.Length >= 4 || Input.GetKeyDown(KeyCode.R))
 				{

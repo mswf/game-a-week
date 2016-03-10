@@ -261,7 +261,7 @@ namespace Week04
 			//GameObject.Destroy(this.gameObject);
 		}
 
-		public bool OnDestroy()
+		public bool OnReadyToDestroy()
 		{
 			Globals.playfield.RemoveUnit(this);
 
