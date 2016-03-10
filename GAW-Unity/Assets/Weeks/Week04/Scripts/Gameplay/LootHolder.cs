@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -164,6 +165,21 @@ namespace Week04
 			}
 
 			return newContainer;
+		}
+
+		public override string ToString()
+		{
+			string returnValue = "";
+
+			const string ColonString = ": ";
+			const string PipeString = "|";
+
+			foreach (var resource in resourceList)
+			{
+				returnValue += string.Concat(PipeString, resource.type.ToString(), ColonString, resource.amount, " \n");
+			}
+
+			return returnValue;
 		}
 	}
 

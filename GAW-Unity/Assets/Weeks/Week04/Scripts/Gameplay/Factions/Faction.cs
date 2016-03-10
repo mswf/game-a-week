@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -65,7 +66,6 @@ namespace Week04
 
 			resources.Add(ResourceType.Gold, 100d);
 			resources.Add(ResourceType.Food, 50d);
-
 		}
 
 		public CommandState globalCommandState = CommandState.Advance;
@@ -85,6 +85,16 @@ namespace Week04
 		{
 			var newUnit = Globals.unitBuilder.buildUnit(Globals.gameController.transform, currentBuildInstructions, this);
 
+		}
+
+		public override string ToString()
+		{
+			
+
+
+			return String.Concat("PlayerFaction\n\n",
+				"Resources:\n",
+				resources.ToString());
 		}
 	}
 }
