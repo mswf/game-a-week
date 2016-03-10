@@ -24,6 +24,10 @@ namespace Week04
 		public int health = 200;
 		public double buildCost = 100;
 
+		public float attackSpeed = 2f;
+		public float attackPower = 20f;
+
+
 		[Header("Visual")]
 		public GameObject prefab;
 	}

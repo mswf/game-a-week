@@ -18,16 +18,12 @@ namespace Week04
 		protected override void Awake()
 		{
 			base.Awake();
+			if (!Application.isPlaying)
+				return;
 
 			_descriptionText = GetComponentInChildren<Text>();
 
 			SetVisible(false);
-		}
-		
-		// Update is called once per frame
-		private void Update () 
-		{
-		
 		}
 
 		public void SetEnabled(bool isEnabled)

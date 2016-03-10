@@ -49,6 +49,7 @@ namespace Week04
 
 		protected override void UpdateAttack(float dt)
 		{
+			
 			//throw new System.NotImplementedException();
 		}
 	}

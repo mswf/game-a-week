@@ -13,6 +13,8 @@ namespace Week04
 		protected override void Awake()
 		{
 			base.Awake();
+			if (!Application.isPlaying)
+				return;
 
 			_text = GetComponentInChildren<Text>();
 		}
@@ -20,7 +22,8 @@ namespace Week04
 		protected override void Start()
 		{
 			base.Start();
-
+			if (!Application.isPlaying)
+				return;
 			SetToState(Globals.playerFaction.globalCommandState);
 		}
 
@@ -29,6 +32,7 @@ namespace Week04
 		{
 			if (!Application.isPlaying)
 				return;
+
 			if (_currentState != Globals.playerFaction.globalCommandState)
 				SetToState(Globals.playerFaction.globalCommandState);
 		}

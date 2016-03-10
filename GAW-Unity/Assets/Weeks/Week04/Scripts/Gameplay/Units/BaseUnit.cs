@@ -10,7 +10,15 @@ namespace Week04
 	{
 		Moving,
 		Targetting,
-		Attacking
+		Attacking,
+		Dead
+	}
+
+	public enum LootableStatus
+	{
+		Fortified,
+		OpenForLooting,
+		Emptied,
 	}
 
 	[SelectionBase]
@@ -29,6 +37,21 @@ namespace Week04
 
 		[SerializeField, ReadOnlyAttribute]
 		private UnitBuildInstructions _buildInstructions;
+
+		[Header("Loot")]
+		[SerializeField, ReadOnlyAttribute]
+		public LootContainer lootContainer;
+		private LootableStatus _lootableStatus = LootableStatus.Emptied;
+
+		public LootableStatus GetLootableStatus()
+		{
+			return _lootableStatus;
+		}
+
+		public bool ContainsLoot()
+		{
+			return lootContainer.ContainsLoot();
+		}
 
 		#endregion
 
@@ -81,6 +104,15 @@ namespace Week04
 
 			_timeSincePreviousAttack += dt;
 
+
+			/*
+			if (faction.controlType == ControlType.Player)
+			{
+				Log.Steb("Pls");
+			}
+			*/
+
+
 			switch (state)
 			{
 				case UnitStates.Moving:
@@ -114,7 +146,7 @@ namespace Week04
 
 					break;
 				case UnitStates.Attacking:
-					if (CanTarget(_currentTarget) == false && ShouldTarget(_currentTarget))
+					if (CanTarget(_currentTarget) == false || IsInRange(_currentTarget) == false)
 					{
 						_currentTarget = null;
 						state = UnitStates.Moving;
@@ -123,10 +155,15 @@ namespace Week04
 
 					if (IsReadyForAttack())
 					{
+						DebugExtension.DebugArrow(_currentPosition, new Vector3(_currentTarget._currentPosition.x - _currentPosition.x, 0f), Color.red, 1f, false);
+
 						AttackUnit(_currentTarget);
 					}
 
 					UpdateAttack(dt);
+
+					break;
+				case UnitStates.Dead:
 
 					break;
 				default:
@@ -143,7 +180,6 @@ namespace Week04
 			if (faction == potentialTarget.faction)
 				return false;
 
-
 			// TODO calculate faction logic here
 			return true;
 		}
@@ -151,18 +187,18 @@ namespace Week04
 
 		public bool CanTarget(BaseUnit potentialTarget)
 		{
-			return potentialTarget.IsAlive();
+			return potentialTarget.gameObject != null && (potentialTarget.IsAlive() || potentialTarget.ContainsLoot());
 		}
 
 		public bool IsInRange(BaseUnit targetUnit)
 		{
 			if (Mathf.Abs(Globals.playfield.GetUnitPosition(targetUnit) - _currentPosition.x) < 3f)
 				return true;
-			
+
 			return false;
 		}
 
-		public bool IsReadyForAttack()
+		public virtual bool IsReadyForAttack()
 		{
 			return _timeSincePreviousAttack >= attackSpeed;
 		}
@@ -171,35 +207,65 @@ namespace Week04
 		{
 			if (_currentHealth > 0)
 				return true;
-			
+
 
 			return false;
 		}
 
 		public void AttackUnit(BaseUnit target)
 		{
-			target.ReceiveAttack(this);
+			if (target.IsAlive())
+				target.ReceiveAttack(this);
+			else
+				lootContainer += target.ReceiveLootStrike(this);
+
 
 			_timeSincePreviousAttack = 0f;
 		}
 
 		public void ReceiveAttack(BaseUnit attacker)
 		{
-			_currentHealth -= 5;
+			_currentHealth -= 50;
 
 			if (IsAlive() == false)
 			{
 				Log.Steb("Blergh unit died");
-				OnUnitDeath();
-
+				OnDeath();
 			}
 		}
 
-		public void OnUnitDeath()
+		public LootContainer ReceiveLootStrike(BaseUnit attacker)
+		{
+			var takenLoot = new LootContainer();
+
+			Log.Steb("Getting a lootstrike " + _buildInstructions.unitName);
+
+			foreach (LootType lootType in Enum.GetValues(typeof(LootType)))
+			{
+				var takenAmount = lootContainer.Subtract(lootType, 30d);
+
+				Log.Steb("Took " + takenAmount + " of type " + lootType.ToString());
+
+				takenLoot.Add(lootType, takenAmount);
+			}
+
+			return takenLoot;
+		}
+
+		public void OnDeath()
+		{
+			//Globals.playfield.RemoveUnit(this);
+			state = UnitStates.Dead;
+
+
+			//GameObject.Destroy(this.gameObject);
+		}
+
+		public bool OnDestroy()
 		{
 			Globals.playfield.RemoveUnit(this);
 
-			GameObject.Destroy(this.gameObject);
+			return true;
 		}
 
 		public BaseUnit GetNearTarget()
@@ -226,10 +292,10 @@ namespace Week04
 		}
 
 		private static Collider[] collidersForPhysicsTest = new Collider[40];
-		
+
 		protected BaseUnit[] GetUnitsWithinCircularRange(float radius, Vector3 position)
 		{
-			BaseUnit[] units;	
+			BaseUnit[] units;
 
 			int numCollidersInRange = Physics.OverlapSphereNonAlloc(position, radius, collidersForPhysicsTest);
 

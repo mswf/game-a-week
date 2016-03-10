@@ -65,6 +65,8 @@ namespace Week04
 		private static readonly Color MovingColor = Color.green;
 		private static readonly Color TargettingColor = Color.yellow;
 		private static readonly Color AttackingColor = Color.red;
+		private static readonly Color DeadColor = Color.black;
+
 
 		private void LateUpdate () 
 		{
@@ -105,6 +107,10 @@ namespace Week04
 							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, AttackingColor, inner_2, dt, false);
 							break;
 						default:
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, DeadColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, DeadColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, DeadColor, inner_2, dt, false);
+							break;
 							throw new ArgumentOutOfRangeException();
 					}
 
