@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 
+using Week04.BehaviourTree;
+
+
 namespace Week04
 {
 	public enum UnitStates
@@ -71,6 +74,29 @@ namespace Week04
 			Globals.playfield.AddUnit(this);
 		}
 
+		protected EntryNode behaviourTree;
+
+		protected virtual void InitBehaviourTree()
+		{
+			behaviourTree = new EntryNode(this, 
+				new SelectorCompositeNode(
+					// Trying to attack
+					new SequenceCompositeNode(
+						// Try to find a target
+						// SequenceCompositeNode
+
+
+						// Can Target (_curTarget_)
+						// 
+					)
+					// 
+
+			
+				));
+
+			var test = behaviourTree;
+		}
+
 		// Set up all internal references to this 
 		private void Awake()
 		{
@@ -103,15 +129,6 @@ namespace Week04
 			var dt = Time.deltaTime;
 
 			_timeSincePreviousAttack += dt;
-
-
-			/*
-			if (faction.controlType == ControlType.Player)
-			{
-				Log.Steb("Pls");
-			}
-			*/
-
 
 			switch (state)
 			{
