@@ -9,6 +9,7 @@ namespace Week04
 		public class UIGlobals
 		{
 			public BuildUnitButtonManager buildUnitButtonManager;
+			public ResourceDisplayManager resourceDisplayManager;
 		}
 
 		public static UIGlobals UI = new UIGlobals();

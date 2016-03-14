@@ -23,20 +23,25 @@ namespace Week04
 		[SerializeField]
 		public Dictionary<Faction, Relationship> relationships;
 
-		public ResourceContainer resources;
+		protected ResourceContainer _resources;
+
+		public ResourceContainer resources
+		{
+			get { return _resources; }
+		}
 
 		public Faction(string factionName)
 		{
 			this.name = factionName;
 			relationships = new Dictionary<Faction, Relationship>();
-			resources = new ResourceContainer();
+			_resources = new ResourceContainer();
 		}
 
 		protected Faction()
 		{
 			this.name = "Default Name";
 			relationships = new Dictionary<Faction, Relationship>();
-			resources = new ResourceContainer();
+			_resources = new ResourceContainer();
 		}
 
 		public Relationship DefineRelationshipTo(Faction otherFaction, RelationType currentRelation)
@@ -47,6 +52,7 @@ namespace Week04
 
 			return newRelationship;
 		}
+		
 	}
 
 	[System.Serializable]
@@ -58,11 +64,20 @@ namespace Week04
 			Retreat
 		}
 
+		public virtual ResourceContainer resources
+		{
+			get
+			{
+				return _resources; 
+				Globals.UI.resourceDisplayManager.UpdateDisplays();
+			}
+		}
+
 		public PlayerFaction(string factionName) : base()
 		{
 			this.name = factionName;
 			relationships = new Dictionary<Faction, Relationship>();
-			resources = new ResourceContainer();
+			_resources = new ResourceContainer();
 
 			resources.Add(ResourceType.Gold, 100d);
 			resources.Add(ResourceType.Food, 50d);

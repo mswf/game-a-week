@@ -100,6 +100,8 @@ namespace Week04
 		private void Start()
 		{
 			Globals.UI.buildUnitButtonManager.OnOptionsChanged();
+			Globals.UI.resourceDisplayManager.Initialize();
+
 		}
 
 		// Update is called once per frame
