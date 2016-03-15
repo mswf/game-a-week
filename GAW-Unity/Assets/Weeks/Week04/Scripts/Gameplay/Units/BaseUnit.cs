@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
-
+using UnityEditor;
 using Week04.BehaviourTree;
 
 
@@ -41,6 +41,8 @@ namespace Week04
 		[SerializeField, ReadOnlyAttribute]
 		private UnitBuildInstructions _buildInstructions;
 
+		public float movementSpeed = 1f;
+
 		[Header("Loot")]
 		[SerializeField, ReadOnlyAttribute]
 		public ResourceContainer resourceContainer;
@@ -72,29 +74,19 @@ namespace Week04
 			if (_currentHealth == 0)
 				_currentHealth = 200;
 			Globals.playfield.AddUnit(this);
+
+			InitBehaviourTree();
 		}
 
+		[SerializeField]
 		protected EntryNode behaviourTree;
 
 		protected virtual void InitBehaviourTree()
 		{
 			behaviourTree = new EntryNode(this, 
-				new SelectorCompositeNode(
-					// Trying to attack
-					new SequenceCompositeNode(
-						// Try to find a target
-						// SequenceCompositeNode
+					new IsNullNode("Ghello")
+				);
 
-
-						// Can Target (_curTarget_)
-						// 
-					)
-					// 
-
-			
-				));
-
-			var test = behaviourTree;
 		}
 
 		// Set up all internal references to this 
@@ -129,6 +121,13 @@ namespace Week04
 			var dt = Time.deltaTime;
 
 			_timeSincePreviousAttack += dt;
+
+			behaviourTree.UpdateTree(dt);
+
+			Globals.playfield.unitPositions[this] = _currentPosition.x;
+
+			if (true)
+				return;
 
 			switch (state)
 			{
@@ -229,6 +228,32 @@ namespace Week04
 			return false;
 		}
 
+		public Vector3 GetUnitPosition()
+		{
+			var xPosition = Globals.playfield.unitPositions[this];
+			return new Vector3(xPosition, 0);
+		}
+
+		public float GetUnitPositionX()
+		{
+			return Globals.playfield.unitPositions[this];
+		}
+
+		public void SetUnitPosition(float newPosition)
+		{
+			_currentPosition.x = newPosition;
+
+			Globals.playfield.unitPositions[this] = newPosition;
+		}
+
+		public void MoveUnitPosition(float positionDelta)
+		{
+			_currentPosition.x += positionDelta;
+
+			Globals.playfield.unitPositions[this] += positionDelta;
+		}
+
+
 		public void AttackUnit(BaseUnit target)
 		{
 			if (target.IsAlive())
@@ -310,7 +335,7 @@ namespace Week04
 
 		private static Collider[] collidersForPhysicsTest = new Collider[40];
 
-		protected BaseUnit[] GetUnitsWithinCircularRange(float radius, Vector3 position)
+		public BaseUnit[] GetUnitsWithinCircularRange(float radius, Vector3 position)
 		{
 			BaseUnit[] units;
 
@@ -329,7 +354,7 @@ namespace Week04
 			return units;
 		}
 
-		protected BaseUnit[] GetUnitsWithinCircularRange(float radius)
+		public BaseUnit[] GetUnitsWithinCircularRange(float radius)
 		{
 			return GetUnitsWithinCircularRange(radius, _currentPosition);
 		}
