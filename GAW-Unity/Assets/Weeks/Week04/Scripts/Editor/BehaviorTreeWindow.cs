@@ -33,6 +33,14 @@ namespace Week04
 
 			_scrollPosition = Vector2.zero;
 
+
+			
+		}
+
+		protected void Update()
+		{
+			//if (EditorWindow.focusedWindow != this)	
+				Repaint();
 		}
 
 		protected void OnDestroy()
@@ -249,6 +257,7 @@ namespace Week04
 		private static readonly Color DecoratorNodeColor_Title = new Color(247f / 255f, 162f / 255f, 151f / 255f, 0.5f);
 		private static readonly Color CompositeNodeColor_Title = new Color(188f / 255f, 247f / 255f, 151f / 255f, 0.5f);
 
+		private static readonly  Color WhiteTransparentColor = new Color(1,1,1,0);
 
 		private void DrawNode(int id)
 		{
@@ -268,9 +277,36 @@ namespace Week04
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+			GUI.DrawTexture(new Rect(0, 0, _windowRect.width, 16f), EditorGUIUtility.whiteTexture);
 
 
-			GUI.DrawTexture(new Rect(0,0,_windowRect.width, 16f), EditorGUIUtility.whiteTexture);
+			var state = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT.TryGetState<BaseNodeState>(_nodeToDraw);
+
+			if (state != null)
+			{
+				var previousState = state.previousStatus;
+				var timeSinceChange = Time.time - state.timeSinceStatusChange;
+				
+
+				switch (previousState)
+				{
+					case BehaviourStatus.Success:
+						GUI.color = Color.Lerp(Color.green, WhiteTransparentColor, timeSinceChange);
+						break;
+					case BehaviourStatus.Failure:
+						GUI.color = Color.Lerp(Color.red, WhiteTransparentColor, timeSinceChange);
+						break;
+					case BehaviourStatus.Running:
+						GUI.color = Color.Lerp(Color.yellow, WhiteTransparentColor, timeSinceChange);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+				GUI.DrawTexture(new Rect(0, 16f, _windowRect.width, _windowRect.height - 16f), EditorGUIUtility.whiteTexture);
+				GUILayout.Label(timeSinceChange.ToString(), EditorStyles.boldLabel);
+
+			}
+
 
 			//GUI.color = Color.black;
 
@@ -278,10 +314,8 @@ namespace Week04
 
 			GUI.DragWindow();
 
-			GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+			//GUILayout.Label("Base Settings", EditorStyles.boldLabel);
 			_nodeToDraw.DrawGUI(id);
-
-
 		}
 
 		private static void DrawNodeCurve(Rect start, Rect end)
@@ -290,12 +324,12 @@ namespace Week04
 			Vector3 startPos = new Vector3(start.x + start.width, start.y + start.height/2f, 0);
 			Vector3 endPos = new Vector3(end.x, end.y + end.height/2f, 0);
 
-			Vector3 startTan = startPos + Vector3.right* offset;
-			Vector3 endTan = endPos + Vector3.left* offset;
+			Vector3 startTan = startPos + Vector3.right*offset;
+			Vector3 endTan = endPos + Vector3.left*offset;
 			Color shadowCol = new Color(0, 0, 0, 0.06f);
 			for (int i = 0; i < 3; i++) // Draw a shadow
 				Handles.DrawBezier(startPos, endPos, startTan, endTan, shadowCol, null, (i + 1)*5f);
-				
+
 			Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.black, EditorGUIUtility.whiteTexture, 1f);
 		}
 	}

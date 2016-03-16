@@ -31,7 +31,7 @@ namespace Week04
 			_behaviorContext[SUBJECT] = this;
 
 			behaviourTree = new EntryNode(
-				new SelectorCompositeNode(
+				new SequenceCompositeNode(
 					// Get a target
 					new SelectorCompositeNode(
 						// Do we already have a target

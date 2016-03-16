@@ -64,7 +64,7 @@ namespace Week04
 			Retreat
 		}
 
-		public virtual ResourceContainer resources
+		public new virtual ResourceContainer resources
 		{
 			get
 			{
