@@ -11,6 +11,11 @@ namespace Week04
 			public BehaviourStatus previousStatus;
 			public float timeSinceStatusChange;
 
+			public int timesCalled;
+
+			public int timesSuccess;
+			public int timesFailure;
+			public int timesRunning;
 
 		}
 

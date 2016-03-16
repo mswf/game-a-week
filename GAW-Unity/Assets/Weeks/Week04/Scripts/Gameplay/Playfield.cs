@@ -83,7 +83,7 @@ namespace Week04
 
 				foreach (KeyValuePair<BaseUnit, float> unitPosition in unitPositions)
 				{
-					Debug.DrawLine(new Vector3(unitPosition.Value, 0f), unitPosition.Key._currentPosition, Color.gray, dt, true);
+					Debug.DrawLine(new Vector3(unitPosition.Value, 0f), unitPosition.Key.GetUnitPosition(), Color.gray, dt, true);
 					const float inner_0 = 1f;
 					const float inner_1 = 0.98f;
 					const float inner_2 = 0.96f;
@@ -91,25 +91,25 @@ namespace Week04
 					switch (unitPosition.Key.state)
 					{
 						case UnitStates.Moving:
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, MovingColor, inner_0, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, MovingColor, inner_1, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, MovingColor, inner_2, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), MovingColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), MovingColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), MovingColor, inner_2, dt, false);
 
 							break;
 						case UnitStates.Targetting:
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, TargettingColor, inner_0, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, TargettingColor, inner_1, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, TargettingColor, inner_2, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), TargettingColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), TargettingColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), TargettingColor, inner_2, dt, false);
 							break;
 						case UnitStates.Attacking:
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, AttackingColor, inner_0, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, AttackingColor, inner_1, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, AttackingColor, inner_2, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), AttackingColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), AttackingColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), AttackingColor, inner_2, dt, false);
 							break;
 						default:
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, DeadColor, inner_0, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, DeadColor, inner_1, dt, false);
-							DebugExtension.DebugCircle(unitPosition.Key._currentPosition, DeadColor, inner_2, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), DeadColor, inner_0, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), DeadColor, inner_1, dt, false);
+							DebugExtension.DebugCircle(unitPosition.Key.GetUnitPosition(), DeadColor, inner_2, dt, false);
 							break;
 							throw new ArgumentOutOfRangeException();
 					}

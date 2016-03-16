@@ -3,6 +3,7 @@
 
 //#define DEBUG_MEMORY
 
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Object = System.Object;
@@ -201,6 +202,24 @@ namespace Week04
 				var nodeState = context.GetState<StateType>(this);
 				nodeState.previousStatus = result;
 				nodeState.timeSinceStatusChange = Time.time;
+				nodeState.timesCalled++;
+
+				switch (result)
+				{
+					case BehaviourStatus.Success:
+						nodeState.timesSuccess++;
+						break;
+					case BehaviourStatus.Failure:
+						nodeState.timesFailure++;
+
+						break;
+					case BehaviourStatus.Running:
+						nodeState.timesRunning++;
+
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 
 				return result;
 			}
@@ -221,12 +240,10 @@ namespace Week04
 				var nodeState = context.GetState<StateType>(this);
 				nodeState.timeSinceStatusChange = Time.time;
 				//	Debug.Log("Cleanup: " + this.ToString());
-
 			}
 
 			public virtual void DrawGUI(int windowID)
 			{
-				
 			}
 		}
 	}

@@ -31,73 +31,75 @@ namespace Week04
 			_behaviorContext[SUBJECT] = this;
 
 			behaviourTree = new EntryNode(
-				new SequenceCompositeNode(
-					// Get a target
-					new SelectorCompositeNode(
-						// Do we already have a target
-						new SequenceCompositeNode(
-							new ContainsUnit(TARGET),
-							new CanTargetUnit(SUBJECT, TARGET),
-							new CanHitUnit(SUBJECT, TARGET)
-							//new PrintNode("Has preexisting target")
+				new SelectorCompositeNode(
+					new SequenceCompositeNode(
+						// Get a target
+						new SelectorCompositeNode(
+							// Do we already have a target
+							new SequenceCompositeNode(
+								new ContainsUnit(TARGET),
+								new CanTargetUnit(SUBJECT, TARGET),
+								new CanHitUnit(SUBJECT, TARGET)
+								//new PrintNode("Has preexisting target")
 
-							),
-						// If not, find a new target, this returns true if it found a target
-						new SequenceCompositeNode(
-							new ClearStack(TARGETS_STACK),
-							new FindTargets(SUBJECT, TARGETS_STACK, RANGE_VAR),
+								),
+							// If not, find a new target, this returns true if it found a target
+							new SequenceCompositeNode(
+								new ClearStack(TARGETS_STACK),
+								new FindTargets(SUBJECT, TARGETS_STACK, RANGE_VAR),
 
-							//new PrintNode("Starting Search"),
-
-
-							new RepeatUntilFailDecoratorNode(
-								new SequenceCompositeNode(
-
-									new PopFromStack(POTENTIAL_TARGET, TARGETS_STACK),
-
-									//new PrintNode("Testing"),
-									//new PrintVarNode(POTENTIAL_TARGET),
+								//new PrintNode("Starting Search"),
 
 
-									new ShouldTargetUnit(SUBJECT, POTENTIAL_TARGET),
+								new RepeatUntilFailDecoratorNode(
+									new SequenceCompositeNode(
 
-									//new PrintNode("1"),
+										new PopFromStack(POTENTIAL_TARGET, TARGETS_STACK),
+
+										new InverterDecoratorNode(
+											new SequenceCompositeNode(
+												new ShouldTargetUnit(SUBJECT, POTENTIAL_TARGET),
+
+												new CanTargetUnit(SUBJECT, POTENTIAL_TARGET),
+
+												new CanHitUnit(SUBJECT, POTENTIAL_TARGET),
+
+												// Passed all the checks, it's promoted to target now
+												new SetVarTo<ContextIndex>(TARGET, POTENTIAL_TARGET)
+											)
+										)
 
 
-									new CanTargetUnit(SUBJECT, POTENTIAL_TARGET),
-									new PrintNode("2"),
-
-									new CanHitUnit(SUBJECT, POTENTIAL_TARGET),
-									new PrintNode("3"),
-
-									// Passed all the checks, it's promoted to target now
-									new SetVarTo<ContextIndex>(TARGET, POTENTIAL_TARGET)
 									)
 								),
 
-							//new PrintNode("At the end of the road:"),
-							//new PrintVarNode(TARGET),
+								//new PrintNode("At the end of the road:"),
+								//new PrintVarNode(TARGET),
 
 
-							new InverterDecoratorNode(
-								new IsNullNode(POTENTIAL_TARGET)
+								new InverterDecoratorNode(
+									new IsNullNode(TARGET)
+									)
 								)
-							)
 							// Couldn't find any target
 
-						),
-					// We could find a target
-					// Now move in for the kill
+							),
+						// We could find a target
+						// Now move in for the kill
+						new SequenceCompositeNode(
+							
+							new MoveToUnit(SUBJECT, TARGET)
+						)
+
+					// 
+
+
+					),
 					new SequenceCompositeNode(
-						new PrintNode("Has a target"),
-
-						new MoveToUnit(SUBJECT, TARGET)
+						new MoveNode(SUBJECT)
 					)
-
-				// 
-
-
-				));
+				)
+				);
 
 			_behaviorContext[RANGE_VAR] = 5f;
 
@@ -111,38 +113,31 @@ namespace Week04
 		{
 			if (faction.controlType == ControlType.Player)
 			{
-				var pFaction = (PlayerFaction)faction;
+				var pFaction = (PlayerFaction) faction;
 
 				if (pFaction.globalCommandState == PlayerFaction.CommandState.Advance)
-					_currentPosition.x += movementSpeed * dt;
+					MoveUnitPosition(movementSpeed*dt);
 				else
-					_currentPosition.x -= movementSpeed * dt;
+					MoveUnitPosition(-movementSpeed*dt);
 
 			}
 			else
 			{
-				_currentPosition.x += movementSpeed * dt;
+				MoveUnitPosition(movementSpeed*dt);
 			}
-
-			Globals.playfield.ChangeUnitPosition(this, _currentPosition.x);
-
-			_transform.localPosition = _currentPosition;
 		}
 
 		protected override void UpdateTargetting(float dt)
 		{
 			var targetPosition = Globals.playfield.GetUnitPosition(_currentTarget);
 
-			var ownPosition = _currentPosition.x;
+			var ownPosition = GetUnitPositionX();
 
 			var distanceToTarget = targetPosition - ownPosition;
 
 			var movement = Mathf.Min(Mathf.Abs(distanceToTarget), movementSpeed*dt);
 
-			_currentPosition.x += movement * Mathf.Sign(distanceToTarget);
-			Globals.playfield.ChangeUnitPosition(this, _currentPosition.x);
-
-			_transform.localPosition = _currentPosition;
+			MoveUnitPosition(movement * Mathf.Sign(distanceToTarget));
 		}
 
 		protected override void UpdateAttack(float dt)

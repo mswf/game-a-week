@@ -29,8 +29,9 @@ namespace Week04
 	{
 		[SerializeField]
 		public Faction faction;
-		
-		public Vector3 _currentPosition;
+
+		[SerializeField]
+		private Vector3 _currentPosition;
 		public Transform _transform;
 
 		#region Stats
@@ -130,9 +131,12 @@ namespace Week04
 
 			_timeSincePreviousAttack += dt;
 
+			_transform.localPosition = _currentPosition;
+			Globals.playfield.unitPositions[this] = _currentPosition.x;
+
+
 			behaviourTree.UpdateTree(dt, _behaviorContext);
 
-			Globals.playfield.unitPositions[this] = _currentPosition.x;
 
 			if (true)
 				return;
@@ -216,7 +220,7 @@ namespace Week04
 
 		public bool IsInRange(BaseUnit targetUnit)
 		{
-			if (Mathf.Abs(Globals.playfield.GetUnitPosition(targetUnit) - _currentPosition.x) < 3f)
+			if (Mathf.Abs(targetUnit.GetUnitPositionX() - GetUnitPositionX()) < 3f)
 				return true;
 
 			return false;
@@ -320,7 +324,7 @@ namespace Week04
 
 		public BaseUnit GetNearTarget()
 		{
-			var potentialTargets = GetUnitsWithinCircularRange(5f, _currentPosition);
+			var potentialTargets = GetUnitsWithinCircularRange(5f, GetUnitPosition());
 
 			for (int i = 0; i < potentialTargets.Length; i++)
 			{
@@ -364,7 +368,7 @@ namespace Week04
 
 		public BaseUnit[] GetUnitsWithinCircularRange(float radius)
 		{
-			return GetUnitsWithinCircularRange(radius, _currentPosition);
+			return GetUnitsWithinCircularRange(radius, GetUnitPosition());
 		}
 
 		public const string UNIT_COLLIDER_TAG = "Unit";

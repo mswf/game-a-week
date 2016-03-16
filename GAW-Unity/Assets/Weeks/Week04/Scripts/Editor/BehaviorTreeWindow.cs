@@ -24,23 +24,30 @@ namespace Week04
 		private BehaviorNodeDrawer _rootNode;
 		private Rect _scrollViewRect;
 
+		private Vector2 _zoomLevel;
 
 		public BehaviorTreeWindow()
 		{
 			var title = new GUIContent("Behavior Tree");
 			titleContent = title;
-			_scrollViewRect = new Rect(0,0,1200f, 500f);
+			_scrollViewRect = new Rect(0,0,12000f, 5000f);
 
 			_scrollPosition = Vector2.zero;
 
+			_zoomLevel = Vector2.one;
 
-			
+
 		}
 
 		protected void Update()
 		{
-			//if (EditorWindow.focusedWindow != this)	
-				Repaint();
+			if (EditorWindow.focusedWindow == this)
+			{
+
+
+			}
+
+			Repaint();
 		}
 
 		protected void OnDestroy()
@@ -56,7 +63,60 @@ namespace Week04
 
 		protected void OnGUI()
 		{
-	//		GUIUtility.ScaleAroundPivot(Vector2.one, Vector2.zero);
+
+			const float moveSpeed = 2000f;
+			float dt = Time.deltaTime;
+
+			
+
+			Event e = Event.current;
+			if (e != null)
+			{
+				switch (e.type)
+				{
+					case EventType.keyDown:
+						{
+							if (Event.current.keyCode == (KeyCode.D))
+							{
+
+								_scrollPosition.x += moveSpeed * dt;
+							}
+							if (Event.current.keyCode == (KeyCode.A))
+							{
+								_scrollPosition.x -= moveSpeed * dt;
+							}
+
+							if (Event.current.keyCode == (KeyCode.W))
+							{
+
+								_scrollPosition.y -= moveSpeed * dt;
+							}
+							if (Event.current.keyCode == (KeyCode.S))
+							{
+								_scrollPosition.y += moveSpeed * dt;
+							}
+
+
+							if (Event.current.keyCode == KeyCode.Q)
+							{
+								_zoomLevel *= 0.66f;
+							}
+
+							if (Event.current.keyCode == KeyCode.E)
+							{
+								_zoomLevel *= 1.5f;
+							}
+
+							if (Event.current.keyCode == KeyCode.R)
+							{
+								_zoomLevel = Vector2.one;
+							}
+							break;
+						}
+				}
+			}
+
+
 
 			if (_rootNode == null)
 			{
@@ -69,21 +129,28 @@ namespace Week04
 			}
 
 
-			
-			var windowRect = new Rect(0,0, position.width, position.height);
+
+			//var windowRect = new Rect(0,0, position.width * (1f/_zoomLevel.x), position.height * (1f / _zoomLevel.x));
+			var windowRect = new Rect(0, 0, position.width, position.height );
+
 
 			_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect	);
 
+
 			BeginWindows();
+
+			//GUIUtility.ScaleAroundPivot(_zoomLevel, Vector2.zero);
+
 
 			int idToUse = 1;
 
 			if (_rootNode != null)
 				_rootNode.OnDrawWindow(ref idToUse);
 
+//			GUIUtility.ScaleAroundPivot(_zoomLevel / 1f, Vector2.zero);
+
 			EndWindows();
 
-			
 
 			GUI.EndScrollView();
 
@@ -113,7 +180,7 @@ namespace Week04
 		private BehaviorNodeDrawer[] _childrenNodes;
 
 		public const float MIN_WIDTH = 100f;
-		public const float MIN_HEIGHT = 50f;
+		public const float MIN_HEIGHT = 60f;
 
 		public const float INITIAL_HORIZONTAL_SPACING = 20f;
 
@@ -303,7 +370,17 @@ namespace Week04
 						throw new ArgumentOutOfRangeException();
 				}
 				GUI.DrawTexture(new Rect(0, 16f, _windowRect.width, _windowRect.height - 16f), EditorGUIUtility.whiteTexture);
-				GUILayout.Label(timeSinceChange.ToString(), EditorStyles.boldLabel);
+				
+				//GUILayout.Label(timeSinceChange.ToString(), EditorStyles.boldLabel);
+				GUI.color = Color.black;
+				GUILayout.Label(state.timesCalled.ToString(), EditorStyles.boldLabel);
+
+				var smallStyle = EditorStyles.miniLabel;
+				smallStyle.fontSize = 8;
+
+				GUILayout.Label("S: " + state.timesSuccess + " F: " + state.timesFailure + " R: " + state.timesRunning, smallStyle);
+
+
 
 			}
 

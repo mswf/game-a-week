@@ -1,6 +1,7 @@
 ﻿
+using System;
 using UnityEngine;
-
+using UnityEngine.UI;
 using ContextIndex = System.String;
 using Stack_Object = System.Collections.Generic.Stack<System.Object>;
 
@@ -214,7 +215,7 @@ namespace Week04
 
 		public class CanTargetUnit : UnitToUnitInteraction
 		{
-			public CanTargetUnit(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
+			public CanTargetUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar) { }
 
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
@@ -233,7 +234,7 @@ namespace Week04
 
 		public class ShouldTargetUnit : UnitToUnitInteraction
 		{
-			public ShouldTargetUnit(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
+			public ShouldTargetUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar) { }
 
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
@@ -252,7 +253,7 @@ namespace Week04
 
 		public class MoveToUnit : UnitToUnitInteraction
 		{
-			public MoveToUnit(string subjectVar, string targetVar) : base(subjectVar, targetVar)
+			public MoveToUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar)
 			{
 			}
 
@@ -275,7 +276,7 @@ namespace Week04
 
 				if (distanceToTarget * signedDistance > maxTravelDistance)
 				{
-					targetUnit.MoveUnitPosition(maxTravelDistance * signedDistance);
+					subjectUnit.MoveUnitPosition(maxTravelDistance * signedDistance);
 					context.timeLeft = 0f;
 					return BehaviourStatus.Running;
 				}
@@ -288,6 +289,33 @@ namespace Week04
 				}
 
 
+			}
+		}
+
+		public class MoveNode : LeafNode
+		{
+
+			private ContextIndex _subjectVar;
+
+			public MoveNode(ContextIndex subjectVar)
+			{
+				this._subjectVar = subjectVar;
+			}
+
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			{
+				var subjectUnit = context[_subjectVar] as BaseUnit;
+
+				if (subjectUnit == null)
+					return BehaviourStatus.Failure;
+
+				if (Math.Abs(context.timeLeft) < Mathf.Epsilon)
+					return BehaviourStatus.Failure;
+
+				subjectUnit.MoveUnitPosition(subjectUnit.movementSpeed * context.timeLeft);
+				context.timeLeft = 0f;
+
+				return BehaviourStatus.Success;
 			}
 		}
 

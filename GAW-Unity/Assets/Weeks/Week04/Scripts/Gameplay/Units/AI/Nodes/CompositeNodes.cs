@@ -53,7 +53,7 @@ namespace Week04
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var state = context.GetState<IteratorNodeState>(this);
-				state.currentIndex = -1;
+				//state.currentIndex = -1;
 
 				if (state.currentIndex >= 0)
 				{
@@ -68,6 +68,7 @@ namespace Week04
 							childNodes[state.currentIndex].Cleanup(context);
 							return BehaviourStatus.Failure;
 						case BehaviourStatus.Running:
+	
 							return BehaviourStatus.Running;
 						default:
 							throw new ArgumentOutOfRangeException();
@@ -140,8 +141,11 @@ namespace Week04
 					switch (result)
 					{
 						case BehaviourStatus.Success:
+							childNodes[state.currentIndex].Cleanup(context);
 							return BehaviourStatus.Success;
 						case BehaviourStatus.Failure:
+							childNodes[state.currentIndex].Cleanup(context);
+
 							break;
 						case BehaviourStatus.Running:
 							return BehaviourStatus.Running;
@@ -157,16 +161,22 @@ namespace Week04
 
 				for (int index = state.currentIndex; index < childNodes.Length; index++)
 				{
-					var childNode = childNodes[index];
-					var result = childNode.Update(context);
+					childNodes[index].Initialize(context);
+					var result = childNodes[index].Update(context);
 
 					switch (result)
 					{
 						case BehaviourStatus.Success:
+							childNodes[index].Cleanup(context);
+
 							return BehaviourStatus.Success;
 						case BehaviourStatus.Failure:
+							childNodes[index].Cleanup(context);
+
 							break;
 						case BehaviourStatus.Running:
+							state.currentIndex = index;
+
 							return BehaviourStatus.Running;
 						default:
 							throw new ArgumentOutOfRangeException();
