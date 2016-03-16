@@ -62,6 +62,8 @@ namespace Week04
 
 		public UnitStates state = UnitStates.Moving;
 
+		protected BehaviorContext _behaviorContext;
+
 		public void InitializeUnit(Faction unitFaction, UnitBuildInstructions template)
 		{
 			faction = unitFaction;
@@ -83,7 +85,13 @@ namespace Week04
 
 		protected virtual void InitBehaviourTree()
 		{
-			behaviourTree = new EntryNode(this, 
+
+			const string SUBJECT = "S_SUBJECT";
+
+			_behaviorContext = new BehaviorContext();
+			_behaviorContext[SUBJECT] = this;
+
+			behaviourTree = new EntryNode(
 					new IsNullNode("Ghello")
 				);
 
@@ -122,7 +130,7 @@ namespace Week04
 
 			_timeSincePreviousAttack += dt;
 
-			behaviourTree.UpdateTree(dt);
+			behaviourTree.UpdateTree(dt, _behaviorContext);
 
 			Globals.playfield.unitPositions[this] = _currentPosition.x;
 

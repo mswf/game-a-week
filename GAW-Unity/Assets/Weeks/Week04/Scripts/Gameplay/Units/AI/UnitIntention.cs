@@ -1,17 +1,16 @@
 ﻿
 #define SAFE_MODE
 
-#define DEBUG_MEMORY
-
+//#define DEBUG_MEMORY
 
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor;
 using Object = System.Object;
-
 using ContextIndex = System.String;
 using Stack_Object = System.Collections.Generic.Stack<System.Object>;
+
+
 
 namespace Week04
 {
@@ -34,7 +33,6 @@ namespace Week04
 			[ReadOnlyAttribute]
 			public ContextIndex Key;
 
-			//[ShowOnlyIfNotNull, SerializeField]
 			private Object _value;
 			public Object Value
 			{
@@ -88,7 +86,7 @@ namespace Week04
 #endif
 
 		[System.Serializable]
-		public class BehaviourContext
+		public class BehaviorContext
 		{
 			public float timeLeft;
 
@@ -98,16 +96,20 @@ namespace Week04
 #else
 			public Dictionary<ContextIndex, Object> memory;
 #endif
-			public BehaviourContext()
+			public Dictionary<Object, BaseNodeState> state; 
+
+			public BehaviorContext()
 			{
 #if DEBUG_MEMORY
 				memory = new List <DebugMemoryEntry>();
 #else
-				memory = new Dictionary<ContextIndex, object>();
+				memory = new Dictionary<ContextIndex, Object>();
 #endif
+
+				state = new Dictionary<object, BaseNodeState>();
 			}
 
-		public Object this[ContextIndex memoryKey] 
+			public Object this[ContextIndex memoryKey] 
 			{
 				get
 				{
@@ -142,100 +144,158 @@ namespace Week04
 #endif
 				}
 			}
+
+			public T GetState<T>(Object stateKey) where T : BaseNodeState, new()
+			{
+				if (state.ContainsKey(stateKey))
+					return (T) state[stateKey];
+				else
+				{
+					var newState = new T();
+					state[stateKey] = newState;
+
+					return newState;
+				}
+			}
 		}
 
-		public abstract class Node
+		public interface INode
 		{
-			public abstract BehaviourStatus UpdateTick(BehaviourContext context);
+			BehaviourStatus UpdateTick(BehaviorContext context);
 
-			public const ContextIndex S_SUBJECT = "S_SUBJECT";
 
-			public virtual void Initialize()
+			void Initialize(BehaviorContext context);
+			void Cleanup(BehaviorContext context);
+
+			void DrawGUI(int windowID);
+		}
+
+		public interface ICompositeNode
+		{
+			INode[] getChildNodes();
+		}
+
+		public interface IDecoratorNode
+		{
+			INode getChildNode();
+		}
+
+		public interface ILeafNode
+		{
+			
+		}
+
+		public abstract class Node<StateType> : INode where StateType : BaseNodeState, new()
+		{
+			public abstract BehaviourStatus UpdateTick(BehaviorContext context);
+
+
+			public virtual void Initialize(BehaviorContext context)
 			{
+				var nodeState = context.GetState<StateType>(this);
+				nodeState.timeSinceStatusChange = Time.time;
+
+				//	Debug.Log("Initializing: " + this.ToString());
+			}
+
+			public virtual void Cleanup(BehaviorContext context)
+			{
+				var nodeState = context.GetState<StateType>(this);
+				nodeState.timeSinceStatusChange = Time.time;
+				//	Debug.Log("Cleanup: " + this.ToString());
 
 			}
 
-			public virtual void Cleanup()
+			public virtual void DrawGUI(int windowID)
 			{
-
+				
 			}
 		}
-		
+
+		public abstract class Node : Node<BaseNodeState>
+		{
+		}
+
 		[System.Serializable]
-		public class EntryNode : Node
+		public class EntryNode : DecoratorNode
 		{
-			public Node firstNode;
+			//public Node firstNode;
 
-			public BehaviourContext _context;
-
-			private BaseUnit subject;
-
-			public EntryNode(BaseUnit subject, Node firstNode)
+			
+			public EntryNode(INode firstNode) : base(firstNode)
 			{
-				this.subject = subject;
-				this.firstNode = firstNode;
-
-				_context = new BehaviourContext();
-
-				_context[S_SUBJECT] = subject;
+				this.childNode = firstNode;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				throw new NotImplementedException();
 			}
 
 			private BehaviourStatus _prevStatus;
 
-			public void UpdateTree(float dt)
+			public void UpdateTree(float dt, BehaviorContext context)
 			{
-				_context.timeLeft = dt;
+				context.timeLeft = dt;
 
 				if (_prevStatus != BehaviourStatus.Running)
-					firstNode.Initialize();
+					childNode.Initialize(context);
 
-				var result = firstNode.UpdateTick(_context);
+				var result = childNode.UpdateTick(context);
 
 				if (result != BehaviourStatus.Running)
-					firstNode.Cleanup();
+					childNode.Cleanup(context);
 
 				_prevStatus = result;
 			}
 		}
 
-		public abstract class CompositeNode : Node
+		public abstract class CompositeNode<StateType> : Node<StateType>, ICompositeNode where StateType : BaseNodeState, new()
 		{
-			protected Node[] childNodes;
+			public INode[] childNodes;
 
-			protected CompositeNode(params Node[] childNodes)
+			protected CompositeNode(params INode[] childNodes)
 			{
 				this.childNodes = childNodes;
 			}
 
-			
+
+			public INode[] getChildNodes()
+			{
+				return childNodes;
+			}
 		}
 
-		public class SequenceCompositeNode : CompositeNode
+		public abstract class CompositeNode : CompositeNode<BaseNodeState>, ICompositeNode
 		{
-			public SequenceCompositeNode(params Node[] childNodes) : base(childNodes)
+			protected CompositeNode(INode[] childNodes) : base(childNodes)
 			{
 			}
+		}
 
+		public class SequenceCompositeNode : CompositeNode<IteratorNodeState>
+		{
+			public SequenceCompositeNode(params INode[] childNodes) : base(childNodes)
+			{
+			}
 
 			private int _currentNodeIndex;
 
-			public override void Initialize()
+			public override void Initialize(BehaviorContext context)
 			{
-				_currentNodeIndex = -1;
+				base.Initialize(context);
 
-			}
-
-			public override void Cleanup()
-			{
 				_currentNodeIndex = -1;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override void Cleanup(BehaviorContext context)
+			{
+				base.Cleanup(context);
+
+				_currentNodeIndex = -1;
+			}
+
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				if (_currentNodeIndex >= 0)
 				{
@@ -244,10 +304,10 @@ namespace Week04
 					switch (result)
 					{
 						case BehaviourStatus.Success:
-							childNodes[_currentNodeIndex].Cleanup();
+							childNodes[_currentNodeIndex].Cleanup(context);
 							break;
 						case BehaviourStatus.Failure:
-							childNodes[_currentNodeIndex].Cleanup();
+							childNodes[_currentNodeIndex].Cleanup(context);
 							return BehaviourStatus.Failure;
 						case BehaviourStatus.Running:
 							return BehaviourStatus.Running;
@@ -264,16 +324,16 @@ namespace Week04
 
 				for (int index = _currentNodeIndex; index < childNodes.Length; index++)
 				{
-					childNodes[index].Initialize();
+					childNodes[index].Initialize(context);
 					var result = childNodes[index].UpdateTick(context);
 
 					switch (result)
 					{
 						case BehaviourStatus.Success:
-							childNodes[index].Cleanup();
+							childNodes[index].Cleanup(context);
 							break;
 						case BehaviourStatus.Failure:
-							childNodes[index].Cleanup();
+							childNodes[index].Cleanup(context);
 							
 							return BehaviourStatus.Failure;
 						case BehaviourStatus.Running:
@@ -291,24 +351,27 @@ namespace Week04
 
 		public class SelectorCompositeNode : CompositeNode
 		{
-			public SelectorCompositeNode(params Node[] childNodes) : base(childNodes)
+			public SelectorCompositeNode(params INode[] childNodes) : base(childNodes)
 			{
 			}
 
 			private int _currentNodeIndex;
 
-			public override void Initialize()
+			public override void Initialize(BehaviorContext context)
 			{
-				_currentNodeIndex = -1;
+				base.Initialize(context);
 
-			}
-
-			public override void Cleanup()
-			{
 				_currentNodeIndex = -1;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override void Cleanup(BehaviorContext context)
+			{
+				base.Cleanup(context);
+
+				_currentNodeIndex = -1;
+			}
+
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 
 				if (_currentNodeIndex >= 0)
@@ -355,33 +418,40 @@ namespace Week04
 			}
 		}
 
-		public abstract class DecoratorNode : Node
+		public abstract class DecoratorNode : Node, IDecoratorNode
 		{
-			protected Node childNode;
+			public INode childNode;
 
-			protected DecoratorNode(Node childNode)
+			protected DecoratorNode(INode childNode)
 			{
 				this.childNode = childNode;
 			}
 
-			public override void Initialize()
+			public override void Initialize(BehaviorContext context)
 			{
-				childNode.Initialize();
+				base.Initialize(context);
+				childNode.Initialize(context);
 			}
 
-			public override void Cleanup()
+			public override void Cleanup(BehaviorContext context)
 			{
-				childNode.Cleanup();
+				base.Cleanup(context);
+				childNode.Cleanup(context);
+			}
+
+			public INode getChildNode()
+			{
+				return childNode;
 			}
 		}
 
 		public class InverterDecoratorNode : DecoratorNode
 		{
-			public InverterDecoratorNode(Node childNode) : base(childNode)
+			public InverterDecoratorNode(INode childNode) : base(childNode)
 			{
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var result = childNode.UpdateTick(context);
 
@@ -401,11 +471,11 @@ namespace Week04
 
 		public class SucceederDecoratorNode : DecoratorNode
 		{
-			public SucceederDecoratorNode(Node childNode) : base(childNode)
+			public SucceederDecoratorNode(INode childNode) : base(childNode)
 			{
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				childNode.UpdateTick(context);
 				return BehaviourStatus.Success;
@@ -414,11 +484,11 @@ namespace Week04
 
 		public class RepeatUntilFailDecoratorNode : DecoratorNode
 		{
-			public RepeatUntilFailDecoratorNode(Node childNode) : base(childNode)
+			public RepeatUntilFailDecoratorNode(INode childNode) : base(childNode)
 			{
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var result = childNode.UpdateTick(context);
 
@@ -430,7 +500,7 @@ namespace Week04
 			}
 		}
 
-		public abstract class LeafNode : Node
+		public abstract class LeafNode : Node, ILeafNode
 		{
 			protected LeafNode()
 			{
@@ -447,11 +517,16 @@ namespace Week04
 				this._messageToPrint = messageToPrint;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				Debug.Log(_messageToPrint);
 
 				return BehaviourStatus.Success;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+	//			GUI.
 			}
 		}
 		
@@ -464,7 +539,7 @@ namespace Week04
 				this._varToPrint = varToPrint;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var toPrint = context[_varToPrint];
 				if (toPrint == null)
@@ -493,7 +568,7 @@ namespace Week04
 				this._stackVar = stackVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
@@ -528,7 +603,7 @@ namespace Week04
 				this._stackVar = stackVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
@@ -559,7 +634,7 @@ namespace Week04
 				this._stackVar = stackVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
@@ -585,7 +660,7 @@ namespace Week04
 				this._stackVar = stackVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
@@ -609,7 +684,7 @@ namespace Week04
 				this._unitVar = unitVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var unit = context[_unitVar] as BaseUnit;
 
@@ -636,7 +711,7 @@ namespace Week04
 		{
 			public CanTargetUnit(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
@@ -655,7 +730,7 @@ namespace Week04
 		{
 			public ShouldTargetUnit(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
@@ -676,7 +751,7 @@ namespace Week04
 			{
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
@@ -715,7 +790,7 @@ namespace Week04
 		{
 			public CanHitUnit(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
@@ -754,7 +829,7 @@ namespace Week04
 				this._rangeVar = rangeVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				float range;
 				if (_range.HasValue)
@@ -796,16 +871,6 @@ namespace Week04
 				
 				return BehaviourStatus.Success;
 			}
-
-			public override void Cleanup()
-			{
-				base.Cleanup();
-			}
-
-			public override void Initialize()
-			{
-				base.Initialize();
-			}
 		}
 
 		public class IsNullNode : LeafNode
@@ -817,7 +882,7 @@ namespace Week04
 				this._variable = variable;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var variableToCheck = context[_variable];
 
@@ -837,7 +902,7 @@ namespace Week04
 				this._variable = variable;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				context[_variable] = null;
 				
@@ -868,7 +933,7 @@ namespace Week04
 			{
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviourContext context)
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var type = typeof (T);
 

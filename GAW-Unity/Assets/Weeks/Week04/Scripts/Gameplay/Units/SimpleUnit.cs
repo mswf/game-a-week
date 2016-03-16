@@ -9,12 +9,17 @@ using ContextIndex = System.String;
 
 namespace Week04
 {
+
 	[SelectionBase]
 	public class SimpleUnit : BaseUnit
 	{
+		public static EntryNode _DEBUGSTATIC_NODE;
+		public static BehaviorContext _DEBUGSTATIC_BEHAVIORCONTEXT;
+
+
 		protected override void InitBehaviourTree()
 		{
-			const string SUBJECT = Node.S_SUBJECT;
+			const string SUBJECT = "S_SUBJECT";
 			const string TARGET = "UNIT_TARGET";
 			const string TARGETS_STACK = "UNIT_TARGETS_STACK";
 
@@ -22,7 +27,10 @@ namespace Week04
 
 			const string RANGE_VAR = "F_RANGE";
 
-			behaviourTree = new EntryNode(this,
+			_behaviorContext = new BehaviorContext();
+			_behaviorContext[SUBJECT] = this;
+
+			behaviourTree = new EntryNode(
 				new SelectorCompositeNode(
 					// Get a target
 					new SelectorCompositeNode(
@@ -53,7 +61,7 @@ namespace Week04
 
 									new ShouldTargetUnit(SUBJECT, POTENTIAL_TARGET),
 
-									new PrintNode("1"),
+									//new PrintNode("1"),
 
 
 									new CanTargetUnit(SUBJECT, POTENTIAL_TARGET),
@@ -91,7 +99,10 @@ namespace Week04
 
 				));
 
-			behaviourTree._context[RANGE_VAR] = 5f;
+			_behaviorContext[RANGE_VAR] = 5f;
+
+			_DEBUGSTATIC_NODE = behaviourTree;
+			_DEBUGSTATIC_BEHAVIORCONTEXT = _behaviorContext;
 
 			var test = behaviourTree;
 		}
