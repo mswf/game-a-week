@@ -215,13 +215,82 @@ namespace Week04
 		public abstract class Node : Node<BaseNodeState>
 		{
 		}
+		
+		public abstract class CompositeNode<StateType> : Node<StateType>, ICompositeNode where StateType : BaseNodeState, new()
+		{
+			public INode[] childNodes;
 
-		[System.Serializable]
+			protected CompositeNode(params INode[] childNodes)
+			{
+				this.childNodes = childNodes;
+			}
+
+
+			public INode[] getChildNodes()
+			{
+				return childNodes;
+			}
+		}
+
+		public abstract class CompositeNode : CompositeNode<BaseNodeState>, ICompositeNode
+		{
+			protected CompositeNode(INode[] childNodes) : base(childNodes)
+			{
+			}
+		}
+
+		public abstract class DecoratorNode<StateType> : Node<StateType>, IDecoratorNode where StateType : BaseNodeState, new()
+		{
+			public INode childNode;
+
+			protected DecoratorNode(INode childNode)
+			{
+				this.childNode = childNode;
+			}
+
+			public override void Initialize(BehaviorContext context)
+			{
+				base.Initialize(context);
+				childNode.Initialize(context);
+			}
+
+			public override void Cleanup(BehaviorContext context)
+			{
+				base.Cleanup(context);
+				childNode.Cleanup(context);
+			}
+
+			public INode getChildNode()
+			{
+				return childNode;
+			}
+		}
+
+		public abstract class DecoratorNode : DecoratorNode<BaseNodeState>
+		{
+			public DecoratorNode(INode childNode) : base(childNode)
+			{
+			}
+		}
+
+		public abstract class LeafNode<StateType> : Node<StateType>, ILeafNode where StateType : BaseNodeState, new()
+		{
+			protected LeafNode()
+			{
+
+			}
+		}
+
+		public abstract class LeafNode : LeafNode<BaseNodeState>
+		{ 
+		}
+
+
 		public class EntryNode : DecoratorNode
 		{
 			//public Node firstNode;
 
-			
+
 			public EntryNode(INode firstNode) : base(firstNode)
 			{
 				this.childNode = firstNode;
@@ -250,28 +319,6 @@ namespace Week04
 			}
 		}
 
-		public abstract class CompositeNode<StateType> : Node<StateType>, ICompositeNode where StateType : BaseNodeState, new()
-		{
-			public INode[] childNodes;
-
-			protected CompositeNode(params INode[] childNodes)
-			{
-				this.childNodes = childNodes;
-			}
-
-
-			public INode[] getChildNodes()
-			{
-				return childNodes;
-			}
-		}
-
-		public abstract class CompositeNode : CompositeNode<BaseNodeState>, ICompositeNode
-		{
-			protected CompositeNode(INode[] childNodes) : base(childNodes)
-			{
-			}
-		}
 
 		public class SequenceCompositeNode : CompositeNode<IteratorNodeState>
 		{
@@ -418,33 +465,6 @@ namespace Week04
 			}
 		}
 
-		public abstract class DecoratorNode : Node, IDecoratorNode
-		{
-			public INode childNode;
-
-			protected DecoratorNode(INode childNode)
-			{
-				this.childNode = childNode;
-			}
-
-			public override void Initialize(BehaviorContext context)
-			{
-				base.Initialize(context);
-				childNode.Initialize(context);
-			}
-
-			public override void Cleanup(BehaviorContext context)
-			{
-				base.Cleanup(context);
-				childNode.Cleanup(context);
-			}
-
-			public INode getChildNode()
-			{
-				return childNode;
-			}
-		}
-
 		public class InverterDecoratorNode : DecoratorNode
 		{
 			public InverterDecoratorNode(INode childNode) : base(childNode)
@@ -496,14 +516,6 @@ namespace Week04
 					return BehaviourStatus.Success;
 
 				return BehaviourStatus.Running;
-				
-			}
-		}
-
-		public abstract class LeafNode : Node, ILeafNode
-		{
-			protected LeafNode()
-			{
 				
 			}
 		}
