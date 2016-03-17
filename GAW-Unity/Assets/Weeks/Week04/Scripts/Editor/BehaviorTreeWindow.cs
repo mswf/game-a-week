@@ -38,7 +38,7 @@ namespace Week04
 
 			_zoomLevel = Vector2.one;
 
-			_toolsWindowRect = new Rect(0, 0, 100f, 300f);
+			_toolsWindowRect = new Rect(0, 0, 130f, 240f);
 
 		}
 
@@ -137,8 +137,12 @@ namespace Week04
 			var windowRect = new Rect(0, 0, position.width, position.height );
 
 
-			_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect	);
-
+			var newScrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect	);
+			if (newScrollPosition.x != _scrollPosition.x || newScrollPosition.y != _scrollPosition.y)
+			{
+				_toolsWindowRect.position += newScrollPosition - _scrollPosition;
+			}
+			_scrollPosition = newScrollPosition;
 
 			BeginWindows();
 
@@ -153,16 +157,32 @@ namespace Week04
 			//			GUIUtility.ScaleAroundPivot(_zoomLevel / 1f, Vector2.zero);
 
 
+			_toolsWindowRect = GUI.Window(1, _toolsWindowRect, DrawToolsWindow, "Tools");
+
 
 			EndWindows();
 
 			GUI.EndScrollView();
 
-			
 
-			//_toolsWindowRect = GUI.Window(1, _toolsWindowRect, DrawToolsWindow, "Tools");
+			var textEditor = EditorGUIUtility.GetStateObject(typeof(TextEditor), EditorGUIUtility.keyboardControl) as TextEditor;
 
-			
+			if (textEditor != null)
+			{
+				if (focusedWindow == this)
+				{
+					if (Event.current.Equals(Event.KeyboardEvent("#x")))
+						textEditor.Cut();
+
+					if (Event.current.Equals(Event.KeyboardEvent("#c")))
+						textEditor.Copy();
+
+					if (Event.current.Equals(Event.KeyboardEvent("#v")))
+						textEditor.Paste();
+
+				}
+			}
+
 			/*
 			myString = EditorGUILayout.TextField("Text Field", myString);
 
@@ -177,7 +197,6 @@ namespace Week04
 
 		private void DrawToolsWindow(int id)
 		{
-
 			GUILayout.Label("Base Settings", EditorStyles.boldLabel);
 			if (GUILayout.Button("Reset uses"))
 			{
@@ -191,6 +210,9 @@ namespace Week04
 
 				}
 			}
+
+			GUI.DragWindow();
+
 		}
 
 		private Vector2 _scrollPosition;
@@ -422,11 +444,12 @@ namespace Week04
 
 			//GUI.DragWindow();
 
-			GUI.DragWindow();
 
 			//GUILayout.Label("Base Settings", EditorStyles.boldLabel);
 			GUI.color = Color.white;
 			_nodeToDraw.DrawGUI(id);
+
+			GUI.DragWindow();
 		}
 
 		private static void DrawNodeCurve(Rect start, Rect end)
