@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEditor;
-using Week04.BehaviourTree;
+using Week04.BehaviorTree;
 
 
 namespace Week04

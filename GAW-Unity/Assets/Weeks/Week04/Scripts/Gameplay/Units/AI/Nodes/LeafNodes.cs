@@ -1,38 +1,36 @@
 ﻿
-using System;
+//#define SAFE_MODE
+
 using UnityEngine;
-using UnityEngine.UI;
+
 using ContextIndex = System.String;
 using Stack_Object = System.Collections.Generic.Stack<System.Object>;
 
-
 namespace Week04
 {
-	namespace BehaviourTree
+	namespace BehaviorTree
 	{
 		public abstract class LeafNode<StateType> : Node<StateType>, ILeafNode where StateType : BaseNodeState, new()
-		{
-		}
+		{}
 
 		public abstract class LeafNode : LeafNode<BaseNodeState>
-		{
-		}
+		{}
 
 
 		public class PrintNode : LeafNode
 		{
-			private string _messageToPrint;
+			private readonly string _messageToPrint;
 
 			public PrintNode(string messageToPrint)
 			{
 				this._messageToPrint = messageToPrint;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				Debug.Log(_messageToPrint);
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -48,14 +46,14 @@ namespace Week04
 
 		public class PrintVarNode : LeafNode
 		{
-			private string _varToPrint;
+			private readonly ContextIndex _varToPrint;
 
-			public PrintVarNode(string varToPrint)
+			public PrintVarNode(ContextIndex varToPrint)
 			{
 				this._varToPrint = varToPrint;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var toPrint = context[_varToPrint];
 				if (toPrint == null)
@@ -63,7 +61,7 @@ namespace Week04
 				else
 					Debug.Log(toPrint.ToString());
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -82,14 +80,13 @@ namespace Week04
 			private readonly ContextIndex _stackVar;
 			private readonly ContextIndex _itemVar;
 
-
 			public PushToStack(ContextIndex stackVar, ContextIndex itemVar)
 			{
 				this._stackVar = stackVar;
 				this._itemVar = itemVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
@@ -99,16 +96,16 @@ namespace Week04
 					context[_stackVar] = stack;
 				}
 
-				var objectToPush = context[_itemVar] as System.Object;
+				var objectToPush = context[_itemVar];
 				if (objectToPush == null)
 				{
 					Debug.Log("Tried to push nonexistent var '" + _itemVar + "' to stack '" + _stackVar + "'");
-					return BehaviourStatus.Success;
+					return BehaviorStatus.Success;
 				}
 
 				stack.Push(objectToPush);
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -135,25 +132,24 @@ namespace Week04
 				this._itemVar = itemVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
 				if (stack == null || stack.Count == 0)
 				{
-					//	Debug.LogError("Not a stack! Variable: " + _stackVar.ToString());
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 				}
 
-				var objectToPop = stack.Pop() as System.Object;
+				var objectToPop = stack.Pop();
 				if (objectToPop == null)
 				{
 					Debug.Log("Tried to pop nonexistent var '" + _itemVar + "' to stack '" + _stackVar + "'");
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 				}
 
 				context[_itemVar] = objectToPop;
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -178,19 +174,17 @@ namespace Week04
 				this._stackVar = stackVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
 				if (stack == null)
-				{
-					return BehaviourStatus.Success;
-				}
+					return BehaviorStatus.Success;
 
 				if (stack.Count == 0)
-					return BehaviourStatus.Success;
-				else
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Success;
+				
+				return BehaviorStatus.Failure;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -206,7 +200,6 @@ namespace Week04
 
 		public class ClearStack : LeafNode
 		{
-
 			private readonly ContextIndex _stackVar;
 
 			public ClearStack(ContextIndex stackVar)
@@ -214,18 +207,16 @@ namespace Week04
 				this._stackVar = stackVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var stack = context[_stackVar] as Stack_Object;
 
 				if (stack == null)
-				{
-					return BehaviourStatus.Success;
-				}
+					return BehaviorStatus.Success;
 
 				stack.Clear();
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -249,14 +240,14 @@ namespace Week04
 				this._unitVar = unitVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var unit = context[_unitVar] as BaseUnit;
 
 				if (unit == null)
-					return BehaviourStatus.Failure;
-				else
-					return BehaviourStatus.Success;
+					return BehaviorStatus.Failure;
+
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -269,6 +260,7 @@ namespace Week04
 				GUILayout.Label("Subject:");
 				GUILayout.TextField(_unitVar.ToString());
 			}
+
 		}
 
 		public abstract class UnitToUnitInteraction : LeafNode
@@ -294,137 +286,131 @@ namespace Week04
 				GUILayout.Label("Target:");
 				GUILayout.TextField(_targetVar.ToString());
 			}
+
 		}
 
 		public class CanTargetUnit : UnitToUnitInteraction
 		{
 			public CanTargetUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar) { }
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
 
 				if (subjectUnit == null || targetUnit == null)
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 
 				if (subjectUnit.CanTarget(targetUnit))
-					return BehaviourStatus.Success;
-				else
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Success;
+
+				return BehaviorStatus.Failure;
 			}
+
 		}
 
 		public class ShouldTargetUnit : UnitToUnitInteraction
 		{
 			public ShouldTargetUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar) { }
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
 
 				if (subjectUnit == null || targetUnit == null)
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 
 				if (subjectUnit.ShouldTarget(targetUnit))
-					return BehaviourStatus.Success;
-				else
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Success;
+
+				return BehaviorStatus.Failure;
 			}
+
 		}
 
 		public class MoveToUnit : UnitToUnitInteraction
 		{
 			public MoveToUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar)
-			{
-			}
+			{}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
 
 				if (subjectUnit == null || targetUnit == null)
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 
 				var subjectPosition = subjectUnit.GetUnitPositionX();
 				var targetPosition = targetUnit.GetUnitPositionX();
 
 				var distanceToTarget = targetPosition - subjectPosition;
-
-				var maxTravelDistance = subjectUnit.movementSpeed * context.timeLeft;
-
 				var signedDistance = Mathf.Sign(distanceToTarget);
+				var maxTravelDistance = subjectUnit.movementSpeed * context.timeLeft;
 
 				if (distanceToTarget * signedDistance > maxTravelDistance)
 				{
 					subjectUnit.MoveUnitPosition(maxTravelDistance * signedDistance);
 					context.timeLeft = 0f;
-					return BehaviourStatus.Running;
-				}
-				else
-				{
-					var fraction = (distanceToTarget * signedDistance) / maxTravelDistance;
-
-					context.timeLeft -= context.timeLeft * fraction;
-					return BehaviourStatus.Success;
+					return BehaviorStatus.Running;
 				}
 
-
+				var fraction = (distanceToTarget * signedDistance) / maxTravelDistance;
+				context.timeLeft -= context.timeLeft * fraction;
+				return BehaviorStatus.Success;
 			}
+
 		}
 
 		public class AttackUnit : UnitToUnitInteraction
 		{
 			public AttackUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar)
-			{
-			}
+			{}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
 
 				if (subjectUnit == null || targetUnit == null)
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 
 				if (subjectUnit.IsReadyForAttack() == false)
-					return BehaviourStatus.Running;
+					return BehaviorStatus.Running;
 
 				DebugExtension.DebugArrow(subjectUnit.GetUnitPosition(), 
 						new Vector3(targetUnit.GetUnitPositionX() - subjectUnit.GetUnitPositionX(), 0f), Color.red, 1f, false);
 
 				subjectUnit.AttackUnit(targetUnit);
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 		}
 
 		public class MoveNode : LeafNode
 		{
-
-			private ContextIndex _subjectVar;
+			private readonly ContextIndex _subjectVar;
 
 			public MoveNode(ContextIndex subjectVar)
 			{
 				this._subjectVar = subjectVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 
 				if (subjectUnit == null)
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 
-				if (Math.Abs(context.timeLeft) < Mathf.Epsilon)
-					return BehaviourStatus.Failure;
+				if (Mathf.Abs(context.timeLeft) < Mathf.Epsilon)
+					return BehaviorStatus.Failure;
 
 				subjectUnit.MoveUnitPosition(subjectUnit.movementSpeed * context.timeLeft);
 				context.timeLeft = 0f;
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 		}
 
@@ -432,29 +418,30 @@ namespace Week04
 		{
 			public IsUnitInRange(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var subjectUnit = context[_subjectVar] as BaseUnit;
 				var targetUnit = context[_targetVar] as BaseUnit;
 
 				if (subjectUnit == null || targetUnit == null)
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 
 
 				if (subjectUnit.IsInRange(targetUnit))
-					return BehaviourStatus.Success;
-				else
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Success;
+
+				return BehaviorStatus.Failure;
 			}
+
 		}
 
 		public class FindTargets : LeafNode
 		{
-			private ContextIndex _subjectVar;
-			private ContextIndex _targetStack;
+			private readonly ContextIndex _subjectVar;
+			private readonly ContextIndex _targetStack;
 
-			private ContextIndex _rangeVar;
-			private float? _range;
+			private readonly ContextIndex _rangeVar;
+			private readonly float? _range;
 
 			public FindTargets(ContextIndex subjectVar, ContextIndex targetStack, float range)
 			{
@@ -471,15 +458,13 @@ namespace Week04
 				this._rangeVar = rangeVar;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				float range;
 				if (_range.HasValue)
 					range = _range.Value;
 				else
-				{
 					range = (context[_rangeVar] as float?).GetValueOrDefault(5f);
-				}
 
 				var unit = context[_subjectVar] as BaseUnit;
 
@@ -494,7 +479,7 @@ namespace Week04
 				var targets = unit.GetUnitsWithinCircularRange(range);
 
 				if (targets.Length == 0)
-					return BehaviourStatus.Failure;
+					return BehaviorStatus.Failure;
 
 				var stack = context[_targetStack] as Stack_Object;
 
@@ -511,7 +496,7 @@ namespace Week04
 					}
 				}
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 
@@ -536,21 +521,21 @@ namespace Week04
 
 		public class IsNullNode : LeafNode
 		{
-			private string _variable;
+			private readonly ContextIndex _variable;
 
 			public IsNullNode(ContextIndex variable)
 			{
 				this._variable = variable;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var variableToCheck = context[_variable];
 
 				if (variableToCheck == null)
-					return BehaviourStatus.Success;
+					return BehaviorStatus.Success;
 
-				return BehaviourStatus.Failure;
+				return BehaviorStatus.Failure;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -562,22 +547,23 @@ namespace Week04
 			{
 				GUILayout.TextField(_variable.ToString());
 			}
+
 		}
 
 		public class SetToNullNode : LeafNode
 		{
-			private string _variable;
+			private readonly ContextIndex _variable;
 
 			public SetToNullNode(ContextIndex variable)
 			{
 				this._variable = variable;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				context[_variable] = null;
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -589,6 +575,7 @@ namespace Week04
 			{
 				GUILayout.TextField(_variable.ToString());
 			}
+
 		}
 
 		public abstract class MathNode<T> : LeafNode
@@ -598,8 +585,8 @@ namespace Week04
 			protected static readonly System.Type FloatType = typeof(ContextIndex);
 			protected static readonly System.Type DoubleType = typeof(ContextIndex);
 
-			protected ContextIndex _targetVar;
-			protected T _paramVar;
+			protected readonly ContextIndex _targetVar;
+			protected readonly T _paramVar;
 
 			public MathNode(ContextIndex targetVar, T paramVar)
 			{
@@ -611,10 +598,9 @@ namespace Week04
 		public class SetVarTo<T> : MathNode<T>
 		{
 			public SetVarTo(ContextIndex targetVar, T paramVar) : base(targetVar, paramVar)
-			{
-			}
+			{}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var type = typeof(T);
 
@@ -627,7 +613,7 @@ namespace Week04
 					context[_targetVar] = _paramVar;
 				}
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 
 			public override float GetGUIPropertyHeight()
@@ -643,6 +629,7 @@ namespace Week04
 				GUILayout.Label("Param:");
 				GUILayout.TextField(_paramVar.ToString());
 			}
+
 		}
 	}
 

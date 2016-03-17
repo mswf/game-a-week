@@ -3,7 +3,7 @@ using System;
 
 namespace Week04
 {
-	namespace BehaviourTree
+	namespace BehaviorTree
 	{
 		public abstract class DecoratorNode<StateType> : Node<StateType>, IDecoratorNode where StateType : BaseNodeState, new()
 		{
@@ -35,116 +35,111 @@ namespace Week04
 		public abstract class DecoratorNode : DecoratorNode<BaseNodeState>
 		{
 			protected DecoratorNode(INode childNode) : base(childNode)
-			{
-			}
+			{}
 		}
 
 		public class EntryNode : DecoratorNode
 		{
-			//public Node firstNode;
-
+			// TODO: Store this state in the context
+			private BehaviorStatus _prevStatus;
 
 			public EntryNode(INode firstNode) : base(firstNode)
 			{
 				this.childNode = firstNode;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				throw new NotImplementedException();
 			}
-
-			private BehaviourStatus _prevStatus;
 
 			public void UpdateTree(float dt, BehaviorContext context)
 			{
 				context.timeLeft = dt;
 
-				if (_prevStatus != BehaviourStatus.Running)
+				if (_prevStatus != BehaviorStatus.Running)
 					childNode.Initialize(context);
 
 				var result = childNode.Update(context);
 
-				if (result != BehaviourStatus.Running)
+				if (result != BehaviorStatus.Running)
 					childNode.Cleanup(context);
 
 				_prevStatus = result;
 			}
+
 		}
 
 		public class InverterDecoratorNode : DecoratorNode
 		{
 			public InverterDecoratorNode(INode childNode) : base(childNode)
-			{
-			}
+			{}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var result = childNode.Update(context);
 
 				switch (result)
 				{
-					case BehaviourStatus.Success:
-						return BehaviourStatus.Failure;
-					case BehaviourStatus.Failure:
-						return BehaviourStatus.Success;
-					case BehaviourStatus.Running:
-						return BehaviourStatus.Running;
+					case BehaviorStatus.Success:
+						return BehaviorStatus.Failure;
+					case BehaviorStatus.Failure:
+						return BehaviorStatus.Success;
+					case BehaviorStatus.Running:
+						return BehaviorStatus.Running;
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
 			}
+
 		}
 
 		public class SucceederDecoratorNode : DecoratorNode
 		{
 			public SucceederDecoratorNode(INode childNode) : base(childNode)
-			{
-			}
+			{}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				childNode.Update(context);
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
+
 		}
 
 		public class FailerDecoratorNode : DecoratorNode
 		{
 			public FailerDecoratorNode(INode childNode) : base(childNode)
-			{
-			}
+			{}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				childNode.Update(context);
-				return BehaviourStatus.Failure;
+				return BehaviorStatus.Failure;
 			}
+
 		}
 
 		public class RepeatUntilFailDecoratorNode : DecoratorNode
 		{
 			public RepeatUntilFailDecoratorNode(INode childNode) : base(childNode)
-			{
-			}
+			{}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
-				var result = BehaviourStatus.Running;
+				var result = BehaviorStatus.Running;
 
-				while (result != BehaviourStatus.Failure)
+				while (result != BehaviorStatus.Failure)
 				{
-					if (result == BehaviourStatus.Success)
+					if (result == BehaviorStatus.Success)
 						childNode.Cleanup(context);
 
 					result = childNode.Update(context);
 				}
 
-				return BehaviourStatus.Success;
-
-				//return BehaviourStatus.Running;
-
+				return BehaviorStatus.Success;
 			}
+
 		}
 	}
 }

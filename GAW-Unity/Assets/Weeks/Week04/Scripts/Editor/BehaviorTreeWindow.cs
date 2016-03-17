@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using Week04.BehaviourTree;
+using Week04.BehaviorTree;
 
 
 namespace Week04
@@ -83,45 +83,50 @@ namespace Week04
 				switch (e.type)
 				{
 					case EventType.keyDown:
+					{
+						var keyCode = e.keyCode;
+
+						switch (keyCode)
 						{
-							if (Event.current.keyCode == (KeyCode.D))
-							{
-								_scrollPosition.x += moveSpeed * dt;
-							}
-							if (Event.current.keyCode == (KeyCode.A))
-							{
+							case KeyCode.A:
+							case KeyCode.LeftArrow:
 								_scrollPosition.x -= moveSpeed * dt;
-							}
-
-							if (Event.current.keyCode == (KeyCode.W))
-							{
+								break;
+							case KeyCode.D:
+							case KeyCode.RightArrow:
+								_scrollPosition.x += moveSpeed * dt;
+								break;
+							case KeyCode.W:
+							case KeyCode.UpArrow:
 								_scrollPosition.y -= moveSpeed * dt;
-							}
-							if (Event.current.keyCode == (KeyCode.S))
-							{
+								break;
+							case KeyCode.S:
+							case KeyCode.DownArrow:
 								_scrollPosition.y += moveSpeed * dt;
-							}
+								break;
 
-
-							if (Event.current.keyCode == KeyCode.Q)
-							{
-								_zoomLevel *= 0.66f;
-							}
-
-							if (Event.current.keyCode == KeyCode.E)
-							{
-								_zoomLevel *= 1.5f;
-							}
-
-							if (Event.current.keyCode == KeyCode.R)
-							{
-								_zoomLevel = Vector2.one;
-							}
-							break;
+							default:
+								break;
 						}
+
+						if (keyCode == KeyCode.Q)
+						{
+							_zoomLevel *= 0.66f;
+						}
+
+						if (keyCode == KeyCode.E)
+						{
+							_zoomLevel *= 1.5f;
+						}
+
+						if (keyCode == KeyCode.R)
+						{
+							_zoomLevel = Vector2.one;
+						}
+						break;
+					}
 				}
 			}
-
 
 
 			if (_rootNode == null)
@@ -137,14 +142,13 @@ namespace Week04
 			}
 
 
-
 			//var windowRect = new Rect(0,0, position.width * (1f/_zoomLevel.x), position.height * (1f / _zoomLevel.x));
-			var windowRect = new Rect(0, 0, position.width, position.height );
+			var windowRect = new Rect(0, 0, position.width, position.height);
 
 
-			_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect	);
-	
-			
+			_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect);
+
+
 			BeginWindows();
 
 			//GUIUtility.ScaleAroundPivot(_zoomLevel, Vector2.zero);
@@ -160,9 +164,9 @@ namespace Week04
 
 			if (previousScrollPosition.x != _scrollPosition.x || previousScrollPosition.y != _scrollPosition.y)
 			{
-				_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);;
+				_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);
+				;
 				_toolsWindowRect.position += _scrollPosition - previousScrollPosition;
-
 			}
 
 			_contextDrawer.OnDrawWindow(ref idToUse);
@@ -175,7 +179,7 @@ namespace Week04
 			GUI.EndScrollView();
 
 
-			var textEditor = EditorGUIUtility.GetStateObject(typeof(TextEditor), EditorGUIUtility.keyboardControl) as TextEditor;
+			var textEditor = EditorGUIUtility.GetStateObject(typeof (TextEditor), EditorGUIUtility.keyboardControl) as TextEditor;
 
 			if (textEditor != null)
 			{
@@ -189,7 +193,6 @@ namespace Week04
 
 					if (Event.current.Equals(Event.KeyboardEvent("#v")))
 						textEditor.Paste();
-
 				}
 			}
 
@@ -232,14 +235,12 @@ namespace Week04
 						baseNodeState.timesFailure = 0;
 						baseNodeState.timesRunning = 0;
 						baseNodeState.timesSuccess = 0;
-
 					}
 				}
 			}
 
 
 			GUI.DragWindow();
-
 		}
 
 		private Vector2 _scrollPosition;
@@ -249,7 +250,10 @@ namespace Week04
 	{
 		protected Rect _windowRect;
 
-		private BehaviorNodeDrawer() { }
+		private BehaviorNodeDrawer()
+		{
+		}
+
 		private INode _nodeToDraw;
 
 		private BehaviorNodeDrawer[] _childrenNodes;
@@ -260,7 +264,7 @@ namespace Week04
 		public const float INITIAL_HORIZONTAL_SPACING = 20f;
 
 		public const float SIBLING_VERTICAL_SPACING = 1f;
-		
+
 		public const float VERTICAL_SPACING = 8f;
 
 
@@ -289,7 +293,6 @@ namespace Week04
 			var decoratorNode = nodeToDraw as DecoratorNode;
 			if (decoratorNode != null)
 			{
-
 				type = VisualNodeType.DecoratorNode;
 
 				_childrenNodes = new BehaviorNodeDrawer[1]
@@ -309,9 +312,7 @@ namespace Week04
 
 				for (int i = 0; i < compositeChilds.Length; i++)
 				{
-					_childrenNodes[i] = new BehaviorNodeDrawer(compositeChilds[i], 
-															_windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH,
-															_windowRect.y);
+					_childrenNodes[i] = new BehaviorNodeDrawer(compositeChilds[i], _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y);
 				}
 			}
 
@@ -328,9 +329,6 @@ namespace Week04
 			}
 
 			_windowTitle = _nodeToDraw.GetType().Name.Replace("Node", "").Replace("Decorator", "").Replace("Composite", "");
-
-
-
 		}
 
 		public float GetCombinedHeight()
@@ -368,7 +366,6 @@ namespace Week04
 			{
 				_childrenNodes[i].MoveVertical(yPos);
 			}
-
 		}
 
 		public void OnDrawWindow(ref int id)
@@ -382,13 +379,13 @@ namespace Week04
 
 			//_windowRect = GUI.Window(id, _windowRect, DrawNode, _nodeToDraw.ToString());
 
-		//	var style =
+			//	var style =
 
-	//		_nodeToDraw.GetType().Name
-	
-			
-			 //_windowRect = 
-			 GUI.Window(id, _windowRect, DrawNode, _windowTitle);
+			//		_nodeToDraw.GetType().Name
+
+
+			//_windowRect = 
+			GUI.Window(id, _windowRect, DrawNode, _windowTitle);
 
 
 			id++;
@@ -396,10 +393,10 @@ namespace Week04
 
 		private static readonly Color LeafNodeColor_Title = new Color(97f/255f, 151f/255f, 247f/255f, 0.5f);
 
-		private static readonly Color DecoratorNodeColor_Title = new Color(247f / 255f, 162f / 255f, 151f / 255f, 0.5f);
-		private static readonly Color CompositeNodeColor_Title = new Color(188f / 255f, 247f / 255f, 151f / 255f, 0.5f);
+		private static readonly Color DecoratorNodeColor_Title = new Color(247f/255f, 162f/255f, 151f/255f, 0.5f);
+		private static readonly Color CompositeNodeColor_Title = new Color(188f/255f, 247f/255f, 151f/255f, 0.5f);
 
-		private static readonly  Color WhiteTransparentColor = new Color(1,1,1,0);
+		private static readonly Color WhiteTransparentColor = new Color(1, 1, 1, 0);
 
 		private void DrawNode(int id)
 		{
@@ -432,13 +429,13 @@ namespace Week04
 
 				switch (previousState)
 				{
-					case BehaviourStatus.Success:
+					case BehaviorStatus.Success:
 						GUI.color = Color.Lerp(Color.green, WhiteTransparentColor, timeSinceChange);
 						break;
-					case BehaviourStatus.Failure:
+					case BehaviorStatus.Failure:
 						GUI.color = Color.Lerp(Color.red, WhiteTransparentColor, timeSinceChange);
 						break;
-					case BehaviourStatus.Running:
+					case BehaviorStatus.Running:
 						GUI.color = Color.Lerp(Color.yellow, WhiteTransparentColor, timeSinceChange);
 						break;
 					default:
@@ -454,9 +451,6 @@ namespace Week04
 				smallStyle.fontSize = 8;
 
 				GUILayout.Label("S: " + state.timesSuccess + " F: " + state.timesFailure + " R: " + state.timesRunning, smallStyle);
-
-
-
 			}
 			else
 			{
@@ -503,7 +497,7 @@ namespace Week04
 
 		public BehaviorContextDrawer()
 		{
-			_windowRect = new Rect(200f,200f, 400f, 600f);
+			_windowRect = new Rect(200f, 200f, 400f, 600f);
 		}
 
 		public void OnDrawWindow(ref int id)
@@ -511,7 +505,6 @@ namespace Week04
 			_windowRect = GUI.Window(id, _windowRect, DrawContext, "Behavior Context");
 
 			id++;
-
 		}
 
 		private bool _isMemoryExpanded = true;
@@ -532,7 +525,7 @@ namespace Week04
 			if (_isMemoryExpanded)
 			{
 				EditorGUI.indentLevel = 1;
-				
+
 				var memory = behaviorContext.memory;
 
 				foreach (KeyValuePair<string, object> keyValuePair in memory)
@@ -541,7 +534,6 @@ namespace Week04
 						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), keyValuePair.Value.ToString());
 					else
 						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), "null");
-
 				}
 			}
 			EditorGUI.indentLevel = 0;
@@ -552,7 +544,7 @@ namespace Week04
 			if (_isStateExpanded)
 			{
 				EditorGUI.indentLevel = 1;
-				
+
 				var state = behaviorContext.state;
 
 				foreach (KeyValuePair<object, BaseNodeState> keyValuePair in state)
@@ -561,9 +553,7 @@ namespace Week04
 						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), keyValuePair.Value.ToString());
 					else
 						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), "null");
-
 				}
-
 			}
 
 			GUI.enabled = true;

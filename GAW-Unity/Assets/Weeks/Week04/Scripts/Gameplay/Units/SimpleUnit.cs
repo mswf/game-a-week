@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
-using Week04.BehaviourTree;
+using Week04.BehaviorTree;
 
 using ContextIndex = System.String;
 

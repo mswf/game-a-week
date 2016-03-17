@@ -1,14 +1,12 @@
-﻿using UnityEngine;
-using System.Collections;
-
+﻿
 namespace Week04
 {
-	namespace BehaviourTree
+	namespace BehaviorTree
 	{
 	
 		public class BaseNodeState
 		{
-			public BehaviourStatus previousStatus;
+			public BehaviorStatus previousStatus;
 			public float timeSinceStatusChange;
 
 			public int timesCalled;

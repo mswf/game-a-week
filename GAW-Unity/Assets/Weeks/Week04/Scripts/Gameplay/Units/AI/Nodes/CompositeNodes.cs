@@ -1,10 +1,9 @@
-﻿using System;
-using UnityEngine;
-using System.Collections.Generic;
+﻿
+using System;
 
 namespace Week04
 {
-	namespace BehaviourTree
+	namespace BehaviorTree
 	{
 		public abstract class CompositeNode<StateType> : Node<StateType>, ICompositeNode where StateType : BaseNodeState, new()
 		{
@@ -21,18 +20,16 @@ namespace Week04
 			}
 		}
 
-		public abstract class CompositeNode : CompositeNode<BaseNodeState>, ICompositeNode
+		public abstract class CompositeNode : CompositeNode<BaseNodeState>
 		{
-			protected CompositeNode(INode[] childNodes) : base(childNodes)
-			{
-			}
+			protected CompositeNode(INode[] childNodes) : base(childNodes) 
+			{}
 		}
 
 		public class SequenceCompositeNode : CompositeNode<IteratorNodeState>
 		{
 			public SequenceCompositeNode(params INode[] childNodes) : base(childNodes)
-			{
-			}
+			{}
 
 			public override void Initialize(BehaviorContext context)
 			{
@@ -50,69 +47,64 @@ namespace Week04
 				state.currentIndex = -1;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var state = context.GetState<IteratorNodeState>(this);
 				
 				if (state.currentIndex >= 0)
 				{
 					var result = childNodes[state.currentIndex].Update(context);
-
 					switch (result)
 					{
-						case BehaviourStatus.Success:
+						case BehaviorStatus.Success:
 							childNodes[state.currentIndex].Cleanup(context);
 							state.currentIndex++;
 							break;
-						case BehaviourStatus.Failure:
+						case BehaviorStatus.Failure:
 							childNodes[state.currentIndex].Cleanup(context);
-							return BehaviourStatus.Failure;
-						case BehaviourStatus.Running:
-	
-							return BehaviourStatus.Running;
+							return BehaviorStatus.Failure;
+						case BehaviorStatus.Running:
+							return BehaviorStatus.Running;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
-
 				}
 				else
 				{
 					state.currentIndex = 0;
 				}
 
-
 				for (int index = state.currentIndex; index < childNodes.Length; index++)
 				{
 					childNodes[index].Initialize(context);
-					var result = childNodes[index].Update(context);
 
+					var result = childNodes[index].Update(context);
 					switch (result)
 					{
-						case BehaviourStatus.Success:
+						case BehaviorStatus.Success:
 							childNodes[index].Cleanup(context);
 							break;
-						case BehaviourStatus.Failure:
+						case BehaviorStatus.Failure:
 							childNodes[index].Cleanup(context);
 
-							return BehaviourStatus.Failure;
-						case BehaviourStatus.Running:
+							return BehaviorStatus.Failure;
+						case BehaviorStatus.Running:
 							state.currentIndex = index;
 
-							return BehaviourStatus.Running;
+							return BehaviorStatus.Running;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
 				}
 
-				return BehaviourStatus.Success;
+				return BehaviorStatus.Success;
 			}
 		}
 
 		public class SelectorCompositeNode : CompositeNode<IteratorNodeState>
 		{
 			public SelectorCompositeNode(params INode[] childNodes) : base(childNodes)
-			{
-			}
+			{}
 
 			public override void Initialize(BehaviorContext context)
 			{
@@ -130,30 +122,27 @@ namespace Week04
 				state.currentIndex = -1;
 			}
 
-			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
 			{
 				var state = context.GetState<IteratorNodeState>(this);
 
 				if (state.currentIndex >= 0)
 				{
 					var result = childNodes[state.currentIndex].Update(context);
-
 					switch (result)
 					{
-						case BehaviourStatus.Success:
+						case BehaviorStatus.Success:
 							childNodes[state.currentIndex].Cleanup(context);
-							return BehaviourStatus.Success;
-						case BehaviourStatus.Failure:
+							return BehaviorStatus.Success;
+						case BehaviorStatus.Failure:
 							childNodes[state.currentIndex].Cleanup(context);
 							state.currentIndex++;
-
 							break;
-						case BehaviourStatus.Running:
-							return BehaviourStatus.Running;
+						case BehaviorStatus.Running:
+							return BehaviorStatus.Running;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
-
 				}
 				else
 				{
@@ -163,32 +152,27 @@ namespace Week04
 				for (int index = state.currentIndex; index < childNodes.Length; index++)
 				{
 					childNodes[index].Initialize(context);
-					var result = childNodes[index].Update(context);
 
+					var result = childNodes[index].Update(context);
 					switch (result)
 					{
-						case BehaviourStatus.Success:
+						case BehaviorStatus.Success:
 							childNodes[index].Cleanup(context);
-
-							return BehaviourStatus.Success;
-						case BehaviourStatus.Failure:
+							return BehaviorStatus.Success;
+						case BehaviorStatus.Failure:
 							childNodes[index].Cleanup(context);
-
 							break;
-						case BehaviourStatus.Running:
+						case BehaviorStatus.Running:
 							state.currentIndex = index;
-
-							return BehaviourStatus.Running;
+							return BehaviorStatus.Running;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
 				}
-
-				return BehaviourStatus.Failure;
+				return BehaviorStatus.Failure;
 			}
 		}
 
+
 	}
-
-
 }

@@ -1,22 +1,25 @@
 ﻿
-#define SAFE_MODE
+//#define SAFE_MODE
 
 //#define DEBUG_MEMORY
+
+#define ALLOW_EDITOR
 
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+
 using Object = System.Object;
 using ContextIndex = System.String;
 
 namespace Week04
 {
 
-	namespace BehaviourTree
+	namespace BehaviorTree
 	{
 		//http://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
 
-		public enum BehaviourStatus
+		public enum BehaviorStatus
 		{
 			Success,
 			Failure,
@@ -146,36 +149,29 @@ namespace Week04
 			{
 				if (state.ContainsKey(stateKey))
 					return (T) state[stateKey];
-				else
-				{
-					var newState = new T();
-					state[stateKey] = newState;
 
-					return newState;
-				}
+				var newState = new T();
+				state[stateKey] = newState;
+
+				return newState;
 			}
 			public T TryGetState<T>(Object stateKey) where T : BaseNodeState
 			{
 				if (state.ContainsKey(stateKey))
 					return (T)state[stateKey];
-				else
-				{
-					return null;
-				}
+				return null;
 			}
 		}
 
 		public interface INode
 		{
-			BehaviourStatus Update(BehaviorContext context);
-
+			BehaviorStatus Update(BehaviorContext context);
 
 			void Initialize(BehaviorContext context);
 			void Cleanup(BehaviorContext context);
 
 			void DrawGUI(int windowID);
 			float GetGUIPropertyHeight();
-
 		}
 
 		public interface ICompositeNode
@@ -195,8 +191,11 @@ namespace Week04
 
 		public abstract class Node<StateType> : INode where StateType : BaseNodeState, new()
 		{
-			public virtual BehaviourStatus Update(BehaviorContext context)
+			public virtual BehaviorStatus Update(BehaviorContext context)
 			{
+				//return UpdateTick(context);
+
+				///*
 				var result = UpdateTick(context);
 
 				var nodeState = context.GetState<StateType>(this);
@@ -206,14 +205,14 @@ namespace Week04
 
 				switch (result)
 				{
-					case BehaviourStatus.Success:
+					case BehaviorStatus.Success:
 						nodeState.timesSuccess++;
 						break;
-					case BehaviourStatus.Failure:
+					case BehaviorStatus.Failure:
 						nodeState.timesFailure++;
 
 						break;
-					case BehaviourStatus.Running:
+					case BehaviorStatus.Running:
 						nodeState.timesRunning++;
 
 						break;
@@ -222,33 +221,32 @@ namespace Week04
 				}
 
 				return result;
+				//*/
 			}
 
-			public abstract BehaviourStatus UpdateTick(BehaviorContext context);
-
+			public abstract BehaviorStatus UpdateTick(BehaviorContext context);
 
 			public virtual void Initialize(BehaviorContext context)
 			{
+#if ALLOW_EDITOR
 				var nodeState = context.GetState<StateType>(this);
 				nodeState.timeSinceStatusChange = Time.time;
-
-				//	Debug.Log("Initializing: " + this.ToString());
+#endif
 			}
 
 			public virtual void Cleanup(BehaviorContext context)
 			{
+#if ALLOW_EDITOR
 				var nodeState = context.GetState<StateType>(this);
 				nodeState.timeSinceStatusChange = Time.time;
-				//	Debug.Log("Cleanup: " + this.ToString());
+#endif
 			}
 
-			public virtual void DrawGUI(int windowID)
-			{
-			}
+			public virtual void DrawGUI(int windowID) {}
 
 			protected const float DefaultPropertyHeight = 18f;
 			
-			protected static readonly GUILayoutOption[] GuiLayoutOptions = new GUILayoutOption[1]
+			protected static readonly GUILayoutOption[] GUILayoutOptions = new GUILayoutOption[1]
 			{
 				GUILayout.Height(DefaultPropertyHeight)
 			};
