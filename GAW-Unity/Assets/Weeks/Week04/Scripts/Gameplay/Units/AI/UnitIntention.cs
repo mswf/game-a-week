@@ -155,6 +155,7 @@ namespace Week04
 
 				return newState;
 			}
+
 			public T TryGetState<T>(Object stateKey) where T : BaseNodeState
 			{
 				if (state.ContainsKey(stateKey))

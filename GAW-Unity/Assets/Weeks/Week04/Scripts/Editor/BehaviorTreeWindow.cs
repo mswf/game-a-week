@@ -15,12 +15,6 @@ namespace Week04
 		{
 			EditorWindow.GetWindow<BehaviorTreeWindow>();
 		}
-		/*
-		private string myString = "Hello World";
-		private bool groupEnabled;
-		private bool myBool = true;
-		private float myFloat = 1.23f;
-		*/
 
 		private BehaviorNodeDrawer _rootNode;
 		private Rect _scrollViewRect;
@@ -68,13 +62,12 @@ namespace Week04
 	//		var currentSelection = Selection.instanceIDs;
 		}
 
-
 		protected void OnGUI()
 		{
+			const float moveSpeed = 2000f;
 
 			var previousScrollPosition = _scrollPosition;
 
-			const float moveSpeed = 2000f;
 			float dt = Time.deltaTime;
 
 			Event e = Event.current;
@@ -141,31 +134,23 @@ namespace Week04
 				}
 			}
 
-
-			//var windowRect = new Rect(0,0, position.width * (1f/_zoomLevel.x), position.height * (1f / _zoomLevel.x));
 			var windowRect = new Rect(0, 0, position.width, position.height);
 
 
 			_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect);
 
-
 			BeginWindows();
 
 			//GUIUtility.ScaleAroundPivot(_zoomLevel, Vector2.zero);
-
 
 			int idToUse = 1;
 
 			if (_rootNode != null)
 				_rootNode.OnDrawWindow(ref idToUse);
 
-			//			GUIUtility.ScaleAroundPivot(_zoomLevel / 1f, Vector2.zero);
-
-
 			if (previousScrollPosition.x != _scrollPosition.x || previousScrollPosition.y != _scrollPosition.y)
 			{
 				_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);
-				;
 				_toolsWindowRect.position += _scrollPosition - previousScrollPosition;
 			}
 
@@ -195,17 +180,6 @@ namespace Week04
 						textEditor.Paste();
 				}
 			}
-
-			/*
-			myString = EditorGUILayout.TextField("Text Field", myString);
-
-			groupEnabled = EditorGUILayout.BeginToggleGroup("Optional Settings", groupEnabled);
-				myBool = EditorGUILayout.Toggle("Toggle", myBool);
-				myFloat = EditorGUILayout.Slider("Slider", myFloat, -3f, 3f);
-		
-			EditorGUILayout.EndToggleGroup();
-				
-			*/
 		}
 
 		private void DrawToolsWindow(int id)
@@ -239,7 +213,6 @@ namespace Week04
 				}
 			}
 
-
 			GUI.DragWindow();
 		}
 
@@ -248,11 +221,14 @@ namespace Week04
 
 	public class BehaviorNodeDrawer
 	{
-		protected Rect _windowRect;
-
-		private BehaviorNodeDrawer()
+		public enum VisualNodeType
 		{
+			LeafNode = 0,
+			DecoratorNode = 1,
+			CompositeNode = 2
 		}
+
+		protected Rect _windowRect;
 
 		private INode _nodeToDraw;
 
@@ -262,21 +238,14 @@ namespace Week04
 		public const float MIN_HEIGHT = 42f;
 
 		public const float INITIAL_HORIZONTAL_SPACING = 20f;
-
 		public const float SIBLING_VERTICAL_SPACING = 1f;
-
 		public const float VERTICAL_SPACING = 8f;
-
-
-		public enum VisualNodeType
-		{
-			LeafNode = 0,
-			DecoratorNode = 1,
-			CompositeNode = 2
-		}
 
 		public VisualNodeType type;
 		private string _windowTitle;
+
+		private BehaviorNodeDrawer()
+		{}
 
 		public BehaviorNodeDrawer(INode nodeToDraw, float xPos, float yPos)
 		{
@@ -319,8 +288,6 @@ namespace Week04
 
 			var aggregatedHeight = 0f;
 
-			//_windowRect.y += GetCombinedHeight();
-
 			for (int i = 0; i < _childrenNodes.Length; i++)
 			{
 				_childrenNodes[i].MoveVertical(aggregatedHeight);
@@ -333,7 +300,7 @@ namespace Week04
 
 		public float GetCombinedHeight()
 		{
-			float combinedHeight = 0f;
+			var combinedHeight = 0f;
 
 			for (int i = 0; i < _childrenNodes.Length; i++)
 			{
@@ -347,8 +314,6 @@ namespace Week04
 				combinedHeight = _windowRect.height;
 
 			combinedHeight += VERTICAL_SPACING;
-			//combinedHeight += VERTICAL_SPACING;
-
 
 			return combinedHeight;
 		}
@@ -376,17 +341,7 @@ namespace Week04
 				_childrenNodes[i].OnDrawWindow(ref id);
 			}
 
-
-			//_windowRect = GUI.Window(id, _windowRect, DrawNode, _nodeToDraw.ToString());
-
-			//	var style =
-
-			//		_nodeToDraw.GetType().Name
-
-
-			//_windowRect = 
 			GUI.Window(id, _windowRect, DrawNode, _windowTitle);
-
 
 			id++;
 		}
@@ -443,10 +398,8 @@ namespace Week04
 				}
 				GUI.DrawTexture(new Rect(0, 16f, _windowRect.width, _windowRect.height - 16f), EditorGUIUtility.whiteTexture);
 
-				//GUILayout.Label(timeSinceChange.ToString(), EditorStyles.boldLabel);
 				GUI.color = Color.black;
-				//	GUILayout.Label(state.timesCalled.ToString(), EditorStyles.boldLabel);
-
+				
 				var smallStyle = EditorStyles.miniLabel;
 				smallStyle.fontSize = 8;
 
@@ -461,12 +414,6 @@ namespace Week04
 			}
 
 
-			//GUI.color = Color.black;
-
-			//GUI.DragWindow();
-
-
-			//GUILayout.Label("Base Settings", EditorStyles.boldLabel);
 			GUI.color = Color.white;
 			_nodeToDraw.DrawGUI(id);
 
@@ -487,6 +434,7 @@ namespace Week04
 
 			Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.black, EditorGUIUtility.whiteTexture, 1f);
 		}
+
 	}
 
 	public class BehaviorContextDrawer
@@ -509,7 +457,6 @@ namespace Week04
 
 		private bool _isMemoryExpanded = true;
 		private bool _isStateExpanded = false;
-
 
 		private void DrawContext(int id)
 		{
@@ -565,60 +512,6 @@ namespace Week04
 		{
 			_windowRect.position += positionDelta;
 		}
+
 	}
 }
-
-/*
-
-using UnityEngine;
-using UnityEditor;
- 
-public class NodeEditor : EditorWindow
-{
-
-	Rect window1;
-	Rect window2;
-
-	[MenuItem("Window/Node editor")]
-	static void ShowEditor()
-	{
-		NodeEditor editor = EditorWindow.GetWindow<NodeEditor>();
-		editor.Init();
-	}
-
-	public void Init()
-	{
-		window1 = new Rect(10, 10, 100, 100);
-		window2 = new Rect(210, 210, 100, 100);
-	}
-
-	void OnGUI()
-	{
-		DrawNodeCurve(window1, window2); // Here the curve is drawn under the windows
-
-		BeginWindows();
-		window1 = GUI.Window(1, window1, DrawNodeWindow, "Window 1");   // Updates the Rect's when these are dragged
-		window2 = GUI.Window(2, window2, DrawNodeWindow, "Window 2");
-		EndWindows();
-	}
-
-	void DrawNodeWindow(int id)
-	{
-		GUI.DragWindow();
-	}
-
-	void DrawNodeCurve(Rect start, Rect end)
-	{
-		Vector3 startPos = new Vector3(start.x + start.width, start.y + start.height / 2, 0);
-		Vector3 endPos = new Vector3(end.x, end.y + end.height / 2, 0);
-		Vector3 startTan = startPos + Vector3.right * 50;
-		Vector3 endTan = endPos + Vector3.left * 50;
-		Color shadowCol = new Color(0, 0, 0, 0.06f);
-		for (int i = 0; i < 3; i++) // Draw a shadow
-			Handles.DrawBezier(startPos, endPos, startTan, endTan, shadowCol, null, (i + 1) * 5);
-		Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.black, null, 1);
-	}
-}
-
-
-*/
