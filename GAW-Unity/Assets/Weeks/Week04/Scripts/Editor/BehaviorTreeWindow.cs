@@ -70,8 +70,6 @@ namespace Week04
 			const float moveSpeed = 2000f;
 			float dt = Time.deltaTime;
 
-			
-
 			Event e = Event.current;
 			if (e != null)
 			{
@@ -81,21 +79,23 @@ namespace Week04
 						{
 							if (Event.current.keyCode == (KeyCode.D))
 							{
-
+								_toolsWindowRect.x += moveSpeed * dt;
 								_scrollPosition.x += moveSpeed * dt;
 							}
 							if (Event.current.keyCode == (KeyCode.A))
 							{
+								_toolsWindowRect.x -= moveSpeed * dt;
 								_scrollPosition.x -= moveSpeed * dt;
 							}
 
 							if (Event.current.keyCode == (KeyCode.W))
 							{
-
+								_toolsWindowRect.y -= moveSpeed * dt;
 								_scrollPosition.y -= moveSpeed * dt;
 							}
 							if (Event.current.keyCode == (KeyCode.S))
 							{
+								_toolsWindowRect.y += moveSpeed * dt;
 								_scrollPosition.y += moveSpeed * dt;
 							}
 
@@ -157,7 +157,7 @@ namespace Week04
 			//			GUIUtility.ScaleAroundPivot(_zoomLevel / 1f, Vector2.zero);
 
 
-			_toolsWindowRect = GUI.Window(1, _toolsWindowRect, DrawToolsWindow, "Tools");
+			_toolsWindowRect = GUI.Window(idToUse, _toolsWindowRect, DrawToolsWindow, "Tools");
 
 
 			EndWindows();
@@ -198,18 +198,29 @@ namespace Week04
 		private void DrawToolsWindow(int id)
 		{
 			GUILayout.Label("Base Settings", EditorStyles.boldLabel);
-			if (GUILayout.Button("Reset uses"))
+
+			if (GUILayout.Button("Reset Tree"))
 			{
-				var state = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT.state;
+				_rootNode = null;
+				SimpleUnit._DEBUGSTATIC_NODE = null;
+			}
 
-				foreach (var baseNodeState in state.Values)
+			if (SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT != null)
+			{
+				if (GUILayout.Button("Reset uses"))
 				{
-					baseNodeState.timesFailure = 0;
-					baseNodeState.timesRunning = 0;
-					baseNodeState.timesSuccess = 0;
+					var state = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT.state;
 
+					foreach (var baseNodeState in state.Values)
+					{
+						baseNodeState.timesFailure = 0;
+						baseNodeState.timesRunning = 0;
+						baseNodeState.timesSuccess = 0;
+
+					}
 				}
 			}
+
 
 			GUI.DragWindow();
 

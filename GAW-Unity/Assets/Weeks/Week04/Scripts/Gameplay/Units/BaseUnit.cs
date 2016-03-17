@@ -359,7 +359,7 @@ namespace Week04
 
 
 			if (numCollidersInRange > 0)
-				FilterAllUnits(ref collidersForPhysicsTest, out units, numCollidersInRange);
+				FilterAllUnits(ref collidersForPhysicsTest, out units, numCollidersInRange, this);
 			else
 				units = new BaseUnit[0];
 
@@ -374,7 +374,7 @@ namespace Week04
 		public const string UNIT_COLLIDER_TAG = "Unit";
 		private static readonly List<BaseUnit> UnitBuffer = new List<BaseUnit>(10);
 
-		public static void FilterAllUnits(ref Collider[] colliders, out BaseUnit[] units, int colliderCount = -1)
+		public static void FilterAllUnits(ref Collider[] colliders, out BaseUnit[] units, int colliderCount = -1, BaseUnit unitToIgnore = null)
 		{
 			UnitBuffer.Clear();
 
@@ -387,7 +387,9 @@ namespace Week04
 			{
 				if (colliders[i].CompareTag(UNIT_COLLIDER_TAG))
 				{
-					UnitBuffer.Add(colliders[i].GetComponent<UnitCollider>().unit);
+					var unit = colliders[i].GetComponent<UnitCollider>().unit;
+					if (unit != unitToIgnore)
+						UnitBuffer.Add(unit);
 				}
 			}
 
