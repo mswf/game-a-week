@@ -35,14 +35,19 @@ namespace Week04
 					new SequenceCompositeNode(
 						// Get a target
 						new SelectorCompositeNode(
-							// Do we already have a target
+							// Do we already have a VALID target
 							new SequenceCompositeNode(
 								new ContainsUnit(TARGET),
 								new CanTargetUnit(SUBJECT, TARGET),
-								new CanHitUnit(SUBJECT, TARGET)
+								new IsUnitInRange(SUBJECT, TARGET)
 								//new PrintNode("Has preexisting target")
 
 								),
+							// if not, empty the TARGET var
+							new FailerDecoratorNode(
+								new SetToNullNode(TARGET)
+							),
+
 							// If not, find a new target, this returns true if it found a target
 							new SequenceCompositeNode(
 								new ClearStack(TARGETS_STACK),
@@ -54,15 +59,13 @@ namespace Week04
 								new RepeatUntilFailDecoratorNode(
 									new SequenceCompositeNode(
 
-										new PopFromStack(POTENTIAL_TARGET, TARGETS_STACK),
+										new PopFromStack(TARGETS_STACK, POTENTIAL_TARGET),
 
 										new InverterDecoratorNode(
 											new SequenceCompositeNode(
 												new ShouldTargetUnit(SUBJECT, POTENTIAL_TARGET),
 
 												new CanTargetUnit(SUBJECT, POTENTIAL_TARGET),
-
-												new CanHitUnit(SUBJECT, POTENTIAL_TARGET),
 
 												// Passed all the checks, it's promoted to target now
 												new SetVarTo<ContextIndex>(TARGET, POTENTIAL_TARGET)
@@ -86,8 +89,17 @@ namespace Week04
 							),
 						// We could find a target
 						// Now move in for the kill
+						
+
 						new SequenceCompositeNode(
-							
+							new InverterDecoratorNode(
+								new SequenceCompositeNode(
+									new IsUnitInRange(SUBJECT, TARGET),
+									new CanTargetUnit(SUBJECT, TARGET),
+									new AttackUnit(SUBJECT, TARGET)
+
+								)
+							),
 							new MoveToUnit(SUBJECT, TARGET)
 						)
 

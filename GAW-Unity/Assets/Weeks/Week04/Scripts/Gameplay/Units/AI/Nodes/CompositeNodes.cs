@@ -53,8 +53,7 @@ namespace Week04
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
 				var state = context.GetState<IteratorNodeState>(this);
-				//state.currentIndex = -1;
-
+				
 				if (state.currentIndex >= 0)
 				{
 					var result = childNodes[state.currentIndex].Update(context);
@@ -63,6 +62,7 @@ namespace Week04
 					{
 						case BehaviourStatus.Success:
 							childNodes[state.currentIndex].Cleanup(context);
+							state.currentIndex++;
 							break;
 						case BehaviourStatus.Failure:
 							childNodes[state.currentIndex].Cleanup(context);
@@ -145,6 +145,7 @@ namespace Week04
 							return BehaviourStatus.Success;
 						case BehaviourStatus.Failure:
 							childNodes[state.currentIndex].Cleanup(context);
+							state.currentIndex++;
 
 							break;
 						case BehaviourStatus.Running:

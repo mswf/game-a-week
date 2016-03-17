@@ -109,6 +109,19 @@ namespace Week04
 			}
 		}
 
+		public class FailerDecoratorNode : DecoratorNode
+		{
+			public FailerDecoratorNode(INode childNode) : base(childNode)
+			{
+			}
+
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			{
+				childNode.Update(context);
+				return BehaviourStatus.Failure;
+			}
+		}
+
 		public class RepeatUntilFailDecoratorNode : DecoratorNode
 		{
 			public RepeatUntilFailDecoratorNode(INode childNode) : base(childNode)
@@ -117,12 +130,19 @@ namespace Week04
 
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
-				var result = childNode.Update(context);
+				var result = BehaviourStatus.Running;
 
-				if (result == BehaviourStatus.Failure)
-					return BehaviourStatus.Success;
+				while (result != BehaviourStatus.Failure)
+				{
+					if (result == BehaviourStatus.Success)
+						childNode.Cleanup(context);
 
-				return BehaviourStatus.Running;
+					result = childNode.Update(context);
+				}
+
+				return BehaviourStatus.Success;
+
+				//return BehaviourStatus.Running;
 
 			}
 		}

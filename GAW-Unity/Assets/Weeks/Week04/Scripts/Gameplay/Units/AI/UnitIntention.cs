@@ -174,8 +174,8 @@ namespace Week04
 			void Cleanup(BehaviorContext context);
 
 			void DrawGUI(int windowID);
+			float GetGUIPropertyHeight();
 
-			
 		}
 
 		public interface ICompositeNode
@@ -244,6 +244,18 @@ namespace Week04
 
 			public virtual void DrawGUI(int windowID)
 			{
+			}
+
+			protected const float DefaultPropertyHeight = 18f;
+			
+			protected static readonly GUILayoutOption[] GuiLayoutOptions = new GUILayoutOption[1]
+			{
+				GUILayout.Height(DefaultPropertyHeight)
+			};
+			
+			public virtual float GetGUIPropertyHeight()
+			{
+				return 0;
 			}
 		}
 	}

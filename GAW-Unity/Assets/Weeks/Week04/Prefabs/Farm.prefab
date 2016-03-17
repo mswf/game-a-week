@@ -218,10 +218,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30e6117990c35c048b922e7df64cdbe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initialLootContainer:
-    lootDictionary:
+  _initialResourceContainer:
+    resourceList:
     - type: 0
       amount: 100
+    - type: 1
+      amount: 20
 --- !u!114 &11451820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -246,9 +248,12 @@ MonoBehaviour:
     type: 0
     health: 200
     buildCost: 100
+    attackSpeed: 2
+    attackPower: 20
     prefab: {fileID: 0}
-  lootContainer:
-    lootDictionary: []
+  movementSpeed: 1
+  resourceContainer:
+    resourceList: []
   state: 0
   attackSpeed: 10
 --- !u!1001 &100100000

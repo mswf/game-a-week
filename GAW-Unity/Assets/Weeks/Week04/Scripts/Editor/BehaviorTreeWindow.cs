@@ -24,6 +24,8 @@ namespace Week04
 		private BehaviorNodeDrawer _rootNode;
 		private Rect _scrollViewRect;
 
+		private Rect _toolsWindowRect;
+
 		private Vector2 _zoomLevel;
 
 		public BehaviorTreeWindow()
@@ -36,6 +38,7 @@ namespace Week04
 
 			_zoomLevel = Vector2.one;
 
+			_toolsWindowRect = new Rect(0, 0, 100f, 300f);
 
 		}
 
@@ -147,14 +150,19 @@ namespace Week04
 			if (_rootNode != null)
 				_rootNode.OnDrawWindow(ref idToUse);
 
-//			GUIUtility.ScaleAroundPivot(_zoomLevel / 1f, Vector2.zero);
+			//			GUIUtility.ScaleAroundPivot(_zoomLevel / 1f, Vector2.zero);
+
+
 
 			EndWindows();
 
-
 			GUI.EndScrollView();
 
-			GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+			
+
+			//_toolsWindowRect = GUI.Window(1, _toolsWindowRect, DrawToolsWindow, "Tools");
+
+			
 			/*
 			myString = EditorGUILayout.TextField("Text Field", myString);
 
@@ -165,6 +173,24 @@ namespace Week04
 			EditorGUILayout.EndToggleGroup();
 				
 			*/
+		}
+
+		private void DrawToolsWindow(int id)
+		{
+
+			GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+			if (GUILayout.Button("Reset uses"))
+			{
+				var state = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT.state;
+
+				foreach (var baseNodeState in state.Values)
+				{
+					baseNodeState.timesFailure = 0;
+					baseNodeState.timesRunning = 0;
+					baseNodeState.timesSuccess = 0;
+
+				}
+			}
 		}
 
 		private Vector2 _scrollPosition;
@@ -180,7 +206,7 @@ namespace Week04
 		private BehaviorNodeDrawer[] _childrenNodes;
 
 		public const float MIN_WIDTH = 100f;
-		public const float MIN_HEIGHT = 60f;
+		public const float MIN_HEIGHT = 42f;
 
 		public const float INITIAL_HORIZONTAL_SPACING = 20f;
 
@@ -201,7 +227,7 @@ namespace Week04
 
 		public BehaviorNodeDrawer(INode nodeToDraw, float xPos, float yPos)
 		{
-			_windowRect = new Rect(xPos, yPos, MIN_WIDTH, MIN_HEIGHT);
+			_windowRect = new Rect(xPos, yPos, MIN_WIDTH, MIN_HEIGHT + nodeToDraw.GetGUIPropertyHeight());
 			_nodeToDraw = nodeToDraw;
 
 			var leafNode = nodeToDraw as LeafNode;
@@ -353,7 +379,7 @@ namespace Week04
 			{
 				var previousState = state.previousStatus;
 				var timeSinceChange = Time.time - state.timeSinceStatusChange;
-				
+
 
 				switch (previousState)
 				{
@@ -370,10 +396,10 @@ namespace Week04
 						throw new ArgumentOutOfRangeException();
 				}
 				GUI.DrawTexture(new Rect(0, 16f, _windowRect.width, _windowRect.height - 16f), EditorGUIUtility.whiteTexture);
-				
+
 				//GUILayout.Label(timeSinceChange.ToString(), EditorStyles.boldLabel);
 				GUI.color = Color.black;
-				GUILayout.Label(state.timesCalled.ToString(), EditorStyles.boldLabel);
+				//	GUILayout.Label(state.timesCalled.ToString(), EditorStyles.boldLabel);
 
 				var smallStyle = EditorStyles.miniLabel;
 				smallStyle.fontSize = 8;
@@ -382,6 +408,13 @@ namespace Week04
 
 
 
+			}
+			else
+			{
+				var smallStyle = EditorStyles.miniLabel;
+				smallStyle.fontSize = 8;
+
+				GUILayout.Label("S: 0 F: 0 R: 0", smallStyle);
 			}
 
 
@@ -392,6 +425,7 @@ namespace Week04
 			GUI.DragWindow();
 
 			//GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+			GUI.color = Color.white;
 			_nodeToDraw.DrawGUI(id);
 		}
 

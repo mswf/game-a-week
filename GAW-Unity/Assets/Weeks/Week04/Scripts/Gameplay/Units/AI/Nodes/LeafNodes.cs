@@ -35,9 +35,14 @@ namespace Week04
 				return BehaviourStatus.Success;
 			}
 
+			public override float GetGUIPropertyHeight()
+			{
+				return 1f * DefaultPropertyHeight;
+			}
+
 			public override void DrawGUI(int windowID)
 			{
-				//			GUI.
+				GUILayout.TextField(_messageToPrint.ToString());
 			}
 		}
 
@@ -60,18 +65,28 @@ namespace Week04
 
 				return BehaviourStatus.Success;
 			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 1f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.TextField(_varToPrint.ToString());
+			}
 		}
 
 		public class PushToStack : LeafNode
 		{
-			private readonly ContextIndex _itemVar;
 			private readonly ContextIndex _stackVar;
+			private readonly ContextIndex _itemVar;
 
 
-			public PushToStack(ContextIndex itemVar, ContextIndex stackVar)
+			public PushToStack(ContextIndex stackVar, ContextIndex itemVar)
 			{
-				this._itemVar = itemVar;
 				this._stackVar = stackVar;
+				this._itemVar = itemVar;
 			}
 
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
@@ -95,18 +110,29 @@ namespace Week04
 
 				return BehaviourStatus.Success;
 			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 3f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.TextField(_stackVar.ToString());
+				GUILayout.Label("Target:");
+				GUILayout.TextField(_itemVar.ToString());
+			}
 		}
 
 		public class PopFromStack : LeafNode
 		{
-			private readonly ContextIndex _itemVar;
 			private readonly ContextIndex _stackVar;
+			private readonly ContextIndex _itemVar;
 
-
-			public PopFromStack(ContextIndex itemVar, ContextIndex stackVar)
+			public PopFromStack(ContextIndex stackVar, ContextIndex itemVar)
 			{
-				this._itemVar = itemVar;
 				this._stackVar = stackVar;
+				this._itemVar = itemVar;
 			}
 
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
@@ -128,6 +154,18 @@ namespace Week04
 
 				context[_itemVar] = objectToPop;
 				return BehaviourStatus.Success;
+			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 3f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.TextField(_stackVar.ToString());
+				GUILayout.Label("Target:");
+				GUILayout.TextField(_itemVar.ToString());
 			}
 		}
 
@@ -154,6 +192,16 @@ namespace Week04
 				else
 					return BehaviourStatus.Failure;
 			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 1f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.TextField(_stackVar.ToString());
+			}
 		}
 
 		public class ClearStack : LeafNode
@@ -179,6 +227,17 @@ namespace Week04
 
 				return BehaviourStatus.Success;
 			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 1f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.TextField(_stackVar.ToString());
+			}
+
 		}
 
 		public class ContainsUnit : LeafNode
@@ -199,6 +258,17 @@ namespace Week04
 				else
 					return BehaviourStatus.Success;
 			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 2f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.Label("Subject:");
+				GUILayout.TextField(_unitVar.ToString());
+			}
 		}
 
 		public abstract class UnitToUnitInteraction : LeafNode
@@ -210,6 +280,19 @@ namespace Week04
 			{
 				this._subjectVar = subjectVar;
 				this._targetVar = targetVar;
+			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 4f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.Label("Subject:");
+				GUILayout.TextField(_subjectVar.ToString());
+				GUILayout.Label("Target:");
+				GUILayout.TextField(_targetVar.ToString());
 			}
 		}
 
@@ -292,6 +375,32 @@ namespace Week04
 			}
 		}
 
+		public class AttackUnit : UnitToUnitInteraction
+		{
+			public AttackUnit(ContextIndex subjectVar, ContextIndex targetVar) : base(subjectVar, targetVar)
+			{
+			}
+
+			public override BehaviourStatus UpdateTick(BehaviorContext context)
+			{
+				var subjectUnit = context[_subjectVar] as BaseUnit;
+				var targetUnit = context[_targetVar] as BaseUnit;
+
+				if (subjectUnit == null || targetUnit == null)
+					return BehaviourStatus.Failure;
+
+				if (subjectUnit.IsReadyForAttack() == false)
+					return BehaviourStatus.Running;
+
+				DebugExtension.DebugArrow(subjectUnit.GetUnitPosition(), 
+						new Vector3(targetUnit.GetUnitPositionX() - subjectUnit.GetUnitPositionX(), 0f), Color.red, 1f, false);
+
+				subjectUnit.AttackUnit(targetUnit);
+
+				return BehaviourStatus.Success;
+			}
+		}
+
 		public class MoveNode : LeafNode
 		{
 
@@ -319,9 +428,9 @@ namespace Week04
 			}
 		}
 
-		public class CanHitUnit : UnitToUnitInteraction
+		public class IsUnitInRange : UnitToUnitInteraction
 		{
-			public CanHitUnit(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
+			public IsUnitInRange(string subjectVar, string targetVar) : base(subjectVar, targetVar) { }
 
 			public override BehaviourStatus UpdateTick(BehaviorContext context)
 			{
@@ -404,6 +513,25 @@ namespace Week04
 
 				return BehaviourStatus.Success;
 			}
+
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 6f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.Label("Subject:");
+				GUILayout.TextField(_subjectVar.ToString());
+				GUILayout.Label("Stack:");
+				GUILayout.TextField(_targetStack.ToString());
+				GUILayout.Label("Range:");
+				if (_range.HasValue)
+					GUILayout.TextField(_range.Value.ToString());
+				else
+					GUILayout.TextField(_rangeVar.ToString());
+			}
 		}
 
 		public class IsNullNode : LeafNode
@@ -424,6 +552,16 @@ namespace Week04
 
 				return BehaviourStatus.Failure;
 			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 1f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.TextField(_variable.ToString());
+			}
 		}
 
 		public class SetToNullNode : LeafNode
@@ -440,6 +578,16 @@ namespace Week04
 				context[_variable] = null;
 
 				return BehaviourStatus.Success;
+			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 1f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.TextField(_variable.ToString());
 			}
 		}
 
@@ -462,7 +610,7 @@ namespace Week04
 
 		public class SetVarTo<T> : MathNode<T>
 		{
-			public SetVarTo(string targetVar, T paramVar) : base(targetVar, paramVar)
+			public SetVarTo(ContextIndex targetVar, T paramVar) : base(targetVar, paramVar)
 			{
 			}
 
@@ -480,6 +628,20 @@ namespace Week04
 				}
 
 				return BehaviourStatus.Success;
+			}
+
+			public override float GetGUIPropertyHeight()
+			{
+				return 4f * DefaultPropertyHeight;
+			}
+
+			public override void DrawGUI(int windowID)
+			{
+				GUILayout.Label("Target:");
+				GUILayout.TextField(_targetVar.ToString());
+
+				GUILayout.Label("Param:");
+				GUILayout.TextField(_paramVar.ToString());
 			}
 		}
 	}
