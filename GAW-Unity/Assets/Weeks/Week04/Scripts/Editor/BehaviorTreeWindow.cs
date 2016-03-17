@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using Week04.BehaviourTree;
 
@@ -28,6 +29,8 @@ namespace Week04
 
 		private Vector2 _zoomLevel;
 
+		private BehaviorContextDrawer _contextDrawer;
+
 		public BehaviorTreeWindow()
 		{
 			var title = new GUIContent("Behavior Tree");
@@ -39,6 +42,8 @@ namespace Week04
 			_zoomLevel = Vector2.one;
 
 			_toolsWindowRect = new Rect(0, 0, 130f, 240f);
+
+			_contextDrawer = new BehaviorContextDrawer();
 
 		}
 
@@ -67,6 +72,8 @@ namespace Week04
 		protected void OnGUI()
 		{
 
+			var previousScrollPosition = _scrollPosition;
+
 			const float moveSpeed = 2000f;
 			float dt = Time.deltaTime;
 
@@ -79,23 +86,19 @@ namespace Week04
 						{
 							if (Event.current.keyCode == (KeyCode.D))
 							{
-								_toolsWindowRect.x += moveSpeed * dt;
 								_scrollPosition.x += moveSpeed * dt;
 							}
 							if (Event.current.keyCode == (KeyCode.A))
 							{
-								_toolsWindowRect.x -= moveSpeed * dt;
 								_scrollPosition.x -= moveSpeed * dt;
 							}
 
 							if (Event.current.keyCode == (KeyCode.W))
 							{
-								_toolsWindowRect.y -= moveSpeed * dt;
 								_scrollPosition.y -= moveSpeed * dt;
 							}
 							if (Event.current.keyCode == (KeyCode.S))
 							{
-								_toolsWindowRect.y += moveSpeed * dt;
 								_scrollPosition.y += moveSpeed * dt;
 							}
 
@@ -128,6 +131,8 @@ namespace Week04
 					_rootNode = new BehaviorNodeDrawer(SimpleUnit._DEBUGSTATIC_NODE, 60f, 10f);
 
 					_scrollViewRect.height = _rootNode.GetCombinedHeight();
+
+					_contextDrawer.behaviorContext = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT;
 				}
 			}
 
@@ -137,13 +142,9 @@ namespace Week04
 			var windowRect = new Rect(0, 0, position.width, position.height );
 
 
-			var newScrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect	);
-			if (newScrollPosition.x != _scrollPosition.x || newScrollPosition.y != _scrollPosition.y)
-			{
-				_toolsWindowRect.position += newScrollPosition - _scrollPosition;
-			}
-			_scrollPosition = newScrollPosition;
-
+			_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect	);
+	
+			
 			BeginWindows();
 
 			//GUIUtility.ScaleAroundPivot(_zoomLevel, Vector2.zero);
@@ -157,8 +158,17 @@ namespace Week04
 			//			GUIUtility.ScaleAroundPivot(_zoomLevel / 1f, Vector2.zero);
 
 
-			_toolsWindowRect = GUI.Window(idToUse, _toolsWindowRect, DrawToolsWindow, "Tools");
+			if (previousScrollPosition.x != _scrollPosition.x || previousScrollPosition.y != _scrollPosition.y)
+			{
+				_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);;
+				_toolsWindowRect.position += _scrollPosition - previousScrollPosition;
 
+			}
+
+			_contextDrawer.OnDrawWindow(ref idToUse);
+
+			_toolsWindowRect = GUI.Window(idToUse, _toolsWindowRect, DrawToolsWindow, "Tools");
+			idToUse++;
 
 			EndWindows();
 
@@ -203,6 +213,12 @@ namespace Week04
 			{
 				_rootNode = null;
 				SimpleUnit._DEBUGSTATIC_NODE = null;
+				SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT = null;
+
+				if (_contextDrawer != null)
+				{
+					_contextDrawer.behaviorContext = null;
+				}
 			}
 
 			if (SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT != null)
@@ -476,6 +492,88 @@ namespace Week04
 				Handles.DrawBezier(startPos, endPos, startTan, endTan, shadowCol, null, (i + 1)*5f);
 
 			Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.black, EditorGUIUtility.whiteTexture, 1f);
+		}
+	}
+
+	public class BehaviorContextDrawer
+	{
+		private Rect _windowRect;
+
+		public BehaviorContext behaviorContext;
+
+		public BehaviorContextDrawer()
+		{
+			_windowRect = new Rect(200f,200f, 400f, 600f);
+		}
+
+		public void OnDrawWindow(ref int id)
+		{
+			_windowRect = GUI.Window(id, _windowRect, DrawContext, "Behavior Context");
+
+			id++;
+
+		}
+
+		private bool _isMemoryExpanded = true;
+		private bool _isStateExpanded = false;
+
+
+		private void DrawContext(int id)
+		{
+			if (behaviorContext == null)
+			{
+				GUILayout.Label("No active Behavior Context");
+				GUI.DragWindow();
+
+				return;
+			}
+
+			_isMemoryExpanded = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), _isMemoryExpanded, "Memory");
+			if (_isMemoryExpanded)
+			{
+				EditorGUI.indentLevel = 1;
+				
+				var memory = behaviorContext.memory;
+
+				foreach (KeyValuePair<string, object> keyValuePair in memory)
+				{
+					if (keyValuePair.Value != null)
+						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), keyValuePair.Value.ToString());
+					else
+						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), "null");
+
+				}
+			}
+			EditorGUI.indentLevel = 0;
+
+			GUI.enabled = false;
+			_isStateExpanded = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), _isStateExpanded, "State");
+
+			if (_isStateExpanded)
+			{
+				EditorGUI.indentLevel = 1;
+				
+				var state = behaviorContext.state;
+
+				foreach (KeyValuePair<object, BaseNodeState> keyValuePair in state)
+				{
+					if (keyValuePair.Value != null)
+						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), keyValuePair.Value.ToString());
+					else
+						EditorGUILayout.LabelField(keyValuePair.Key.ToString(), "null");
+
+				}
+
+			}
+
+			GUI.enabled = true;
+
+			GUI.DragWindow();
+		}
+
+		public void MovePosition(Vector2 positionDelta)
+		{
+			_windowRect.position += positionDelta;
 		}
 	}
 }
