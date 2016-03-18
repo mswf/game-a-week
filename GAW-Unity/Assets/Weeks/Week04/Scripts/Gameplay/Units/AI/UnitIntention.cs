@@ -17,7 +17,52 @@ namespace Week04
 
 	namespace BehaviorTree
 	{
+		//Introduction article:
 		//http://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
+
+		//LibGDX AI documentation on Behavior Trees
+		//https://github.com/libgdx/gdx-ai/wiki/Behavior-Trees
+		// Example of a dog
+		//https://github.com/jsjolund/GdxDemo3D/blob/master/android/assets/btrees/dog.btree
+
+
+		//http://twvideo01.ubm-us.net/o1/vault/gdc10/slides/ChampandardDaweHernandezCerpa_BehaviorTrees.pdf
+
+		//Understanding the Second Generation of Behavior Trees and Preparing for Challenges Beyond
+		//https://youtu.be/n4aREFb3SsU
+
+
+		/*
+		NOTES:
+
+		- more status: 
+			invalid .. .. .. 
+			fresh .. .. .. cancelled
+			
+		- structure
+			It's possible to make a node initialize and cleanup inside of its own update function?
+			I moved them outside so that I don't need to add it to simple leaf nodes
+			But by adding tests, I can verify that these are called
+
+		- add attributes to 
+			- the classes, with "TaskConstraint(minChildren = 0, maxChildren = int.max)"
+			- all properties of task with "TaskAttribute(name = fieldName, required = false) (required to be set yes or no)"
+			- I can also do typechecking, by adding a type to the TaskAttribute, i can say that a var will be used to store a Stack<>, if other code tries to store a different type in the stack, throw a parsing error
+			// https://msdn.microsoft.com/en-us/library/aa288454(v=vs.71).aspx
+			- cancel the collection of all this info by adding [Conditional("EDITOR")] to the TaskConstraintAttribute definition
+			//https://msdn.microsoft.com/en-us/library/aa288454(v=vs.71).aspx
+
+			- Use attributes to determine what properties the editor should draw instead of the virtual function all nodes have
+			- I can add attributes to the return types of functions, to add extra help info
+			//https://msdn.microsoft.com/en-us/library/z0w1kczw.aspx
+
+		- Include decorator
+			- decorator node with a reference to another BT
+
+		- Enticers
+			- FE: if idle, look around for actors that try to promote themselves as things that satisfy this state. If found, get BT from actor and attach it to idle
+		
+		*/
 
 		public enum BehaviorStatus
 		{
