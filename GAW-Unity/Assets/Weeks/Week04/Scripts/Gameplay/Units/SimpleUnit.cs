@@ -55,7 +55,7 @@ namespace Week04
 
 								//new PrintNode("Starting Search"),
 
-
+								new EditorRegionDecoratorNode(
 								new RepeatUntilFailDecoratorNode(
 									new SequenceCompositeNode(
 
@@ -70,12 +70,13 @@ namespace Week04
 												// Passed all the checks, it's promoted to target now
 												new SetVarTo<ContextIndex>(TARGET, POTENTIAL_TARGET)
 											)
-										)
+										),
 
+										new SetToNullNode(POTENTIAL_TARGET)
 
 									)
+								), Color.yellow, "Find a target"
 								),
-
 								//new PrintNode("At the end of the road:"),
 								//new PrintVarNode(TARGET),
 

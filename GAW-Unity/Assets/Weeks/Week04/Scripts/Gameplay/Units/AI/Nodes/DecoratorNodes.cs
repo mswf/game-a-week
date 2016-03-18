@@ -1,6 +1,8 @@
 ﻿
 using System;
 
+using Color = UnityEngine.Color;
+
 namespace Week04
 {
 	namespace BehaviorTree
@@ -92,6 +94,27 @@ namespace Week04
 				}
 			}
 
+		}
+
+		public class EditorRegionDecoratorNode : DecoratorNode
+		{
+			public readonly Color regionColor;
+			public readonly string label;
+
+			public readonly bool startExpanded;
+
+			public EditorRegionDecoratorNode(INode childNode, Color regionColor, string label = "", bool startExpanded = true) : base(childNode)
+			{
+				regionColor.a = 0.5f;
+				this.regionColor = regionColor;
+				this.label = label;
+				this.startExpanded = startExpanded;
+			}
+
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
+			{
+				return childNode.Update(context);
+			}
 		}
 
 		public class SucceederDecoratorNode : DecoratorNode

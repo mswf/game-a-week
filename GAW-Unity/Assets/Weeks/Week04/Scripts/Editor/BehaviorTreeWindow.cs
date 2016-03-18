@@ -14,8 +14,10 @@ namespace Week04
 			EditorWindow.GetWindow<BehaviorTreeWindow>();
 		}
 
+		[NonSerialized]
 		private BehaviorNodeDrawer _rootNode;
 		private Rect _scrollViewRect;
+
 
 		private Rect _toolsWindowRect;
 
@@ -226,11 +228,11 @@ namespace Week04
 			CompositeNode = 2
 		}
 
-		protected Rect _windowRect;
+		public Rect _windowRect;
 
-		private INode _nodeToDraw;
+		protected INode _nodeToDraw;
 
-		private BehaviorNodeDrawer[] _childrenNodes;
+		protected BehaviorNodeDrawer[] _childrenNodes;
 
 		public const float MIN_WIDTH = 100f;
 		public const float MIN_HEIGHT = 42f;
@@ -240,31 +242,40 @@ namespace Week04
 		public const float VERTICAL_SPACING = 8f;
 
 		public VisualNodeType type;
-		private string _windowTitle;
+		protected string _windowTitle;
+
+		private BehaviorGroupDrawer _groupDrawer;
 
 		private BehaviorNodeDrawer()
 		{}
 
 		public BehaviorNodeDrawer(INode nodeToDraw, float xPos, float yPos)
 		{
+			var regionDecoratorNode = nodeToDraw as EditorRegionDecoratorNode;
+			if (regionDecoratorNode != null)
+			{
+				_groupDrawer = new BehaviorGroupDrawer(regionDecoratorNode, this);
+				nodeToDraw = regionDecoratorNode.getChildNode();
+			}
+
 			_windowRect = new Rect(xPos, yPos, MIN_WIDTH, MIN_HEIGHT + nodeToDraw.GetGUIPropertyHeight());
 			_nodeToDraw = nodeToDraw;
 
-			var leafNode = nodeToDraw as LeafNode;
+			var leafNode = nodeToDraw as ILeafNode;
 			if (leafNode != null)
 			{
 				type = VisualNodeType.LeafNode;
 				_childrenNodes = new BehaviorNodeDrawer[0];
 			}
 
-			var decoratorNode = nodeToDraw as DecoratorNode;
+			var decoratorNode = nodeToDraw as IDecoratorNode;
 			if (decoratorNode != null)
 			{
 				type = VisualNodeType.DecoratorNode;
 
 				_childrenNodes = new BehaviorNodeDrawer[1]
 				{
-					new BehaviorNodeDrawer(decoratorNode.childNode, _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y)
+					new BehaviorNodeDrawer(decoratorNode.getChildNode(), _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y)
 				};
 			}
 
@@ -293,6 +304,10 @@ namespace Week04
 				aggregatedHeight += _childrenNodes[i].GetCombinedHeight();
 			}
 
+			if (_groupDrawer != null)
+				_groupDrawer.Init();
+
+
 			_windowTitle = _nodeToDraw.GetType().Name.Replace("Node", "").Replace("Decorator", "").Replace("Composite", "");
 		}
 
@@ -316,9 +331,30 @@ namespace Week04
 			return combinedHeight;
 		}
 
+		public float GetCombinedWidth()
+		{
+			var combinedWidth = 0f;
+
+			for (int i = 0; i < _childrenNodes.Length; i++)
+			{
+				//if (combinedWidth != 0f)
+					//combinedWidth += INITIAL_HORIZONTAL_SPACING;
+
+				combinedWidth = Mathf.Max(combinedWidth, _childrenNodes[i].GetCombinedWidth());
+			}
+
+			combinedWidth += INITIAL_HORIZONTAL_SPACING;
+			combinedWidth += _windowRect.width;
+
+			return combinedWidth;
+		}
+
 		public void SetPosition(Vector2 position)
 		{
 			_windowRect.position = position;
+
+			if (_groupDrawer != null)
+				_groupDrawer.Init();
 		}
 
 		public void MoveVertical(float yPos)
@@ -329,10 +365,21 @@ namespace Week04
 			{
 				_childrenNodes[i].MoveVertical(yPos);
 			}
+
+			if (_groupDrawer != null)
+				_groupDrawer.Init();
 		}
 
 		public void OnDrawWindow(ref int id)
 		{
+			if (_groupDrawer != null)
+			{
+				if (!_groupDrawer.OnDraw(ref id))
+				{
+					return;
+				}
+			}
+
 			for (int i = 0; i < _childrenNodes.Length; i++)
 			{
 				DrawNodeCurve(_windowRect, _childrenNodes[i]._windowRect);
@@ -344,14 +391,14 @@ namespace Week04
 			id++;
 		}
 
-		private static readonly Color LeafNodeColor_Title = new Color(97f/255f, 151f/255f, 247f/255f, 0.5f);
+		protected static readonly Color LeafNodeColor_Title = new Color(97f/255f, 151f/255f, 247f/255f, 0.5f);
 
-		private static readonly Color DecoratorNodeColor_Title = new Color(247f/255f, 162f/255f, 151f/255f, 0.5f);
-		private static readonly Color CompositeNodeColor_Title = new Color(188f/255f, 247f/255f, 151f/255f, 0.5f);
+		protected static readonly Color DecoratorNodeColor_Title = new Color(247f/255f, 162f/255f, 151f/255f, 0.5f);
+		protected static readonly Color CompositeNodeColor_Title = new Color(188f/255f, 247f/255f, 151f/255f, 0.5f);
 
-		private static readonly Color WhiteTransparentColor = new Color(1, 1, 1, 0);
+		protected static readonly Color WhiteTransparentColor = new Color(1, 1, 1, 0);
 
-		private void DrawNode(int id)
+		protected void DrawNode(int id)
 		{
 			switch (type)
 			{
@@ -418,7 +465,7 @@ namespace Week04
 			GUI.DragWindow();
 		}
 
-		private static void DrawNodeCurve(Rect start, Rect end)
+		protected static void DrawNodeCurve(Rect start, Rect end)
 		{
 			const float offset = 20f;
 			Vector3 startPos = new Vector3(start.x + start.width, start.y + start.height/2f, 0);
@@ -435,6 +482,93 @@ namespace Week04
 
 	}
 
+	public class BehaviorGroupDrawer
+	{
+		private EditorRegionDecoratorNode _childNode;
+		private BehaviorNodeDrawer _childNodeDrawer;
+
+		private Rect _rectangle;
+
+		private string _label;
+
+		private bool _isExpanded;
+
+		public BehaviorGroupDrawer(EditorRegionDecoratorNode childNode, BehaviorNodeDrawer childNodeDrawer)
+		{
+			_childNode = childNode;
+			_childNodeDrawer = childNodeDrawer;
+
+			_label = childNode.label;
+
+			_isExpanded = childNode.startExpanded;
+		}
+
+		public void Init()
+		{
+			_rectangle = new Rect(
+				_childNodeDrawer._windowRect.position,
+				new Vector2(
+					_childNodeDrawer.GetCombinedWidth() - BehaviorNodeDrawer.INITIAL_HORIZONTAL_SPACING / 2f,
+					_childNodeDrawer.GetCombinedHeight() - BehaviorNodeDrawer.VERTICAL_SPACING
+				)
+			);
+
+			_rectangle.y -= BehaviorNodeDrawer.VERTICAL_SPACING / 2f;
+			_rectangle.x -= BehaviorNodeDrawer.INITIAL_HORIZONTAL_SPACING / 4f;
+
+
+		}
+
+		public bool OnDraw(ref int id)
+		{
+			GUI.color = _childNode.regionColor;
+
+			if (_isExpanded)
+			{
+				GUI.DrawTexture(_rectangle, EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill, true);
+
+				var labelPosition = new Rect(_rectangle);
+				GUI.Label(labelPosition, _label);
+
+				labelPosition.x += labelPosition.width - 100f;
+
+				GUI.Label(labelPosition, _label);
+
+				labelPosition.y += labelPosition.height - 20f;
+
+				GUI.Label(labelPosition, _label);
+
+				labelPosition.x -= labelPosition.width - 100f;
+
+				labelPosition.width = 100f;
+				labelPosition.height = 40f;
+				labelPosition.y -= 20f;
+
+
+				if (GUI.Button(labelPosition, _label))
+				{
+					_isExpanded = !_isExpanded;
+				}
+			}
+			else
+			{
+				var labelPosition = new Rect(_rectangle);
+
+				labelPosition.width = 100f;
+				labelPosition.height = 40f;
+				labelPosition.y += labelPosition.height - 30f;
+				
+				if (GUI.Button(labelPosition, _label))
+				{
+					_isExpanded = !_isExpanded;
+				}
+			}
+			
+			return _isExpanded;
+
+		}
+	}
+
 	public class BehaviorContextDrawer
 	{
 		private Rect _windowRect;
@@ -448,6 +582,8 @@ namespace Week04
 
 		public void OnDrawWindow(ref int id)
 		{
+			_windowRect.height = GetPreferredWindowHeight();
+
 			_windowRect = GUI.Window(id, _windowRect, DrawContext, "Behavior Context");
 
 			id++;
@@ -504,6 +640,34 @@ namespace Week04
 			GUI.enabled = true;
 
 			GUI.DragWindow();
+		}
+
+		public float GetPreferredWindowHeight()
+		{
+			const float propertyHeight = 18f;
+			var totalHeight = 0f;
+
+			// title height
+			totalHeight += 16f;
+			// padding
+			totalHeight += 8f;
+			totalHeight += propertyHeight*2f;
+
+			if (behaviorContext == null)
+				return totalHeight;
+
+			if (_isMemoryExpanded)
+			{
+				totalHeight += propertyHeight * behaviorContext.memory.Count;
+			}
+
+			if (_isStateExpanded)
+			{
+				totalHeight += propertyHeight * behaviorContext.state.Count;
+			}
+
+
+			return totalHeight;
 		}
 
 		public void MovePosition(Vector2 positionDelta)
