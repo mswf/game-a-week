@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEditor;
 using Week04.BehaviorTree;
 
@@ -50,6 +51,15 @@ namespace Week04
 			}
 
 			Repaint();
+
+			// remember this
+			TestConditional("Ghello");
+		}
+
+		[Conditional("STEB_TEST")]
+		public static void TestConditional(System.Object message)
+		{
+			UnityEngine.Debug.Log(message);
 		}
 
 		protected void OnDestroy()
