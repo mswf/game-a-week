@@ -40,26 +40,30 @@ namespace Week04
 			{}
 		}
 
-		public class EntryNode : DecoratorNode
+		public class EntryNode : DecoratorNode<EntryNodeState>
 		{
-			// TODO: Store this state in the context
-			private BehaviorStatus _prevStatus;
-
 			public EntryNode(INode firstNode) : base(firstNode)
 			{
 				this.childNode = firstNode;
 			}
 
-			public override BehaviorStatus UpdateTick(BehaviorContext context)
+			public override void Initialize(BehaviorContext context)
 			{
-				throw new NotImplementedException();
+				base.Initialize(context);
+				childNode.Initialize(context);
 			}
 
-			public void UpdateTree(float dt, BehaviorContext context)
+			public override void Cleanup(BehaviorContext context)
 			{
-				context.timeLeft = dt;
+				base.Cleanup(context);
+				childNode.Cleanup(context);
+			}
 
-				if (_prevStatus != BehaviorStatus.Running)
+			public override BehaviorStatus UpdateTick(BehaviorContext context)
+			{
+				var nodeState = context.GetState<EntryNodeState>(this);
+
+				if (nodeState.previousEntryStatus != BehaviorStatus.Running)
 					childNode.Initialize(context);
 
 				var result = childNode.Update(context);
@@ -67,7 +71,9 @@ namespace Week04
 				if (result != BehaviorStatus.Running)
 					childNode.Cleanup(context);
 
-				_prevStatus = result;
+				nodeState.previousEntryStatus = result;
+
+				return result;
 			}
 
 		}

@@ -82,7 +82,9 @@ namespace Week04
 		}
 
 		[SerializeField]
-		protected EntryNode behaviourTree;
+		protected INode behaviourTree;
+
+		public const string BaseUnitBehaviorTreeKey = "BASE_UNIT_BEHAVIOR_TREE";
 
 		protected virtual void InitBehaviourTree()
 		{
@@ -92,10 +94,24 @@ namespace Week04
 			_behaviorContext = new BehaviorContext();
 			_behaviorContext[SUBJECT] = this;
 
-			behaviourTree = new EntryNode(
+			if (BehaviorTreeGlobals.behaviorTrees.ContainsKey(BaseUnitBehaviorTreeKey)
+				&& BehaviorTreeGlobals.behaviorTrees[BaseUnitBehaviorTreeKey].IsAlive)
+			{
+				behaviourTree = BehaviorTreeGlobals.behaviorTrees[BaseUnitBehaviorTreeKey].Target;
+			}
+			else
+			{
+				behaviourTree = new EntryNode(
 					new IsNullNode("Ghello")
 				);
 
+				BehaviorTreeGlobals.behaviorTrees.Add(BaseUnitBehaviorTreeKey, new WeakReferenceT<INode>(behaviourTree));
+			}
+
+
+
+//			BehaviorTreeGlobals.EntryNodes.Add(new WeakReferenceT<INode>(behaviourTree));
+			BehaviorTreeGlobals.behaviorContexts.Add(new WeakReferenceT<BehaviorContext>(_behaviorContext));
 		}
 
 		// Set up all internal references to this 
@@ -107,7 +123,7 @@ namespace Week04
 
 		private void Start()
 		{
-			if ( Globals.gameController.factions.Contains(faction) == false)
+			if (Globals.gameController.factions.Contains(faction) == false)
 			{
 				Debug.LogWarning("Unit without a faction!!!!");
 				InitializeUnit(faction, new UnitBuildInstructions());
@@ -134,9 +150,9 @@ namespace Week04
 			_transform.localPosition = _currentPosition;
 			Globals.playfield.unitPositions[this] = _currentPosition.x;
 
+			_behaviorContext.timeLeft = dt;
 
-			behaviourTree.UpdateTree(dt, _behaviorContext);
-
+			behaviourTree.Update(_behaviorContext);
 
 			if (true)
 				return;

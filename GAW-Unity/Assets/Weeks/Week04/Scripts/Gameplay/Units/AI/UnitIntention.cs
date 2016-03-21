@@ -64,6 +64,17 @@ namespace Week04
 		
 		*/
 
+		public static class BehaviorTreeGlobals
+		{
+			public static Dictionary<string, WeakReferenceT<INode>> behaviorTrees = new Dictionary<string, WeakReferenceT<INode>>();
+
+			public static List<WeakReferenceT<BehaviorContext>> behaviorContexts = new List<WeakReferenceT<BehaviorContext>>();
+
+
+		}
+
+
+
 		public enum BehaviorStatus
 		{
 			Success,
@@ -206,6 +217,15 @@ namespace Week04
 				if (state.ContainsKey(stateKey))
 					return (T)state[stateKey];
 				return null;
+			}
+
+			public override string ToString()
+			{
+				var owner = this["S_SUBJECT"];
+				if (owner != null)
+					return "MEM: " + owner.ToString();
+
+				return base.ToString();
 			}
 		}
 

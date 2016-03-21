@@ -6,8 +6,33 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 
-public static class Helper
+public class WeakReferenceT<T> where T : class
 {
+	private readonly WeakReference _reference;
+
+	public WeakReferenceT (System.Object target)
+	{
+		_reference = new WeakReference(target);
+	}
+
+	public bool IsAlive
+	{
+		get { return _reference.IsAlive; }
+	}
+
+	public T Target
+	{
+		get { return _reference.Target as T; }
+		set { _reference.Target = value; }
+	}
+
+	
+
+
+}
+
+public static class Helper
+{ 
 	private static readonly System.Random _randomArrayRandom = new System.Random();
 
 	public static void RandomizeArray<T>(ref T[] arr)

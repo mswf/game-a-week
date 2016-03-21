@@ -3,10 +3,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEditor;
-using Week04.BehaviorTree;
 
 namespace Week04
 {
+	namespace BehaviorTree
+	{
 	public class BehaviorTreeWindow : EditorWindow
 	{
 		[MenuItem("Window/Behavior Tree Editor")]
@@ -22,12 +23,78 @@ namespace Week04
 
 		private Rect _toolsWindowRect;
 
+		private BehaviorTreeSelectorWindow _treeSelectorWindow;
+
+		private BehaviorContextSelectorWindow _contextSelectorWindow;
+
+
 		private Vector2 _zoomLevel;
 
 		private BehaviorContextDrawer _contextDrawer;
 
+
+		private KeyValuePair<string, WeakReferenceT<INode>> _currentNode;
+		private WeakReferenceT<BehaviorContext> _currentContext;
+
+		public INode GetCurrentNode()
+		{
+			return _currentNode.Value.Target;
+		}
+
+		public BehaviorContext GetCurrentContext()
+		{
+			return _currentContext.Target;
+		}
+
+		public void SetBehaviorTree(KeyValuePair<string, WeakReferenceT<INode>> newNode)
+		{
+			if (!_currentNode.Value.IsAlive)
+			{
+				_currentNode = newNode;
+				OnBehaviorTreeChanged();
+			}
+
+			if (newNode.Value.Target == _currentNode.Value.Target)
+				return;
+
+			_currentNode = newNode;
+			OnBehaviorTreeChanged();
+		}
+
+		public void SetBehaviorContext(WeakReferenceT<BehaviorContext> newContext)
+		{
+			if (!_currentContext.IsAlive)
+			{
+				_currentContext = newContext;
+				OnBehaviorTreeChanged();
+			}
+
+			if (newContext.Target == _currentContext.Target)
+				return;
+
+			_currentContext = newContext;
+			OnBehaviorTreeChanged();
+		}
+
+		public void OnBehaviorTreeChanged()
+		{
+			_rootNode = new BehaviorNodeDrawer(this, _currentNode.Value.Target, 60f, 10f);
+
+			_scrollViewRect.height = _rootNode.GetCombinedHeight();
+			
+		}
+
+		public void OnContextChanged()
+		{
+			_contextDrawer.behaviorContext = _currentContext.Target;
+
+		}
+
 		public BehaviorTreeWindow()
 		{
+			_currentNode = new KeyValuePair<string, WeakReferenceT<INode>>("", new WeakReferenceT<INode>(null));
+			_currentContext = new WeakReferenceT<BehaviorContext>(null);
+
 			var title = new GUIContent("Behavior Tree");
 			titleContent = title;
 			_scrollViewRect = new Rect(0,0,12000f, 5000f);
@@ -40,6 +107,8 @@ namespace Week04
 
 			_contextDrawer = new BehaviorContextDrawer();
 
+			_treeSelectorWindow = new BehaviorTreeSelectorWindow(this);
+			_contextSelectorWindow = new BehaviorContextSelectorWindow(this);
 		}
 
 		protected void Update()
@@ -131,19 +200,6 @@ namespace Week04
 				}
 			}
 
-
-			if (_rootNode == null)
-			{
-				if (SimpleUnit._DEBUGSTATIC_NODE != null)
-				{
-					_rootNode = new BehaviorNodeDrawer(SimpleUnit._DEBUGSTATIC_NODE, 60f, 10f);
-
-					_scrollViewRect.height = _rootNode.GetCombinedHeight();
-
-					_contextDrawer.behaviorContext = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT;
-				}
-			}
-
 			var windowRect = new Rect(0, 0, position.width, position.height);
 
 
@@ -162,6 +218,9 @@ namespace Week04
 			{
 				_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);
 				_toolsWindowRect.position += _scrollPosition - previousScrollPosition;
+
+				_treeSelectorWindow._windowRect.position += _scrollPosition - previousScrollPosition;
+				_contextSelectorWindow._windowRect.position += _scrollPosition - previousScrollPosition;
 			}
 
 			_contextDrawer.OnDrawWindow(ref idToUse);
@@ -169,6 +228,9 @@ namespace Week04
 			_toolsWindowRect = GUI.Window(idToUse, _toolsWindowRect, DrawToolsWindow, "Tools");
 			idToUse++;
 
+			_treeSelectorWindow.OnDrawWindow(ref idToUse);
+			_contextSelectorWindow.OnDrawWindow(ref idToUse);
+			
 			EndWindows();
 
 			GUI.EndScrollView();
@@ -199,8 +261,9 @@ namespace Week04
 			if (GUILayout.Button("Reset Tree"))
 			{
 				_rootNode = null;
-				SimpleUnit._DEBUGSTATIC_NODE = null;
-				SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT = null;
+				
+				_currentNode = new KeyValuePair<string, WeakReferenceT<INode>>("", new WeakReferenceT<INode>(null));
+				_currentContext = new WeakReferenceT<BehaviorContext>(null);
 
 				if (_contextDrawer != null)
 				{
@@ -208,11 +271,11 @@ namespace Week04
 				}
 			}
 
-			if (SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT != null)
+			if (_currentContext.Target != null)
 			{
 				if (GUILayout.Button("Reset uses"))
 				{
-					var state = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT.state;
+					var state = _currentContext.Target.state;
 
 					foreach (var baseNodeState in state.Values)
 					{
@@ -256,11 +319,16 @@ namespace Week04
 
 		private BehaviorGroupDrawer _groupDrawer;
 
+		private BehaviorTreeWindow _behaviorTreeWindow;
+
 		private BehaviorNodeDrawer()
 		{}
 
-		public BehaviorNodeDrawer(INode nodeToDraw, float xPos, float yPos)
+
+		public BehaviorNodeDrawer(BehaviorTreeWindow behaviorTreeWindow, INode nodeToDraw, float xPos, float yPos)
 		{
+			this._behaviorTreeWindow = behaviorTreeWindow;
+
 			var regionDecoratorNode = nodeToDraw as EditorRegionDecoratorNode;
 			if (regionDecoratorNode != null)
 			{
@@ -285,7 +353,7 @@ namespace Week04
 
 				_childrenNodes = new BehaviorNodeDrawer[1]
 				{
-					new BehaviorNodeDrawer(decoratorNode.getChildNode(), _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y)
+					new BehaviorNodeDrawer(behaviorTreeWindow, decoratorNode.getChildNode(), _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y)
 				};
 			}
 
@@ -300,7 +368,7 @@ namespace Week04
 
 				for (int i = 0; i < compositeChilds.Length; i++)
 				{
-					_childrenNodes[i] = new BehaviorNodeDrawer(compositeChilds[i], _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y);
+					_childrenNodes[i] = new BehaviorNodeDrawer(behaviorTreeWindow, compositeChilds[i], _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y);
 				}
 			}
 
@@ -429,7 +497,15 @@ namespace Week04
 			GUI.DrawTexture(new Rect(0, 0, _windowRect.width, 16f), EditorGUIUtility.whiteTexture);
 
 
-			var state = SimpleUnit._DEBUGSTATIC_BEHAVIORCONTEXT.TryGetState<BaseNodeState>(_nodeToDraw);
+			var curContext = _behaviorTreeWindow.GetCurrentContext();
+			BaseNodeState state;
+
+			if (curContext != null)
+			{
+				state = curContext.TryGetState<BaseNodeState>(_nodeToDraw);
+			}
+			else
+				state = null;
 
 			if (state != null)
 			{
@@ -684,6 +760,9 @@ namespace Week04
 		{
 			_windowRect.position += positionDelta;
 		}
+
+	}
+
 
 	}
 }

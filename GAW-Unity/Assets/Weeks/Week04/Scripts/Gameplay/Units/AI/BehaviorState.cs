@@ -22,5 +22,11 @@ namespace Week04
 			public int currentIndex;
 		}
 
+		public class EntryNodeState : BaseNodeState
+		{
+			public BehaviorStatus previousEntryStatus;
+
+		}
+
 	}
 }

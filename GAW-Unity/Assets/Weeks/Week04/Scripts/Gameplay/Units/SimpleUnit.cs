@@ -13,9 +13,7 @@ namespace Week04
 	[SelectionBase]
 	public class SimpleUnit : BaseUnit
 	{
-		public static EntryNode _DEBUGSTATIC_NODE;
-		public static BehaviorContext _DEBUGSTATIC_BEHAVIORCONTEXT;
-
+		public const string SimpleUnitBehaviorTreeKey = "SIMPLE_UNIT_BEHAVIOR_TREE";
 
 		protected override void InitBehaviourTree()
 		{
@@ -29,8 +27,18 @@ namespace Week04
 
 			_behaviorContext = new BehaviorContext();
 			_behaviorContext[SUBJECT] = this;
+			_behaviorContext[RANGE_VAR] = 5f;
 
-			behaviourTree = new EntryNode(
+
+			if (BehaviorTreeGlobals.behaviorTrees.ContainsKey(SimpleUnitBehaviorTreeKey)
+			    && BehaviorTreeGlobals.behaviorTrees[SimpleUnitBehaviorTreeKey].IsAlive)
+			{
+				behaviourTree = BehaviorTreeGlobals.behaviorTrees[SimpleUnitBehaviorTreeKey].Target;
+
+			}
+			else
+			{
+				behaviourTree = new EntryNode(
 				new SelectorCompositeNode(
 					new SequenceCompositeNode(
 						// Get a target
@@ -90,7 +98,7 @@ namespace Week04
 							),
 						// We could find a target
 						// Now move in for the kill
-						
+
 
 						new SequenceCompositeNode(
 							new InverterDecoratorNode(
@@ -114,12 +122,13 @@ namespace Week04
 				)
 				);
 
-			_behaviorContext[RANGE_VAR] = 5f;
+				BehaviorTreeGlobals.behaviorTrees.Add(SimpleUnitBehaviorTreeKey, new WeakReferenceT<INode>(behaviourTree));
 
-			_DEBUGSTATIC_NODE = behaviourTree;
-			_DEBUGSTATIC_BEHAVIORCONTEXT = _behaviorContext;
+			}
 
-			var test = behaviourTree;
+		
+			BehaviorTreeGlobals.behaviorContexts.Add(new WeakReferenceT<BehaviorContext>(_behaviorContext));
+
 		}
 
 		protected override void UpdateMovement(float dt)
