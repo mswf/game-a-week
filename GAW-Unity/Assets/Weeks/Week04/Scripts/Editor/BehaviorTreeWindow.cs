@@ -297,6 +297,7 @@ namespace Week04
 					}
 				}
 
+				
 				if (previousScrollPosition.x != _scrollPosition.x || previousScrollPosition.y != _scrollPosition.y)
 				{
 					_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);
@@ -305,6 +306,7 @@ namespace Week04
 					_treeSelectorWindow.MovePosition(_scrollPosition - previousScrollPosition);
 					_contextSelectorWindow.MovePosition(_scrollPosition - previousScrollPosition);
 				}
+				
 			}
 
 		private void DrawToolsWindow(int id)
@@ -452,7 +454,7 @@ namespace Week04
 			var combinedHeight = 0f;
 
 			if (_groupDrawer != null && _groupDrawer.isExpanded == false)
-				return 40f + VERTICAL_SPACING;
+				return 40f + VERTICAL_SPACING*2f;
 
 			for (int i = 0; i < _childrenNodes.Length; i++)
 			{
@@ -496,7 +498,18 @@ namespace Week04
 				_groupDrawer.Init();
 		}
 
-		public void MoveVertical(float yPos)
+		public void MovePositionRecursively(Vector2 position)
+		{
+			SetPosition(_windowRect.position + position);
+
+
+			for (int i = 0; i < _childrenNodes.Length; i++)
+			{
+				_childrenNodes[i].MovePositionRecursively(position);
+			}
+		}
+
+			public void MoveVertical(float yPos)
 		{
 			_windowRect.y += yPos;
 
@@ -557,8 +570,13 @@ namespace Week04
 				DrawNodeCurve(_windowRect, _childrenNodes[i]._windowRect);
 				_childrenNodes[i].OnDrawWindow(ref id);
 			}
+			var previousPos = _windowRect.position;
+			_windowRect = GUI.Window(id, _windowRect, DrawNode, _windowTitle);
 
-			GUI.Window(id, _windowRect, DrawNode, _windowTitle);
+			for (int i = 0; i < _childrenNodes.Length; i++)
+			{
+				_childrenNodes[i].MovePositionRecursively(_windowRect.position - previousPos);
+			}
 
 			id++;
 		}
