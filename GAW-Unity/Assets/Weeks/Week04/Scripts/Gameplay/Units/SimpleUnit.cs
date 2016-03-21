@@ -13,7 +13,10 @@ namespace Week04
 	[SelectionBase]
 	public class SimpleUnit : BaseUnit
 	{
-		public const string SimpleUnitBehaviorTreeKey = "SIMPLE_UNIT_BEHAVIOR_TREE";
+		public const string SimpleUnitKeySuffix = "SIMPLE_UNIT_";
+		public const string SimpleUnitBehaviorTreeKey = SimpleUnitKeySuffix + "MAIN";
+		public const string CheckTargetTreeKey = SimpleUnitKeySuffix + "CHECK_TARGET";
+
 
 		protected override void InitBehaviourTree()
 		{
@@ -38,7 +41,7 @@ namespace Week04
 			}
 			else
 			{
-				behaviourTree = new EntryNode(
+				behaviourTree = new EntryNode( 
 				new SelectorCompositeNode(
 					new SequenceCompositeNode(
 						// Get a target
@@ -83,7 +86,7 @@ namespace Week04
 										new SetToNullNode(POTENTIAL_TARGET)
 
 									)
-								), Color.yellow, "Find a target"
+								), Color.yellow, "Find a target", treeIndex: CheckTargetTreeKey
 								),
 								//new PrintNode("At the end of the road:"),
 								//new PrintVarNode(TARGET),
@@ -119,10 +122,9 @@ namespace Week04
 					new SequenceCompositeNode(
 						new MoveNode(SUBJECT)
 					)
-				)
-				);
+				),
+				SimpleUnitBehaviorTreeKey);
 
-				BehaviorTreeGlobals.behaviorTrees.Add(SimpleUnitBehaviorTreeKey, new WeakReferenceT<INode>(behaviourTree));
 
 			}
 

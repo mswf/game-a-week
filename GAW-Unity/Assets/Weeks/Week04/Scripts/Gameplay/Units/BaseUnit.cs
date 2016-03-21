@@ -103,9 +103,7 @@ namespace Week04
 			{
 				behaviourTree = new EntryNode(
 					new IsNullNode("Ghello")
-				);
-
-				BehaviorTreeGlobals.behaviorTrees.Add(BaseUnitBehaviorTreeKey, new WeakReferenceT<INode>(behaviourTree));
+				, BaseUnitBehaviorTreeKey);
 			}
 
 

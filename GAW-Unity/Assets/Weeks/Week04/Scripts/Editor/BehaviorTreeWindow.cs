@@ -36,6 +36,8 @@ namespace Week04
 		private KeyValuePair<string, WeakReferenceT<INode>> _currentNode;
 		private WeakReferenceT<BehaviorContext> _currentContext;
 
+		private bool _showSelector = true;
+
 		public INode GetCurrentNode()
 		{
 			return _currentNode.Value.Target;
@@ -86,7 +88,7 @@ namespace Week04
 			{
 				_rootNode = new BehaviorNodeDrawer(this, _currentNode.Value.Target, 60f, 10f);
 
-				_scrollViewRect.height = _rootNode.GetCombinedHeight();
+				_scrollViewRect.height = Mathf.Max(_rootNode.GetCombinedHeight(), position.height);
 			}
 			else
 			{
@@ -161,58 +163,13 @@ namespace Week04
 
 			float dt = Time.deltaTime;
 
-			Event e = Event.current;
-			if (e != null)
-			{
-				switch (e.type)
-				{
-					case EventType.keyDown:
-					{
-						var keyCode = e.keyCode;
+			Rect windowPos = position;
 
-						switch (keyCode)
-						{
-							case KeyCode.A:
-							case KeyCode.LeftArrow:
-								_scrollPosition.x -= moveSpeed * dt;
-								break;
-							case KeyCode.D:
-							case KeyCode.RightArrow:
-								_scrollPosition.x += moveSpeed * dt;
-								break;
-							case KeyCode.W:
-							case KeyCode.UpArrow:
-								_scrollPosition.y -= moveSpeed * dt;
-								break;
-							case KeyCode.S:
-							case KeyCode.DownArrow:
-								_scrollPosition.y += moveSpeed * dt;
-								break;
+			var windowRect = new Rect(0, 0, windowPos.width, windowPos.height);
 
-							default:
-								break;
-						}
+			_prevWindowRect = windowPos;
 
-						if (keyCode == KeyCode.Q)
-						{
-							_zoomLevel *= 0.66f;
-						}
 
-						if (keyCode == KeyCode.E)
-						{
-							_zoomLevel *= 1.5f;
-						}
-
-						if (keyCode == KeyCode.R)
-						{
-							_zoomLevel = Vector2.one;
-						}
-						break;
-					}
-				}
-			}
-
-			var windowRect = new Rect(0, 0, position.width, position.height);
 
 
 			_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect);
@@ -226,45 +183,129 @@ namespace Week04
 			if (_rootNode != null)
 				_rootNode.OnDrawWindow(ref idToUse);
 
-			if (previousScrollPosition.x != _scrollPosition.x || previousScrollPosition.y != _scrollPosition.y)
-			{
-				_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);
-				_toolsWindowRect.position += _scrollPosition - previousScrollPosition;
 
-				_treeSelectorWindow._windowRect.position += _scrollPosition - previousScrollPosition;
-				_contextSelectorWindow._windowRect.position += _scrollPosition - previousScrollPosition;
-			}
 
 			_contextDrawer.OnDrawWindow(ref idToUse);
 
 			_toolsWindowRect = GUI.Window(idToUse, _toolsWindowRect, DrawToolsWindow, "Tools");
 			idToUse++;
 
-			_treeSelectorWindow.OnDrawWindow(ref idToUse);
-			_contextSelectorWindow.OnDrawWindow(ref idToUse);
+			//_treeSelectorWindow.OnGUI(ref idToUse);
+			//_contextSelectorWindow.OnGUI(ref idToUse);
 			
 			EndWindows();
 
 			GUI.EndScrollView();
 
+			GUI.color = Color.white;
 
-			var textEditor = EditorGUIUtility.GetStateObject(typeof (TextEditor), EditorGUIUtility.keyboardControl) as TextEditor;
 
-			if (textEditor != null)
+			if (_showSelector)
 			{
-				if (focusedWindow == this)
+				const float selectorWidth = 220f;
+				const float selectorHeight = 160f;
+
+				var selectorRect = new Rect(0, windowPos.height - selectorHeight - 16f, selectorWidth, selectorHeight);
+
+				GUILayout.BeginArea(selectorRect);
+
+				EditorGUI.DrawRect(new Rect(0, 0, selectorWidth, selectorHeight), new Color(187f / 255f, 188f / 255f, 191f / 255f, 0.5f));
+
+				_contextSelectorWindow.DrawWindow(-1);
+
+				GUILayout.EndArea();
+
+				var selectorRect2 = new Rect(selectorWidth, windowPos.height - selectorHeight - 16f, selectorWidth, selectorHeight);
+
+				GUILayout.BeginArea(selectorRect2);
+
+				EditorGUI.DrawRect(new Rect(0, 0, selectorWidth, selectorHeight), new Color(187f / 255f, 188f / 255f, 191f / 255f, 0.5f));
+
+				_treeSelectorWindow.DrawWindow(-1);
+
+				GUILayout.EndArea();
+			}
+
+				/*
+				var textEditor = EditorGUIUtility.GetStateObject(typeof (TextEditor), EditorGUIUtility.keyboardControl) as TextEditor;
+
+				if (textEditor != null)
 				{
-					if (Event.current.Equals(Event.KeyboardEvent("#x")))
-						textEditor.Cut();
+					if (focusedWindow == this)
+					{
+						if (Event.current.Equals(Event.KeyboardEvent("#x")))
+							textEditor.Cut();
 
-					if (Event.current.Equals(Event.KeyboardEvent("#c")))
-						textEditor.Copy();
+						if (Event.current.Equals(Event.KeyboardEvent("#c")))
+							textEditor.Copy();
 
-					if (Event.current.Equals(Event.KeyboardEvent("#v")))
-						textEditor.Paste();
+						if (Event.current.Equals(Event.KeyboardEvent("#v")))
+							textEditor.Paste();
+					}
+				}
+				*/
+
+				Event e = Event.current;
+				if (e != null)
+				{
+					switch (e.type)
+					{
+						case EventType.keyDown:
+							{
+								var keyCode = e.keyCode;
+								switch (keyCode)
+								{
+									case KeyCode.A:
+									case KeyCode.LeftArrow:
+										_scrollPosition.x -= moveSpeed * dt;
+										break;
+									case KeyCode.D:
+									case KeyCode.RightArrow:
+										_scrollPosition.x += moveSpeed * dt;
+										break;
+									case KeyCode.W:
+									case KeyCode.UpArrow:
+										_scrollPosition.y -= moveSpeed * dt;
+										break;
+									case KeyCode.S:
+									case KeyCode.DownArrow:
+										_scrollPosition.y += moveSpeed * dt;
+										break;
+									case KeyCode.Tab:
+										_showSelector = !_showSelector;
+										break;
+									default:
+										break;
+								}
+
+								if (keyCode == KeyCode.Q)
+								{
+									_zoomLevel *= 0.66f;
+								}
+
+								if (keyCode == KeyCode.E)
+								{
+									_zoomLevel *= 1.5f;
+								}
+
+								if (keyCode == KeyCode.R)
+								{
+									_zoomLevel = Vector2.one;
+								}
+								break;
+							}
+					}
+				}
+
+				if (previousScrollPosition.x != _scrollPosition.x || previousScrollPosition.y != _scrollPosition.y)
+				{
+					_contextDrawer.MovePosition(_scrollPosition - previousScrollPosition);
+					_toolsWindowRect.position += _scrollPosition - previousScrollPosition;
+
+					_treeSelectorWindow.MovePosition(_scrollPosition - previousScrollPosition);
+					_contextSelectorWindow.MovePosition(_scrollPosition - previousScrollPosition);
 				}
 			}
-		}
 
 		private void DrawToolsWindow(int id)
 		{
@@ -302,6 +343,7 @@ namespace Week04
 		}
 
 		private Vector2 _scrollPosition;
+		private Rect _prevWindowRect;
 	}
 
 	public class BehaviorNodeDrawer

@@ -8,33 +8,73 @@ namespace Week04
 {
 	namespace BehaviorTree
 	{
-		public class BehaviorTreeSelectorWindow
+		public abstract class SubWindow
 		{
 			public Rect _windowRect;
 
-			private BehaviorTreeWindow _parent;
+			protected BehaviorTreeWindow _parent;
 
-			private BehaviorTreeSelectorWindow()
-			{}
+			protected string WindowTitle;
 
-			public BehaviorTreeSelectorWindow(BehaviorTreeWindow parent)
+			private SubWindow() { }
+
+			protected SubWindow(BehaviorTreeWindow behaviorTreeWindow)
 			{
-				this._parent = parent;
+				_parent = behaviorTreeWindow;
+				
+			}
+
+			public void OnGUI(ref int windowId)
+			{
+				_windowRect = GUI.Window(windowId, _windowRect, DrawWindow, WindowTitle);
+				windowId++;
+			}
+
+			public abstract void DrawWindow(int id);
+
+			public virtual void SetPosition(Vector2 position)
+			{
+				_windowRect.position = position;
+			}
+
+			public virtual void MovePosition(Vector2 position)
+			{
+				_windowRect.position += position;
+			}
+
+			public virtual void MoveVertical(float yPos)
+			{
+				_windowRect.y += yPos;
+			}
+		}
+
+		public abstract class SearchableSubWindow : SubWindow
+		{
+			protected Vector2 _scrollPosition;
+			protected string _filterText;
+
+
+			public SearchableSubWindow(BehaviorTreeWindow behaviorTreeWindow) : base(behaviorTreeWindow)
+			{
+				_scrollPosition = Vector2.zero;
+				_filterText = "";
+			}
+		}
+
+		public class BehaviorTreeSelectorWindow : SearchableSubWindow
+		{
+			public BehaviorTreeSelectorWindow(BehaviorTreeWindow parent) : base(parent)
+			{
+				WindowTitle = "Select Tree";
 
 				_windowRect = new Rect(100f, 100f, 200f, 500f);
 
 				_currentSelected = new KeyValuePair<string, WeakReferenceT<INode>>();
 			}
 
-			public void OnDrawWindow(ref int id)
-			{
-				_windowRect = GUI.Window(id, _windowRect, DrawNode, "Select a Tree");
-				id++;
-			}
-
 			private KeyValuePair<string, WeakReferenceT<INode>> _currentSelected;
 
-			protected void DrawNode(int id)
+			public override void DrawWindow(int id)
 			{
 				if (_currentSelected.Value != null && _currentSelected.Value.IsAlive)
 				{
@@ -46,84 +86,82 @@ namespace Week04
 				}
 				if (_currentSelected.Key != null)
 				{
-					GUILayout.Label("Tree: " + _currentSelected.Key.ToString());
+					GUILayout.Label(_currentSelected.Key.ToString());
 				}
 				else
 				{
 					GUI.contentColor = Color.red;
 					GUILayout.Label("No tree selected");
 				}
-				GUILayout.Space(5f);
-				
+
+				GUILayout.Space(10f);
+
+				_filterText = GUILayout.TextField(_filterText);
+
+				bool filterText = _filterText != "";
+
+				_scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
+
 				foreach (KeyValuePair<string, WeakReferenceT<INode>> treeRef in BehaviorTreeGlobals.behaviorTrees)
 				{
 					var weakRef = treeRef.Value;
 
-					if (weakRef.IsAlive)
+					var name = treeRef.Key.ToString();
+
+					if (!filterText || name.Contains(_filterText))
 					{
-						if (GUILayout.Button(treeRef.Key.ToString()))
+						if (weakRef.IsAlive)
 						{
-							_currentSelected = treeRef;
-							this._parent.SetBehaviorTree(treeRef);
+							if (GUILayout.Button(name))
+							{
+								_currentSelected = treeRef;
+								this._parent.SetBehaviorTree(treeRef);
+
+							}
+						}
+						else
+						{
+							GUI.enabled = false;
+							if (GUILayout.Button(name))
+							{
+
+							}
+							GUI.enabled = true;
 
 						}
 					}
-					else
-					{
-						GUI.enabled = false;
-						if (GUILayout.Button(treeRef.Key.ToString()))
-						{
 
-						}
-						GUI.enabled = true;
 
-					}
 				}
 
+				EditorGUILayout.EndScrollView();
 
-				GUI.DragWindow();
-
+				if (id != -1)
+					GUI.DragWindow();
 			}
-
-
 		}
 
 
-		public class BehaviorContextSelectorWindow
+		public class BehaviorContextSelectorWindow : SearchableSubWindow
 		{
-			public Rect _windowRect;
 
-			private BehaviorTreeWindow _parent;
-			private Vector2 _scrollPosition;
-
-			private BehaviorContextSelectorWindow()
-			{ }
-
-			public BehaviorContextSelectorWindow(BehaviorTreeWindow parent)
+			public BehaviorContextSelectorWindow(BehaviorTreeWindow parent) : base(parent)
 			{
-				this._parent = parent;
+				WindowTitle = "Select Context";
 
 				_windowRect = new Rect(200f, 100f, 200f, 500f);
 
 				_currentSelected = new WeakReferenceT<BehaviorContext>(null);
 
-				_scrollPosition = Vector2.zero;
-			}
-
-			public void OnDrawWindow(ref int id)
-			{
-				_windowRect = GUI.Window(id, _windowRect, DrawNode, "Select a Context");
-				id++;
 			}
 
 			private WeakReferenceT<BehaviorContext> _currentSelected;
 
-			protected void DrawNode(int id)
+			public override void DrawWindow(int id)
 			{
 				if (_currentSelected.IsAlive)
 				{
 					GUI.contentColor = Color.black;
-					GUILayout.Label("You have selected a context");
 					GUILayout.Label(_currentSelected.Target.ToString());
 
 
@@ -132,39 +170,52 @@ namespace Week04
 				{
 					GUI.contentColor = Color.red;
 					GUILayout.Label("No context selected");
-					GUILayout.Label("");
 				}
 
-				GUILayout.Space(5f);
+				GUILayout.Space(10f);
+
+				_filterText = GUILayout.TextField(_filterText);
+
+				bool filterText = _filterText != "";
+
 
 				_scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
 				foreach (WeakReferenceT<BehaviorContext> contextRef in BehaviorTreeGlobals.behaviorContexts)
 				{
+					if (contextRef.IsAlive == false)
+						break;
 
-					if (contextRef.IsAlive)
+					var name = contextRef.Target.ToString();
+
+					if (!filterText || name.Contains(_filterText))
 					{
-						if (GUILayout.Button(contextRef.Target.ToString()))
+						if (contextRef.IsAlive)
 						{
-							_currentSelected = contextRef;
-							this._parent.SetBehaviorContext(contextRef);
+							if (GUILayout.Button(name))
+							{
+								_currentSelected = contextRef;
+								this._parent.SetBehaviorContext(contextRef);
+							}
+						}
+						else
+						{
+							GUI.enabled = false;
+							if (GUILayout.Button(name))
+							{
+
+							}
+							GUI.enabled = true;
+
 						}
 					}
-					else
-					{
-						GUI.enabled = false;
-						if (GUILayout.Button(contextRef.ToString()))
-						{
 
-						}
-						GUI.enabled = true;
 
-					}
 				}
 
 				EditorGUILayout.EndScrollView();
-
-				GUI.DragWindow();
+				if (id != -1)
+					GUI.DragWindow();
 
 			}
 

@@ -42,9 +42,14 @@ namespace Week04
 
 		public class EntryNode : DecoratorNode<EntryNodeState>
 		{
-			public EntryNode(INode firstNode) : base(firstNode)
+			public EntryNode(INode firstNode, string index) : base(firstNode)
 			{
 				this.childNode = firstNode;
+
+				if (index != null)
+				{
+					BehaviorTreeGlobals.behaviorTrees.Add(index, new WeakReferenceT<INode>(this));
+				}
 			}
 
 			public override void Initialize(BehaviorContext context)
@@ -109,12 +114,17 @@ namespace Week04
 
 			public readonly bool startExpanded;
 
-			public EditorRegionDecoratorNode(INode childNode, Color regionColor, string label = "", bool startExpanded = true) : base(childNode)
+			public EditorRegionDecoratorNode(INode childNode, Color regionColor, string label = "Group", bool startExpanded = true, string treeIndex = null) : base(childNode)
 			{
 				regionColor.a = 0.5f;
 				this.regionColor = regionColor;
 				this.label = label;
 				this.startExpanded = startExpanded;
+
+				if (treeIndex != null)
+				{
+					BehaviorTreeGlobals.behaviorTrees.Add(treeIndex, new WeakReferenceT<INode>(this));
+				}
 			}
 
 			public override BehaviorStatus UpdateTick(BehaviorContext context)
