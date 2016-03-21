@@ -86,7 +86,7 @@ namespace Week04
 		{
 			if (_currentNode.Value.IsAlive)
 			{
-				_rootNode = new BehaviorNodeDrawer(this, _currentNode.Value.Target, 60f, 10f);
+				_rootNode = new BehaviorNodeDrawer(this, null, _currentNode.Value.Target, 60f, 10f);
 
 				_scrollViewRect.height = Mathf.Max(_rootNode.GetCombinedHeight(), position.height);
 			}
@@ -359,6 +359,8 @@ namespace Week04
 
 		protected INode _nodeToDraw;
 
+		protected BehaviorNodeDrawer _parentNode;
+
 		protected BehaviorNodeDrawer[] _childrenNodes;
 
 		public const float MIN_WIDTH = 100f;
@@ -371,6 +373,8 @@ namespace Week04
 		public VisualNodeType type;
 		protected string _windowTitle;
 
+		protected Vector2 _originalPos;
+
 		private BehaviorGroupDrawer _groupDrawer;
 
 		private BehaviorTreeWindow _behaviorTreeWindow;
@@ -379,14 +383,16 @@ namespace Week04
 		{}
 
 
-		public BehaviorNodeDrawer(BehaviorTreeWindow behaviorTreeWindow, INode nodeToDraw, float xPos, float yPos)
+		public BehaviorNodeDrawer(BehaviorTreeWindow behaviorTreeWindow, BehaviorNodeDrawer parentNode, INode nodeToDraw, float xPos, float yPos)
 		{
+			this._originalPos = new Vector2(xPos, yPos);
 			this._behaviorTreeWindow = behaviorTreeWindow;
-
+			this._parentNode = parentNode;
+			
 			var regionDecoratorNode = nodeToDraw as EditorRegionDecoratorNode;
 			if (regionDecoratorNode != null)
 			{
-				_groupDrawer = new BehaviorGroupDrawer(regionDecoratorNode, this);
+				_groupDrawer = new BehaviorGroupDrawer(this, regionDecoratorNode, this);
 				nodeToDraw = regionDecoratorNode.getChildNode();
 			}
 
@@ -407,7 +413,7 @@ namespace Week04
 
 				_childrenNodes = new BehaviorNodeDrawer[1]
 				{
-					new BehaviorNodeDrawer(behaviorTreeWindow, decoratorNode.getChildNode(), _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y)
+					new BehaviorNodeDrawer(behaviorTreeWindow, this, decoratorNode.getChildNode(), _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y)
 				};
 			}
 
@@ -422,10 +428,12 @@ namespace Week04
 
 				for (int i = 0; i < compositeChilds.Length; i++)
 				{
-					_childrenNodes[i] = new BehaviorNodeDrawer(behaviorTreeWindow, compositeChilds[i], _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y);
+					_childrenNodes[i] = new BehaviorNodeDrawer(behaviorTreeWindow, this, compositeChilds[i], _windowRect.x + INITIAL_HORIZONTAL_SPACING + MIN_WIDTH, _windowRect.y);
 				}
 			}
 
+			if (_groupDrawer != null)
+				_groupDrawer.Init();
 
 			var aggregatedHeight = 0f;
 
@@ -436,16 +444,15 @@ namespace Week04
 				aggregatedHeight += _childrenNodes[i].GetCombinedHeight();
 			}
 
-			if (_groupDrawer != null)
-				_groupDrawer.Init();
-
-
 			_windowTitle = _nodeToDraw.GetType().Name.Replace("Node", "").Replace("Decorator", "").Replace("Composite", "");
 		}
 
 		public float GetCombinedHeight()
 		{
 			var combinedHeight = 0f;
+
+			if (_groupDrawer != null && _groupDrawer.isExpanded == false)
+				return 40f + VERTICAL_SPACING;
 
 			for (int i = 0; i < _childrenNodes.Length; i++)
 			{
@@ -500,6 +507,39 @@ namespace Week04
 
 			if (_groupDrawer != null)
 				_groupDrawer.Init();
+		}
+
+		public void ResetPosition()
+		{
+			_windowRect.position = _originalPos;
+		}
+
+		public void RecalculatePosition()
+		{
+			if (_parentNode != null)
+				_parentNode.RecalculatePosition();
+			else
+				OrderChildren();
+		}
+
+		public void OrderChildren()
+		{
+			ResetPosition();
+
+			for (int i = 0; i < _childrenNodes.Length; i++)
+			{
+				_childrenNodes[i].ResetPosition();
+				_childrenNodes[i].OrderChildren();
+			}
+
+			var aggregatedHeight = 0f;
+
+			for (int i = 0; i < _childrenNodes.Length; i++)
+			{
+				_childrenNodes[i].MoveVertical(aggregatedHeight);
+
+				aggregatedHeight += _childrenNodes[i].GetCombinedHeight();
+			}
 		}
 
 		public void OnDrawWindow(ref int id)
@@ -624,6 +664,7 @@ namespace Week04
 
 	public class BehaviorGroupDrawer
 	{
+		private BehaviorNodeDrawer _parentNode;
 		private EditorRegionDecoratorNode _childNode;
 		private BehaviorNodeDrawer _childNodeDrawer;
 
@@ -633,8 +674,15 @@ namespace Week04
 
 		private bool _isExpanded;
 
-		public BehaviorGroupDrawer(EditorRegionDecoratorNode childNode, BehaviorNodeDrawer childNodeDrawer)
+
+		public bool isExpanded
 		{
+			get { return _isExpanded; }
+		}
+
+		public BehaviorGroupDrawer(BehaviorNodeDrawer parentNode, EditorRegionDecoratorNode childNode, BehaviorNodeDrawer childNodeDrawer)
+		{
+			_parentNode = parentNode;
 			_childNode = childNode;
 			_childNodeDrawer = childNodeDrawer;
 
@@ -688,6 +736,7 @@ namespace Week04
 				if (GUI.Button(labelPosition, _label))
 				{
 					_isExpanded = !_isExpanded;
+					_parentNode.RecalculatePosition();
 				}
 			}
 			else
@@ -701,6 +750,8 @@ namespace Week04
 				if (GUI.Button(labelPosition, _label))
 				{
 					_isExpanded = !_isExpanded;
+					_parentNode.RecalculatePosition();
+
 				}
 			}
 			
