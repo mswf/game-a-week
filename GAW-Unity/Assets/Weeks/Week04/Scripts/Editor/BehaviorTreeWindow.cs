@@ -72,21 +72,33 @@ namespace Week04
 			if (newContext.Target == _currentContext.Target)
 				return;
 
+
 			_currentContext = newContext;
+
+			_contextDrawer.behaviorContext = newContext;
+
 			OnBehaviorTreeChanged();
 		}
 
 		public void OnBehaviorTreeChanged()
 		{
-			_rootNode = new BehaviorNodeDrawer(this, _currentNode.Value.Target, 60f, 10f);
+			if (_currentNode.Value.IsAlive)
+			{
+				_rootNode = new BehaviorNodeDrawer(this, _currentNode.Value.Target, 60f, 10f);
 
-			_scrollViewRect.height = _rootNode.GetCombinedHeight();
+				_scrollViewRect.height = _rootNode.GetCombinedHeight();
+			}
+			else
+			{
+				_rootNode = null;
+			}
+
 			
 		}
 
 		public void OnContextChanged()
 		{
-			_contextDrawer.behaviorContext = _currentContext.Target;
+			_contextDrawer.behaviorContext = _currentContext;
 
 		}
 
@@ -267,7 +279,7 @@ namespace Week04
 
 				if (_contextDrawer != null)
 				{
-					_contextDrawer.behaviorContext = null;
+					_contextDrawer.behaviorContext = _currentContext;
 				}
 			}
 
@@ -336,7 +348,7 @@ namespace Week04
 				nodeToDraw = regionDecoratorNode.getChildNode();
 			}
 
-			_windowRect = new Rect(xPos, yPos, MIN_WIDTH, MIN_HEIGHT + nodeToDraw.GetGUIPropertyHeight());
+			_windowRect = new Rect(xPos, yPos, MIN_WIDTH, MIN_HEIGHT + nodeToDraw.GetGUIPropertyHeight());					
 			_nodeToDraw = nodeToDraw;
 
 			var leafNode = nodeToDraw as ILeafNode;
@@ -659,11 +671,13 @@ namespace Week04
 	{
 		private Rect _windowRect;
 
-		public BehaviorContext behaviorContext;
+		public WeakReferenceT<BehaviorContext> behaviorContext;
 
 		public BehaviorContextDrawer()
 		{
 			_windowRect = new Rect(200f, 200f, 400f, 600f);
+
+			behaviorContext = new WeakReferenceT<BehaviorContext>(null);
 		}
 
 		public void OnDrawWindow(ref int id)
@@ -680,7 +694,7 @@ namespace Week04
 
 		private void DrawContext(int id)
 		{
-			if (behaviorContext == null)
+			if (! behaviorContext.IsAlive)
 			{
 				GUILayout.Label("No active Behavior Context");
 				GUI.DragWindow();
@@ -693,7 +707,7 @@ namespace Week04
 			{
 				EditorGUI.indentLevel = 1;
 
-				var memory = behaviorContext.memory;
+				var memory = behaviorContext.Target.memory;
 
 				foreach (KeyValuePair<string, object> keyValuePair in memory)
 				{
@@ -712,7 +726,7 @@ namespace Week04
 			{
 				EditorGUI.indentLevel = 1;
 
-				var state = behaviorContext.state;
+				var state = behaviorContext.Target.state;
 
 				foreach (KeyValuePair<object, BaseNodeState> keyValuePair in state)
 				{
@@ -742,14 +756,14 @@ namespace Week04
 			if (behaviorContext == null)
 				return totalHeight;
 
-			if (_isMemoryExpanded)
+			if (_isMemoryExpanded && behaviorContext.IsAlive)
 			{
-				totalHeight += propertyHeight * behaviorContext.memory.Count;
+				totalHeight += propertyHeight * behaviorContext.Target.memory.Count;
 			}
 
-			if (_isStateExpanded)
+			if (_isStateExpanded && behaviorContext.IsAlive)
 			{
-				totalHeight += propertyHeight * behaviorContext.state.Count;
+				totalHeight += propertyHeight * behaviorContext.Target.state.Count;
 			}
 
 
