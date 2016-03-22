@@ -31,6 +31,12 @@ namespace BehaviorTree
 	//https://youtu.be/n4aREFb3SsU
 
 
+	// TODO: 
+	// Extra reading: http://altdevblog.com/2011/02/24/introduction-to-behavior-trees/
+
+	// UI:::
+	// http://ilkinulas.github.io/programming/unity/2016/03/18/unity_ui_drag_threshold.html
+
 	/*
 	NOTES:
 
@@ -62,7 +68,7 @@ namespace BehaviorTree
 		- FE: if idle, look around for actors that try to promote themselves as things that satisfy this state. If found, get BT from actor and attach it to idle
 	
 	*/
-	
+
 	public enum BehaviorStatus
 	{
 		Success,
