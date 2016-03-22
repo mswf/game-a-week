@@ -128,8 +128,7 @@ namespace BehaviorTree
 		}
 	}
 #endif
-
-	[System.Serializable]
+	
 	public class BehaviorContext
 	{
 		public float timeLeft;
