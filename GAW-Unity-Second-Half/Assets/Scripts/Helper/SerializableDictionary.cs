@@ -30,7 +30,7 @@ public class SerializableDictionary<TKey,TValue> :
 	private List<TKey> _keys;
 	[SerializeField, HideInInspector]
 	private List<TValue> _values;
-	
+
 	// Before the serialization we fill these lists
 	public void OnBeforeSerialize() {
 		_keys = new List<TKey>(this.Count);

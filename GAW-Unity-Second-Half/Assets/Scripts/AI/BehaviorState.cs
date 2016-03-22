@@ -11,6 +11,9 @@ namespace BehaviorTree
 		{
 			var behaviorStateHolder = GameObject.FindObjectOfType<BehaviorStateMonobehavior>();
 
+			if (behaviorStateHolder == null)
+				return null;
+
 			return behaviorStateHolder.GetBehaviorState();
 		}
 		

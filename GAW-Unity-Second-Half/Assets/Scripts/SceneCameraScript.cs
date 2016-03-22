@@ -47,6 +47,7 @@ public class SceneCameraScript : MonoBehaviour
 	// Update is called once per frame
 	private void LateUpdate ()
 	{
+		/*
 
 		_mainGameCamera = Camera.main;
 
@@ -78,6 +79,7 @@ public class SceneCameraScript : MonoBehaviour
 				sceneView.Repaint();
 			
 		}
+		*/
 	}
 #endif
 

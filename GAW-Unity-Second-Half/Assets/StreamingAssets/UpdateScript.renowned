@@ -1,0 +1,118 @@
+﻿// press F6 for a hard reset of the entire scene
+
+// this variable holds the player object
+var Player : GameObject = GameObject.Find("Player");
+// this variable holds the Sword object
+var Sword : GameObject = GameObject.Find("Sword");
+// this variable holds the Boss object
+var Boss : GameObject = GameObject.Find("Boss");
+// this variable holds the message text object
+var Message : GameObject = GameObject.Find("Message");
+
+// checks if the player object was found
+// if not, it is assumed the entire scene has to be initialized anew
+if(!Player){
+	// setup for the player object
+	Player = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+	Player.name = "Player";
+	Player.GetComponent(Renderer).material.SetColor("_Color", Color.green);
+	Player.transform.localPosition = new Vector3(-12, 0, 0);
+
+	// setup for the Sword object
+	Sword = GameObject.CreatePrimitive(PrimitiveType.Cube);
+	Sword.name = "Sword";
+	Sword.GetComponent(Renderer).material.SetColor("_Color", Color.yellow);
+	Sword.transform.localPosition = new Vector3(-6, 3, 0);
+
+	// setting up the message object
+	Message = GameObject.Instantiate(Resources.Load("Message"));
+	Message.name = "Message";
+
+	// defining the current text of the message object
+	Message.GetComponent(TextMesh).text = "Get Sword";
+	Message.GetComponent(TextMesh).characterSize = 0.1;
+
+}
+
+
+
+
+// Input Handling
+
+if (Input.GetKeyDown(KeyCode.T)){
+	var RefreshComponent = GameObject.Find("Main Camera").GetComponent("Refresher");
+	var returnValue = RefreshComponent.Test();
+
+	Debug.Log(returnValue);
+
+	Debug.Log(returnValue._messageInEditor);
+
+	returnValue._messageInEditor = "wLALALALL";
+
+	Debug.Log(returnValue._messageInEditor);
+
+
+	Debug.Log(BehaviorTree);
+	//var testObject = new TestObject();
+}
+
+if(Input.GetKeyDown(KeyCode.W)){
+	Player.transform.Translate(0,1,0);
+}
+
+if(Input.GetKeyDown(KeyCode.S)){
+	Player.transform.Translate(0,-1,0);
+}
+
+if(Input.GetKeyDown(KeyCode.A)){
+	Player.transform.Translate(-1,0,0);
+}
+
+if(Input.GetKeyDown(KeyCode.D)){
+	Player.transform.Translate(1,0,0);
+}
+
+if(Input.GetKey(KeyCode.Y)){
+	GameObject.Destroy(Player);
+}
+
+// if the sword was found, this means it is not picked up
+if(Sword){
+	// checks if the sword and player take up the same spot
+	if(Sword.transform.position == Player.transform.position){
+		// pickup effect
+		RenderSettings.ambientLight = Color.white;
+		// remove sword
+		GameObject.Destroy(Sword);
+
+		// defining the current text of the message object
+		Message.GetComponent(TextMesh).text = "Kill Boss";
+
+		// setup for the Boss object
+		Boss = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		Boss.name = "Boss";
+		Boss.GetComponent(Renderer).material.SetColor("_Color", Color.red);
+		Boss.transform.localPosition = new Vector3(6, -4, 0);
+	}
+}
+
+// if the Boss was found, it means the sword was picked up
+if(Boss){
+	// checks if the Boss and player take up the same spot
+	if(Boss.transform.position == Player.transform.position){
+		// pickup effect
+		RenderSettings.ambientLight = Color.red;
+		// remove boss
+		GameObject.Destroy(Boss);
+
+		// defining the current text of the message object
+		Message.GetComponent(TextMesh).text = "Boss Killed, You Win";
+	}
+}
+
+
+// slowly fades in the main light, as it's initialized at blackness
+GameObject.Find("Directional light").GetComponent(Light).intensity = Mathf.Lerp(GameObject.Find("Directional light").GetComponent(Light).intensity, .9, .02);
+
+// slowly fades in the ambient light, as it's initialized at blackness
+RenderSettings.ambientLight = Color.Lerp(RenderSettings.ambientLight, Color.white, .1f);
