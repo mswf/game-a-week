@@ -20,6 +20,31 @@ namespace BehaviorTree
 	public abstract class LeafNode : LeafNode<BaseNodeState>
 	{}
 
+	public class StubNode : LeafNode
+	{
+
+		private readonly string _messageInEditor;
+
+		public StubNode(string messageInEditor = "")
+		{
+			this._messageInEditor = messageInEditor;
+		}
+
+		public override float GetGUIPropertyHeight()
+		{
+			return 1f * DefaultPropertyHeight;
+		}
+
+		public override BehaviorStatus UpdateTick(BehaviorContext context)
+		{
+			return BehaviorStatus.Success;
+		}
+
+		public override void DrawGUI(int windowID)
+		{
+			GUILayout.TextField(_messageInEditor.ToString());
+		}
+	}
 
 	public class PrintNode : LeafNode
 	{

@@ -13,6 +13,8 @@ namespace Week06
 			behaviorState = new BehaviorState();
 		}
 
+		public List<Squad> squadsInScene;
+
 		public List<Unit> unitsInScene;
 
 		[SerializeField]
@@ -26,6 +28,16 @@ namespace Week06
 		// Use this for initialization
 		private void Start ()
 		{
+			var squads = GameObject.FindObjectsOfType<Squad>();
+			squadsInScene = new List<Squad>(squads.Length);
+
+			for (int i = 0; i < squads.Length; i++)
+			{
+				squadsInScene.Add(squads[i]);
+
+				squads[i].Initialize(this);
+			}
+
 			var units = GameObject.FindObjectsOfType<Unit>();
 			
 			unitsInScene = new List<Unit>(units.Length);

@@ -6,7 +6,7 @@ using BehaviorTree;
 namespace Week06
 {
 	[RequireComponent(typeof(NavMeshAgent))]
-	public class Unit : MonoBehaviour
+	public class BaseUnit : MonoBehaviour
 	{
 
 		public Transform navigationTarget;
@@ -17,49 +17,61 @@ namespace Week06
 
 		
 		// Use this for early referencing
-		private void Awake()
+		protected void Awake()
 		{
 			navMeshAgent = GetComponent<NavMeshAgent>();
 			currentPath = new NavMeshPath();
 		}
 
 		[SerializeField, HideInInspector]
-		private GameController _gameController;
+		protected GameController _gameController;
 
 		[SerializeField, HideInInspector]
-		private BehaviorContext _behaviorContext;
+		protected BehaviorContext _behaviorContext;
 		[SerializeField, HideInInspector]
-		private INode _behaviorTreeEntry;
+		protected INode _behaviorTreeEntry;
 
 		public const string U_SUBJECT = "U_SUBJECT";
 
-		public const string TREE_UNIT = "TREE_UNIT";
+		public const string TREE_BASE_UNIT = "TREE_BASE_UNIT";
 
-
-		public void Initialize(GameController gameController)
+		public virtual void Initialize(GameController gameController)
 		{
 			_gameController = gameController;
 
 			var bState = gameController.behaviorState;
 
 			_behaviorContext = bState.GetNewContext();
-			_behaviorContext[U_SUBJECT] = this;
-			
-			if (bState.IsTreeDefined(TREE_UNIT) == false)
+
+			InitializeBehaviorContext(_behaviorContext);
+
+
+			InitializeBehaviorTree(bState);
+
+		}
+
+		protected virtual void InitializeBehaviorTree(BehaviorState bState)
+		{
+			if (bState.IsTreeDefined(TREE_BASE_UNIT) == false)
 			{
-				_behaviorTreeEntry = bState.AddTree(TREE_UNIT,
+				_behaviorTreeEntry = bState.AddTree(TREE_BASE_UNIT,
+
 				new EntryNode(
-					new PrintNode("GHello")
+					new PrintNode("No behavior tree defined")
 				)
-					
+
 
 				);
 			}
 			else
 			{
-				_behaviorTreeEntry = bState.GetTree(TREE_UNIT);
+				_behaviorTreeEntry = bState.GetTree(TREE_BASE_UNIT);
 			}
-			
+		}
+
+		protected virtual void InitializeBehaviorContext(BehaviorContext behaviorContext)
+		{
+			behaviorContext[U_SUBJECT] = this;
 
 		}
 
@@ -68,16 +80,15 @@ namespace Week06
 		{
 			
 		}
-		
+
 		// Update is called once per frame
-		private void Update ()
+		protected void Update ()
 		{
 			var dt = Time.deltaTime;
 
 			_behaviorContext.timeLeft = dt;
 			_behaviorTreeEntry.Update(_behaviorContext);
 			
-			Debug.Log("Reload test");
 					
 			navMeshAgent.CalculatePath(navigationTarget.position, currentPath);
 			navMeshAgent.stoppingDistance = 3f;
@@ -102,7 +113,7 @@ namespace Week06
 			{
 	//			DebugExtension.DebugPoint(path[i], Color.black, 1f, dt);
 				//Debug.DrawLine(path[i], path[i + 1], Color.blue, dt);	
-				DebugExtension.DebugArrow(path[i], path[i+1] - path[i], dt);
+				DebugExtension.DebugArrow(path[i] + Vector3.up, path[i+1] - path[i], dt);
 			}
 		//	if (path.Length > 0)
 			//	DebugExtension.DebugArrow(path[path.Length-1], navigationTarget.position, dt);
