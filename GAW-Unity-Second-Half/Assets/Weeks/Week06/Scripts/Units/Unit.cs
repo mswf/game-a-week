@@ -2,6 +2,7 @@
 using System.Collections;
 
 using BehaviorTree;
+using Week06.BehaviorTree;
 
 namespace Week06
 {
@@ -9,6 +10,7 @@ namespace Week06
 	{
 		public const string TREE_UNIT = "TREE_UNIT";
 
+		public Squad squad;
 
 		protected override void InitializeBehaviorTree(BehaviorState bState)
 		{
@@ -17,7 +19,7 @@ namespace Week06
 				_behaviorTreeEntry = bState.AddTree(TREE_UNIT,
 
 				new EntryNode(
-					new StubNode("GHello, I'm a unit")
+					new FollowSquadNode(U_SUBJECT)
 				)
 
 
@@ -27,6 +29,11 @@ namespace Week06
 			{
 				_behaviorTreeEntry = bState.GetTree(TREE_UNIT);
 			}
+		}
+
+		public void MoveWithSquad()
+		{
+			navMeshAgent.destination = squad._transform.position;
 		}
 	}
 }

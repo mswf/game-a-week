@@ -13,14 +13,14 @@ namespace Week06
 
 		protected NavMeshAgent navMeshAgent;
 
-		public NavMeshPath currentPath;
-
+		public Transform _transform;
 		
 		// Use this for early referencing
 		protected void Awake()
 		{
 			navMeshAgent = GetComponent<NavMeshAgent>();
-			currentPath = new NavMeshPath();
+
+			_transform = GetComponent<Transform>();
 		}
 
 		[SerializeField, HideInInspector]
@@ -89,35 +89,28 @@ namespace Week06
 			_behaviorContext.timeLeft = dt;
 			_behaviorTreeEntry.Update(_behaviorContext);
 			
+			
 					
-			navMeshAgent.CalculatePath(navigationTarget.position, currentPath);
+			//navMeshAgent.CalculatePath(navigationTarget.position, currentPath);
 			navMeshAgent.stoppingDistance = 3f;
 
 			if (Input.GetKey(KeyCode.R))
 			{
 				Debug.Log("Calculating new path:");
-				//	var result = 
-
-
-				navMeshAgent.path = currentPath;
+				//navMeshAgent.path = currentPath;
 				navMeshAgent.destination = navigationTarget.position;
-
-				//Debug.Log(result);
+				
 			}
 
 
-
+			/*
 			var path = currentPath.corners;
 
 			for (int i = 0; i < path.Length-1; i++)
 			{
-	//			DebugExtension.DebugPoint(path[i], Color.black, 1f, dt);
-				//Debug.DrawLine(path[i], path[i + 1], Color.blue, dt);	
 				DebugExtension.DebugArrow(path[i] + Vector3.up, path[i+1] - path[i], dt);
 			}
-		//	if (path.Length > 0)
-			//	DebugExtension.DebugArrow(path[path.Length-1], navigationTarget.position, dt);
-
+			*/
 
 		}
 	}
