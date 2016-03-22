@@ -10,7 +10,12 @@ using Stack_Object = System.Collections.Generic.Stack<System.Object>;
 namespace BehaviorTree
 {
 	public abstract class LeafNode<StateType> : Node<StateType>, ILeafNode where StateType : BaseNodeState, new()
-	{}
+	{
+		public override void SetBehaviorState(BehaviorState behaviorState)
+		{
+			this.behaviorState = behaviorState;
+		}
+	}
 
 	public abstract class LeafNode : LeafNode<BaseNodeState>
 	{}

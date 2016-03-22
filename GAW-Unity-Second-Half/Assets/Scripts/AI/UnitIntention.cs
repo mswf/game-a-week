@@ -62,18 +62,7 @@ namespace BehaviorTree
 		- FE: if idle, look around for actors that try to promote themselves as things that satisfy this state. If found, get BT from actor and attach it to idle
 	
 	*/
-
-	public static class BehaviorTreeGlobals
-	{
-		public static Dictionary<string, WeakReferenceT<INode>> behaviorTrees = new Dictionary<string, WeakReferenceT<INode>>();
-
-		public static List<WeakReferenceT<BehaviorContext>> behaviorContexts = new List<WeakReferenceT<BehaviorContext>>();
-
-
-	}
-
-
-
+	
 	public enum BehaviorStatus
 	{
 		Success,
@@ -220,7 +209,7 @@ namespace BehaviorTree
 
 		public override string ToString()
 		{
-			var owner = this["S_SUBJECT"];
+			var owner = this["U_SUBJECT"];
 			if (owner != null)
 				return "MEM: " + owner.ToString();
 
@@ -234,6 +223,8 @@ namespace BehaviorTree
 
 		void Initialize(BehaviorContext context);
 		void Cleanup(BehaviorContext context);
+
+		void SetBehaviorState(BehaviorState behaviorState);
 
 		void DrawGUI(int windowID);
 		float GetGUIPropertyHeight();
@@ -256,6 +247,8 @@ namespace BehaviorTree
 
 	public abstract class Node<StateType> : INode where StateType : BaseNodeState, new()
 	{
+		protected BehaviorState behaviorState;
+		
 		public virtual BehaviorStatus Update(BehaviorContext context)
 		{
 			//return UpdateTick(context);
@@ -307,14 +300,11 @@ namespace BehaviorTree
 #endif
 		}
 
+		public abstract void SetBehaviorState(BehaviorState behaviorState);
+
 		public virtual void DrawGUI(int windowID) {}
 
 		protected const float DefaultPropertyHeight = 18f;
-		
-		protected static readonly GUILayoutOption[] GUILayoutOptions = new GUILayoutOption[1]
-		{
-			GUILayout.Height(DefaultPropertyHeight)
-		};
 		
 		public virtual float GetGUIPropertyHeight()
 		{

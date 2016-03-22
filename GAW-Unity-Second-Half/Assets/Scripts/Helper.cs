@@ -10,7 +10,7 @@ public class WeakReferenceT<T> where T : class
 {
 	private readonly WeakReference _reference;
 
-	public WeakReferenceT (System.Object target)
+	public WeakReferenceT (T target)
 	{
 		_reference = new WeakReference(target);
 	}
@@ -25,10 +25,6 @@ public class WeakReferenceT<T> where T : class
 		get { return _reference.Target as T; }
 		set { _reference.Target = value; }
 	}
-
-	
-
-
 }
 
 public static class Helper

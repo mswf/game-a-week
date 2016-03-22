@@ -7,10 +7,20 @@ namespace BehaviorTree
 	public abstract class CompositeNode<StateType> : Node<StateType>, ICompositeNode where StateType : BaseNodeState, new()
 	{
 		public INode[] childNodes;
-
+		
 		protected CompositeNode(params INode[] childNodes)
 		{
 			this.childNodes = childNodes;
+		}
+
+		public override void SetBehaviorState(BehaviorState behaviorState)
+		{
+			this.behaviorState = behaviorState;
+
+			for (int i = 0; i < childNodes.Length; i++)
+			{
+				childNodes[i].SetBehaviorState(behaviorState);
+			}
 		}
 
 		public INode[] getChildNodes()

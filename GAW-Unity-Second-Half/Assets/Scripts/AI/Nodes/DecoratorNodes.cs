@@ -14,6 +14,12 @@ namespace BehaviorTree
 			this.childNode = childNode;
 		}
 
+		public override void SetBehaviorState(BehaviorState behaviorState)
+		{
+			this.behaviorState = behaviorState;
+			childNode.SetBehaviorState(behaviorState);
+		}
+
 		public override void Initialize(BehaviorContext context)
 		{
 			base.Initialize(context);
@@ -40,13 +46,22 @@ namespace BehaviorTree
 
 	public class EntryNode : DecoratorNode<EntryNodeState>
 	{
-		public EntryNode(INode firstNode, string index) : base(firstNode)
+		public readonly string treeIndex;
+
+		public EntryNode(INode firstNode, string treeIndex = null) : base(firstNode)
 		{
 			this.childNode = firstNode;
 
-			if (index != null)
+			this.treeIndex = treeIndex;
+		}
+
+		public override void SetBehaviorState(BehaviorState behaviorState)
+		{
+			base.SetBehaviorState(behaviorState);
+
+			if (treeIndex != null)
 			{
-				BehaviorTreeGlobals.behaviorTrees.Add(index, new WeakReferenceT<INode>(this));
+				behaviorState.AddTree(treeIndex, this);
 			}
 		}
 
@@ -112,6 +127,8 @@ namespace BehaviorTree
 
 		public readonly bool startExpanded;
 
+		public readonly string treeIndex;
+
 		public EditorRegionDecoratorNode(INode childNode, Color regionColor, string label = "Group", bool startExpanded = true, string treeIndex = null) : base(childNode)
 		{
 			regionColor.a = 0.5f;
@@ -119,9 +136,18 @@ namespace BehaviorTree
 			this.label = label;
 			this.startExpanded = startExpanded;
 
+			this.treeIndex = treeIndex;
+
+
+		}
+
+		public override void SetBehaviorState(BehaviorState behaviorState)
+		{
+			base.SetBehaviorState(behaviorState);
+
 			if (treeIndex != null)
 			{
-				BehaviorTreeGlobals.behaviorTrees.Add(treeIndex, new WeakReferenceT<INode>(this));
+				behaviorState.AddTree(treeIndex, this);
 			}
 		}
 

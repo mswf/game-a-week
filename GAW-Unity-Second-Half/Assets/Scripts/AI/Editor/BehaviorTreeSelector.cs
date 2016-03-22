@@ -75,6 +75,14 @@ namespace BehaviorTree
 
 		public override void DrawWindow(int id)
 		{
+			var behaviorState = BehaviorState.GetBehaviorStateInScene();
+			if (behaviorState == null)
+			{
+				GUILayout.Label("No state, no tree.");
+				return;
+			}
+			var behaviorTrees = behaviorState.behaviorTrees;
+
 			if (_currentSelected.Value != null && _currentSelected.Value.IsAlive)
 			{
 				GUI.contentColor = Color.black;
@@ -101,7 +109,7 @@ namespace BehaviorTree
 
 			_scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
-			foreach (KeyValuePair<string, WeakReferenceT<INode>> treeRef in BehaviorTreeGlobals.behaviorTrees)
+			foreach (KeyValuePair<string, WeakReferenceT<INode>> treeRef in behaviorTrees)
 			{
 				var weakRef = treeRef.Value;
 
@@ -158,6 +166,15 @@ namespace BehaviorTree
 
 		public override void DrawWindow(int id)
 		{
+			var behaviorState = BehaviorState.GetBehaviorStateInScene();
+			if (behaviorState == null)
+			{
+				GUILayout.Label("No state, no context.");
+				return;
+			}
+			var behaviorContexts = behaviorState.behaviorContexts;
+
+
 			if (_currentSelected.IsAlive)
 			{
 				GUI.contentColor = Color.black;
@@ -180,7 +197,7 @@ namespace BehaviorTree
 
 			_scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
-			foreach (WeakReferenceT<BehaviorContext> contextRef in BehaviorTreeGlobals.behaviorContexts)
+			foreach (WeakReferenceT<BehaviorContext> contextRef in behaviorContexts)
 			{
 				if (contextRef.IsAlive == false)
 					break;
