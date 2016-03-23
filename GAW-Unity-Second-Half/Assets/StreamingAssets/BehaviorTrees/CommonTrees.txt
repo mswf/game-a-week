@@ -1,0 +1,23 @@
+
+// comments
+// use "Groovy" syntax highlighting
+
+using Default;
+using Week06;
+
+// Include subtrees from other files
+include CommonTrees.txt;
+
+
+subtree: (name= "MySubtree")
+	MyTask (arg1= 1)
+		MySubTask ( pattern.alpha )
+		[MyGuard ()] MySubTask ()
+	myTask ()
+
+root: (name: "TestTree")
+	[MyGuard1 ()] [MyGuard2 (arg1: 1)] MyTask (arg1= 1, arg2= "Hello")
+		$MySubTree
+		Sequence()
+			IsNull()
+			HaHa()
