@@ -2,6 +2,7 @@
 using System.Collections;
 
 using BehaviorTree;
+using UnityEngine.SceneManagement;
 
 
 public class TestObject
@@ -20,8 +21,10 @@ public class TestObject
 
 public class Refresher : MonoBehaviour {
 	void Update () {
-		if(Input.GetKeyDown(KeyCode.F6))
-			Application.LoadLevel(Application.loadedLevel);
+		if (Input.GetKeyDown(KeyCode.F6))
+		{
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
 	}
 
 	public INode Test()

@@ -12,10 +12,10 @@ namespace Week06
 			GameObject.DontDestroyOnLoad(this);
 			behaviorState = new BehaviorState();
 
-
+			/*
 			var parser = new DefinitionParser();
-
 			parser.ParseTestFile();
+			*/
 		}
 
 		public List<Squad> squadsInScene;
@@ -51,7 +51,7 @@ namespace Week06
 			{
 				unitsInScene.Add(units[i]);
 
-				units[i].Initialize(this);
+				//units[i].Initialize(this);
 			}
 		}
 		

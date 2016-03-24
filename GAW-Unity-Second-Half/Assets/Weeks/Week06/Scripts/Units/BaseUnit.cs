@@ -38,7 +38,7 @@ namespace Week06
 		public virtual void Initialize(GameController gameController)
 		{
 			_gameController = gameController;
-
+			
 			var bState = gameController.behaviorState;
 
 			_behaviorContext = bState.GetNewContext();

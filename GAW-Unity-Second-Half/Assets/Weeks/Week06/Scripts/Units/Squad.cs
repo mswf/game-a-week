@@ -15,7 +15,8 @@ namespace Week06
 
 			for (int i = 0; i < squadMembers.Length; i++)
 			{
-				squadMembers[i].squad = this;
+	//			squadMembers[i].squad = this;
+				squadMembers[i].Initialize(gameController, this);
 			}
 		}
 
