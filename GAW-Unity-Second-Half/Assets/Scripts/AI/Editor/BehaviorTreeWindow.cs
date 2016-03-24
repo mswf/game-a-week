@@ -85,8 +85,7 @@ public class BehaviorTreeWindow : EditorWindow
 		if (_currentNode.Value.IsAlive)
 		{
 			_rootNode = new BehaviorNodeDrawer(this, null, _currentNode.Value.Target, 60f, 10f);
-
-			_scrollViewRect.height = Mathf.Max(_rootNode.GetCombinedHeight(), position.height);
+			RecalculateScrollHeight();
 		}
 		else
 		{
@@ -96,7 +95,13 @@ public class BehaviorTreeWindow : EditorWindow
 		
 	}
 
-	public void OnContextChanged()
+	public void RecalculateScrollHeight()
+	{
+		_scrollViewRect.height = Mathf.Max(_rootNode.GetCombinedHeight(), position.height);
+
+	}
+
+		public void OnContextChanged()
 	{
 		_contextDrawer.behaviorContext = _currentContext;
 
@@ -166,9 +171,6 @@ public class BehaviorTreeWindow : EditorWindow
 		var windowRect = new Rect(0, 0, windowPos.width, windowPos.height);
 
 		_prevWindowRect = windowPos;
-
-
-
 
 		_scrollPosition = GUI.BeginScrollView(windowRect, _scrollPosition, _scrollViewRect);
 
@@ -392,7 +394,7 @@ public class BehaviorNodeDrawer
 		var regionDecoratorNode = nodeToDraw as EditorRegionDecoratorNode;
 		if (regionDecoratorNode != null)
 		{
-			_groupDrawer = new BehaviorGroupDrawer(this, regionDecoratorNode, this);
+			_groupDrawer = new BehaviorGroupDrawer(behaviorTreeWindow, this, regionDecoratorNode, this);
 			nodeToDraw = regionDecoratorNode.getChildNode();
 		}
 
@@ -689,6 +691,7 @@ public class BehaviorGroupDrawer
 	private string _label;
 
 	private bool _isExpanded;
+	private BehaviorTreeWindow _behaviorTreeWindow;
 
 
 	public bool isExpanded
@@ -696,8 +699,10 @@ public class BehaviorGroupDrawer
 		get { return _isExpanded; }
 	}
 
-	public BehaviorGroupDrawer(BehaviorNodeDrawer parentNode, EditorRegionDecoratorNode childNode, BehaviorNodeDrawer childNodeDrawer)
+	public BehaviorGroupDrawer(BehaviorTreeWindow behaviorTreeWindow, BehaviorNodeDrawer parentNode, EditorRegionDecoratorNode childNode, BehaviorNodeDrawer childNodeDrawer)
 	{
+		this._behaviorTreeWindow = behaviorTreeWindow;
+
 		_parentNode = parentNode;
 		_childNode = childNode;
 		_childNodeDrawer = childNodeDrawer;
@@ -753,6 +758,7 @@ public class BehaviorGroupDrawer
 			{
 				_isExpanded = !_isExpanded;
 				_parentNode.RecalculatePosition();
+					_behaviorTreeWindow.RecalculateScrollHeight();
 			}
 		}
 		else
@@ -767,9 +773,11 @@ public class BehaviorGroupDrawer
 			{
 				_isExpanded = !_isExpanded;
 				_parentNode.RecalculatePosition();
+					_behaviorTreeWindow.RecalculateScrollHeight();
 
+
+				}
 			}
-		}
 		
 		return _isExpanded;
 

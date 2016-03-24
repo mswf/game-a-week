@@ -43,6 +43,7 @@ namespace Week06
 						// Chasing clues
 						new SequenceCompositeNode(
 							//Get a clue to chase
+							new EditorRegionDecoratorNode(
 							new SelectorCompositeNode(
 								// do we have an active clue?
 									new SequenceCompositeNode(
@@ -94,6 +95,8 @@ namespace Week06
 									new IsNullNode(C_ACTIVE)
 								)
 
+							),
+							Color.blue, "Find A Target", false
 							),
 							// If we got here, we are chasing
 
