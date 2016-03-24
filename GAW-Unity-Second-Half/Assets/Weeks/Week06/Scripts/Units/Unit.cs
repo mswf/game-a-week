@@ -73,11 +73,16 @@ namespace Week06
 												new SequenceCompositeNode(
 													new IsClueWorthInvestigating(C_POTENTIAL),
 													new CanReach(U_SUBJECT, C_POTENTIAL),
+
+													new PrintNode("What is that!"),
+													new TimerNode(1f),
 													
 													// Passed all the checks, it's promoted to target now
 													new SetVarTo<ContextIndex	>(C_ACTIVE, C_POTENTIAL)
 												)
 											),
+
+
 
 											new SetToNullNode(C_POTENTIAL)
 

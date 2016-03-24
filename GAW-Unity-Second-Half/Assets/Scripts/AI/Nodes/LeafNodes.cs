@@ -259,6 +259,49 @@ namespace BehaviorTree
 		}
 
 	}
+
+	public class TimerNode : LeafNode<TimerNodeState>
+	{
+		public readonly float _timeToWait;
+
+		public TimerNode(float timeToWait)
+		{
+			this._timeToWait = timeToWait;
+		}
+
+		public override void Initialize(BehaviorContext context)
+		{
+			base.Initialize(context);
+			context.GetState<TimerNodeState>(this).elapsedTime = 0f;
+		}
+
+		public override BehaviorStatus UpdateTick(BehaviorContext context)
+		{
+			var state = context.GetState<TimerNodeState>(this);
+
+			state.elapsedTime += context.timeLeft;
+
+			if (state.elapsedTime > _timeToWait)
+			{
+				context.timeLeft = state.elapsedTime - _timeToWait;
+				return BehaviorStatus.Success;
+			}
+			context.timeLeft = 0f;
+			return BehaviorStatus.Running;
+		}
+
+		public override float GetGUIPropertyHeight()
+		{
+			return 1f * DefaultPropertyHeight;
+		}
+
+		public override void DrawGUI(int windowID)
+		{
+			GUILayout.TextField(_timeToWait.ToString());
+		}
+
+	}
+
 	/*
 	public class ContainsUnit : LeafNode
 	{

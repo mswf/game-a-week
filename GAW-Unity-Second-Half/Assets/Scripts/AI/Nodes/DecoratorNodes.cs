@@ -192,13 +192,16 @@ namespace BehaviorTree
 		{
 			var result = BehaviorStatus.Running;
 
-			while (result != BehaviorStatus.Failure)
+			while (result != BehaviorStatus.Failure && context.timeLeft > 0f)
 			{
 				if (result == BehaviorStatus.Success)
 					childNode.Cleanup(context);
 
 				result = childNode.Update(context);
 			}
+
+			if (result != BehaviorStatus.Failure)
+				return BehaviorStatus.Running;
 
 			return BehaviorStatus.Success;
 		}

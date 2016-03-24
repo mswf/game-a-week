@@ -130,6 +130,8 @@ namespace Week06.BehaviorTree
 
 			subject.navMeshAgent.destination = target.transform.position;
 
+			subject.navMeshAgent.Resume();
+
 			return BehaviorStatus.Success;
 		}
 	}

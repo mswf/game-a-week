@@ -117,7 +117,11 @@ namespace Week06
 		{
 			navMeshAgent.destination = position;
 
-			if (navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete)
+			var status = navMeshAgent.pathStatus;
+
+			navMeshAgent.Stop();
+
+			if (status == NavMeshPathStatus.PathComplete)
 				return true;
 
 			return false;

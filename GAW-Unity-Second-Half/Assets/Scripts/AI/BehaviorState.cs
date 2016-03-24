@@ -97,4 +97,9 @@ namespace BehaviorTree
 
 	}
 
+	public class TimerNodeState : BaseNodeState
+	{
+		public float elapsedTime = 0f;
+	}
+
 }
