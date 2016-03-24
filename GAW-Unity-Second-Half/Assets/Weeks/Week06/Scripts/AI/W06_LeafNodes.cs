@@ -26,6 +26,10 @@ namespace Week06.BehaviorTree
 
 			var potentialClues = unit.GetPotentialClues();
 
+			if (potentialClues.Length == 0)
+				return BehaviorStatus.Failure;
+
+
 			if (targetStack.Count == 0)
 			{
 				targetStack = new Stack_Object(potentialClues);
@@ -58,6 +62,80 @@ namespace Week06.BehaviorTree
 	}
 
 
+	
+	public class IsClueWorthInvestigating : LeafNode
+	{
+		// Is it's type within threshold of the squad's alert level 
+			// -> Don't investigate a broken twig if we're at ease
+		public readonly ContextIndex _clueVar;
+
+		public IsClueWorthInvestigating(ContextIndex clueVar)
+		{
+			this._clueVar = clueVar;
+
+		}
+		
+		// Is it still fresh enough (a sound fades down to a level)
+		public override BehaviorStatus UpdateTick(BehaviorContext context)
+		{
+			return BehaviorStatus.Success;
+		}
+	}
+	
+	public class CanReach : LeafNode
+	{
+		public readonly ContextIndex _subjectVar;
+		public readonly ContextIndex _targetVar;
+
+		public CanReach (ContextIndex subjectVar, ContextIndex targetVar)
+		{
+			this._subjectVar = subjectVar;
+			this._targetVar = targetVar;
+		}
+
+		// (Unit, MonoBehavior)
+		// Can unit with pathfinder reach the monobehavior?
+		public override BehaviorStatus UpdateTick(BehaviorContext context)
+		{
+			var subject = (BaseUnit) context[_subjectVar];
+			var target = (MonoBehaviour) context[_targetVar];
+
+			if (subject.CanReach(target.transform.position))
+			{
+				return BehaviorStatus.Success;	
+			}
+
+			return BehaviorStatus.Failure;
+		}
+	}
+
+	public class MoveTo : LeafNode
+	{
+		public readonly ContextIndex _subjectVar;
+		public readonly ContextIndex _targetVar;
+
+		public MoveTo(ContextIndex subjectVar, ContextIndex targetVar)
+		{
+			this._subjectVar = subjectVar;
+			this._targetVar = targetVar;
+		}
+
+		public override BehaviorStatus UpdateTick(BehaviorContext context)
+		{
+			//return BehaviorStatus.Success;
+			
+
+			var subject = (BaseUnit)context[_subjectVar];
+			var target = (MonoBehaviour)context[_targetVar];
+
+			subject.navMeshAgent.destination = target.transform.position;
+
+			return BehaviorStatus.Success;
+		}
+	}
+
+
+	
 	public class FollowSquadNode : LeafNode
 	{
 

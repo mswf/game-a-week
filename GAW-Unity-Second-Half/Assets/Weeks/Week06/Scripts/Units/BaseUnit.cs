@@ -11,7 +11,7 @@ namespace Week06
 
 		public Transform navigationTarget;
 
-		protected NavMeshAgent navMeshAgent;
+		public NavMeshAgent navMeshAgent;
 
 		public Transform _transform;
 		
@@ -92,12 +92,11 @@ namespace Week06
 			
 					
 			//navMeshAgent.CalculatePath(navigationTarget.position, currentPath);
-			navMeshAgent.stoppingDistance = 3f;
+			//navMeshAgent.stoppingDistance = 3f;
 
 			if (Input.GetKey(KeyCode.R))
 			{
 				Debug.Log("Calculating new path:");
-				//navMeshAgent.path = currentPath;
 				navMeshAgent.destination = navigationTarget.position;
 				
 			}
@@ -112,6 +111,16 @@ namespace Week06
 			}
 			*/
 
+		}
+
+		public bool CanReach(Vector3 position)
+		{
+			navMeshAgent.destination = position;
+
+			if (navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete)
+				return true;
+
+			return false;
 		}
 	}
 }

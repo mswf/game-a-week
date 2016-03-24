@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using BehaviorTree;
 using Week06.BehaviorTree;
 
+using ContextIndex = System.String;
+
+
 namespace Week06
 {
 	public class Unit : BaseUnit 
@@ -21,7 +24,11 @@ namespace Week06
 
 		public const string U_SQUAD = "U_SQUAD";
 		
-		public const string STACK_POTENTIAL_CLUES = "U_SQUAD";
+		public const string STACK_POTENTIAL_CLUES = "STACK_POTENTIAL_CLUES";
+
+		public const string C_ACTIVE = "C_ACTIVE";
+		public const string C_POTENTIAL = "C_POTENTIAL";
+
 
 
 		protected override void InitializeBehaviorTree(BehaviorState bState)
@@ -31,15 +38,80 @@ namespace Week06
 				_behaviorTreeEntry = bState.AddTree(TREE_UNIT,
 
 				new EntryNode(
-					new SequenceCompositeNode(
+					// What's our top level action?
+					new SelectorCompositeNode(
+						// Chasing clues
 						new SequenceCompositeNode(
-							new ClearStack(STACK_POTENTIAL_CLUES),
-							new FindVisualClues(U_SUBJECT, STACK_POTENTIAL_CLUES)
-						),
-						//new StubNode("GhellO")
-						new FollowSquadNode(U_SUBJECT)
+							//Get a clue to chase
+							new SelectorCompositeNode(
+								// do we have an active clue?
+									new SequenceCompositeNode(
+										new InverterDecoratorNode(
+											new IsNullNode(C_ACTIVE)
+										),
+										new IsClueWorthInvestigating(C_ACTIVE),
+										new CanReach(U_SUBJECT, C_ACTIVE)
+										// Yes, we got one, so return
+									),
+								// if not, empty the clue var
+								new FailerDecoratorNode(
+									new SetToNullNode(C_ACTIVE)
+								),
+								// Move on to investigating the environment
+								new SequenceCompositeNode(
+									new ClearStack(STACK_POTENTIAL_CLUES),
+									new FindVisualClues(U_SUBJECT, STACK_POTENTIAL_CLUES),
 
+									// Loop through the stack
+									new RepeatUntilFailDecoratorNode(
+										new SequenceCompositeNode(
+
+											new PopFromStack(STACK_POTENTIAL_CLUES, C_POTENTIAL),
+
+											// We're just content with the first worthy clue we find
+											new InverterDecoratorNode(
+												new SequenceCompositeNode(
+													new IsClueWorthInvestigating(C_POTENTIAL),
+													new CanReach(U_SUBJECT, C_POTENTIAL),
+													
+													// Passed all the checks, it's promoted to target now
+													new SetVarTo<ContextIndex	>(C_ACTIVE, C_POTENTIAL)
+												)
+											),
+
+											new SetToNullNode(C_POTENTIAL)
+
+										)
+									)
+								),
+
+								new InverterDecoratorNode(
+									new IsNullNode(C_ACTIVE)
+								)
+
+							),
+							// If we got here, we are chasing
+
+							new StubNode("Is the clue noteworthy enough for us to build our anxiety?"),
+
+							new StubNode("Are we close enough to the clue"),
+								new StubNode("Examine the clue"),
+								new StubNode("Examine the clue"),
+
+
+							new StubNode("Are we moving too far away from the squad, so that we should notify it/"),
+
+							//Move towards the current clue
+							new MoveTo(U_SUBJECT, C_ACTIVE)
+
+	
+							//new StubNode("GhellO")
+
+						),
+						// Follow squad
+						new FollowSquadNode(U_SUBJECT)
 					)
+
 				)
 
 

@@ -8,7 +8,7 @@ namespace Week06
 		// Use this for early referencing
 		private void Awake()
 		{
-			Debug.Log("Ghello, I'm a clue");
+			//Debug.Log("Ghello, I'm a clue");
 		}
 
 		// Use this for initialization
