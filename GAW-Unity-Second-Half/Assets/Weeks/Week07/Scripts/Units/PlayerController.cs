@@ -83,9 +83,15 @@ namespace Week07
 
 			if (Input.GetButtonDown("Fire1"))
 			{
-				Debug.Log("Ghello");
+	//			Debug.Log("Attacking");
+
+				if (_weapons[0].IsReadyForAttack())
+					_weapons[0].DoAttack();
+				else
+					_weapons[1].DoAttack();
+
 			}
-			
+
 			if (jumpInput && IsGrounded())
 			{
 				_rigidBody.AddForce(Vector3.up * jumpForce * globalForceMultiplier * dt, ForceMode.VelocityChange);

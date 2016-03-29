@@ -19,6 +19,9 @@ namespace Week07
 
 		private float _distanceToGround;
 
+		[SerializeField]
+		protected Weapon[] _weapons;
+
 		// Use this for early referencing
 		protected virtual void Awake()
 		{
