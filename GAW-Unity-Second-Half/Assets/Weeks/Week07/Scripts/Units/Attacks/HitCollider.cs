@@ -25,6 +25,8 @@ namespace Week07
 			DebugExtension.DebugArrow(attackingWeapon._transform.position,
 				_transform.position - attackingWeapon._transform.position, Color.red, Time.fixedDeltaTime, false);
 
+
+			_transform.Translate(_transform.position - attackingWeapon._transform.position);
 		}
 
 		
