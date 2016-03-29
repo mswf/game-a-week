@@ -182,14 +182,18 @@ namespace Week06
 
 						var rayCastHits = Physics.RaycastNonAlloc(_transform.position, directionToTarget, _rayCastHitBuffer);
 
-						for (int j = 0; j < 1; j++)
+						if (rayCastHits > 0)
 						{
-							if (_rayCastHitBuffer[j].collider == _colliderBuffer[i])
+							for (int j = 0; j < 1; j++)
 							{
-								Debug.DrawLine(_transform.position, _colliderBuffer[i].transform.position, Color.magenta, Time.deltaTime);
-								ClueList.Add(_colliderBuffer[i].GetComponent<Clue>());
+								if (_rayCastHitBuffer[j].collider == _colliderBuffer[i])
+								{
+									Debug.DrawLine(_transform.position, _colliderBuffer[i].transform.position, Color.magenta, Time.deltaTime);
+									ClueList.Add(_colliderBuffer[i].GetComponent<Clue>());
+								}
 							}
 						}
+
 					}
 
 
