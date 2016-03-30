@@ -10,6 +10,10 @@ namespace Week07
 
 		public ParticleSystem movementDust;
 
+
+		public Transform mainBody;
+		public Transform head;
+
 		// Use this for early referencing
 		protected void Awake()
 		{
@@ -59,17 +63,18 @@ namespace Week07
 
 
 
-				_transform.rotation = Quaternion.Lerp(_transform.rotation, Quaternion.LookRotation(curHeading.normalized), 0.2f);
+			mainBody.rotation = Quaternion.Lerp(mainBody.rotation, Quaternion.LookRotation(curHeading.normalized), 0.2f);
+			head.rotation = Quaternion.LookRotation(curHeading.normalized);
 
 			/*
 				_transform.rotation = Quaternion.RotateTowards(_transform.rotation,
 					_transform.rotation * Quaternion.FromToRotation(_transform.forward, curHeading.normalized), 5f);
 			*/
-				//Quaternion.Euler(Vector3.RotateTowards(_transform.rotation.eulerAngles, curHeading.normalized, 10f, 10f));
-				
+			//Quaternion.Euler(Vector3.RotateTowards(_transform.rotation.eulerAngles, curHeading.normalized, 10f, 10f));
 
 
-			
+
+
 		}
 	}
 }

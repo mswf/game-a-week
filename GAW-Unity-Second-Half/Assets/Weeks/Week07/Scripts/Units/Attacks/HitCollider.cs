@@ -26,8 +26,12 @@ namespace Week07
 			DebugExtension.DebugArrow(attackingWeapon._transform.position,
 				_transform.position - attackingWeapon._transform.position, Color.red, Time.fixedDeltaTime, false);
 
-			Camera.main.DOShakePosition(0.5f, (_transform.position - attackingWeapon._transform.position).magnitude / 10f, 50);
-			_transform.Translate(_transform.position - attackingWeapon._transform.position);
+			var offset = (_transform.position - attackingWeapon._transform.position);
+			offset.y = 0;
+			offset.Normalize();
+
+			Camera.main.DOShakePosition(0.5f, 1f, 50);
+			_transform.Translate(offset);
 		}
 
 		

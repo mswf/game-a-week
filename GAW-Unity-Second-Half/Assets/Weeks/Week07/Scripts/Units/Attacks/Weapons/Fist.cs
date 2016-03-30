@@ -54,7 +54,7 @@ namespace Week07
 			{
 				var currentSample = _movementCurve.Evaluate((Time.time - timeOfPreviousAttack)/attackDuration);
 
-				_currentFistPosition.z = currentSample + _originalFistPosition.z;
+				_currentFistPosition.z = currentSample/100f + _originalFistPosition.z;
 
 				_transform.localPosition = _currentFistPosition;
 
