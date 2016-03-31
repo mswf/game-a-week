@@ -17,6 +17,8 @@ namespace Week07
 		[Range(0.5f, 60f), SerializeField]
 		private float jumpForce = 1f;
 
+		private CapsuleCollider _characterCapsuleCollider;
+
 		// Use this for early referencing
 		protected override void Awake()
 		{
@@ -27,6 +29,8 @@ namespace Week07
 			currentDrag = baseDrag;
 
 			previousHeading = _transform.forward;
+
+			_characterCapsuleCollider = _characterCollider as CapsuleCollider;
 		}
 
 		// Use this for initialization
@@ -77,7 +81,6 @@ namespace Week07
 				previousHeading = directionalInput;
 			}
 
-
 			var runInput = Input.GetAxis("Run");
 			var jumpInput = Input.GetButtonDown("Jump");
 
@@ -120,6 +123,80 @@ namespace Week07
 					_isRunning = false;
 				}
 			}
+
+
+			var cap = _characterCapsuleCollider;
+			
+			var capsuleStart = cap.center + _transform.position;
+			capsuleStart.y -= (cap.height / 2f);
+
+			const float distanceAhead = 1.2f;
+
+
+			var capStartForward = capsuleStart + directionalInput.normalized * 0.3f;
+
+			var radius = cap.radius * 0.9f;
+
+			DebugExtension.DebugCapsule(capStartForward,
+				capStartForward + Vector3.up * (cap.height),
+				Color.white, radius, dt, false);
+
+			if (Physics.CheckCapsule(capStartForward,
+				capStartForward + Vector3.up*(cap.height),
+				radius, 1 << HitCollider.layerMask))
+			{
+				const float angle = Mathf.Deg2Rad * 45f;
+
+				var rotatedLeft = new Vector3
+				{
+					x = directionalInput.x*Mathf.Cos(angle) - directionalInput.z*Mathf.Sin(angle),
+					z = directionalInput.z*Mathf.Cos(angle) + directionalInput.x*Mathf.Sin(angle)
+				};
+
+
+				capStartForward = capsuleStart + rotatedLeft.normalized * distanceAhead;
+
+				DebugExtension.DebugCapsule(capStartForward,
+					capStartForward + Vector3.up * (cap.height),
+					Color.red, radius, dt, false);
+
+				if (!Physics.CheckCapsule(capStartForward,
+					capStartForward + Vector3.up*(cap.height),
+					radius, 1 << HitCollider.layerMask))
+				{
+					directionalInput = rotatedLeft;
+				}
+				else
+				{
+					var rotatedRight = new Vector3
+					{
+						x = directionalInput.x * Mathf.Cos(-angle) - directionalInput.z * Mathf.Sin(-angle),
+						z = directionalInput.z * Mathf.Cos(-angle) + directionalInput.x * Mathf.Sin(-angle)
+					};
+
+
+					capStartForward = capsuleStart + rotatedRight.normalized * distanceAhead;
+
+					DebugExtension.DebugCapsule(capStartForward,
+						capStartForward + Vector3.up * (cap.height),
+						Color.blue, radius, dt, false);
+
+					if (!Physics.CheckCapsule(capStartForward,
+						capStartForward + Vector3.up * (cap.height),
+						radius, 1 << HitCollider.layerMask))
+					{
+						directionalInput = rotatedRight;
+					}
+				}
+				
+
+
+			}
+
+
+
+
+			DebugExtension.DebugArrow(_transform.position, directionalInput.normalized * 5f, Color.gray, dt * 10f, false);
 
 			_rigidBody.AddForce(directionalInput * directionalForceMultiplier * globalForceMultiplier * dt, ForceMode.Acceleration);
 

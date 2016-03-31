@@ -135,7 +135,7 @@ public struct Vector2s : IEqualityComparer<Vector2s>
 
 		return false;
 	}
-
+	
 	public int GetHashCode(Vector2s obj)
 	{
 		return obj.hash;

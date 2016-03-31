@@ -25,15 +25,19 @@ namespace Week07
 		{
 			_level = new Level();
 
-			var testPosition = new Vector2s(0,0);
-			var testChunk = new Chunk(testPosition, ChunkData.RoundRoom());
+			for (short i = -4; i < 4; i++)
+			{
+				for (short j = -4; j < 4; j++)
+				{
+					var testPosition = new Vector2s(i, j);
+					var testChunk = new Chunk(testPosition, ChunkData.SquareRoomEmpty());
+					_level[testPosition] = testChunk;
 
-			blablaTest = testChunk;
+					testChunk.Place();
 
-			testChunk.Place();
+				}
+			}
 		}
-
-
 	}
 
 	public class Level
@@ -56,7 +60,32 @@ namespace Week07
 			}
 			set
 			{
-				_chunks[position] = value;
+				if (!_chunks.ContainsKey(position))
+					_chunks[position] = value;
+				else
+				{
+					// Check if same position
+					foreach (var positionKey in _chunks.Keys)
+					{
+						if (positionKey.Equals(positionKey, position))
+						{
+							Debug.LogError("Tried to place duplicate chunk at x:" + position.x + ", y:" + position.y);
+							return;
+						}
+					}
+					// Actually a hash collision, let's find it
+					foreach (var positionKey in _chunks.Keys)
+					{
+						if (positionKey.GetHashCode() == position.GetHashCode())
+						{
+							Debug.LogError("Hash collision for pos x:" + position.x + ", y:" + position.y + " && x:"+positionKey.x+", y:"+positionKey.y);
+							return;
+						}
+					}
+
+				}
+
+
 			}
 		}
 	}
