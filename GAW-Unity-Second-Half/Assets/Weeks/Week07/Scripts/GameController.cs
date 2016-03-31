@@ -15,7 +15,7 @@ namespace Week07
 		// Use this for initialization
 		private void Start () 
 		{
-		
+			GameGlobals.levelGenerator.CreateInitialLevel();
 		}
 		
 		// Update is called once per frame
@@ -28,5 +28,8 @@ namespace Week07
 	public static class GameGlobals
 	{
 		public static List<Unit> units = new List<Unit>();
+
+
+		public static LevelGenerator levelGenerator;
 	}
 }

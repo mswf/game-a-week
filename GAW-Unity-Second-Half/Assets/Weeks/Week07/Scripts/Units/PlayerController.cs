@@ -83,6 +83,7 @@ namespace Week07
 
 			if (Input.GetButtonDown("Fire1"))
 			{
+				
 	//			Debug.Log("Attacking");
 
 				if (_weapons[0].IsReadyForAttack())

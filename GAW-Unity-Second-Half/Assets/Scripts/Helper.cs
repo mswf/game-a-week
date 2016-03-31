@@ -4,6 +4,7 @@ using UnityEngine;
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 
 public class WeakReferenceT<T> where T : class
@@ -95,6 +96,50 @@ public struct Vector2i
 {
 	public int x;
 	public int y;
+
+	public Vector2i(int x, int y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+}
+
+[System.Serializable]
+public struct Vector2s : IEqualityComparer<Vector2s>
+{
+	public short x;
+	public short y;
+
+	private readonly int hash;
+
+	public Vector2s(short x)
+	{
+		this.x = x;
+		this.y = 0;
+
+		hash = MathS.PerfectlyHashThem(x, y);
+	}
+
+	public Vector2s(short x, short y)
+	{
+		this.x = x;
+		this.y = y;
+
+		hash = MathS.PerfectlyHashThem(x, y);
+	}
+
+	public bool Equals(Vector2s a, Vector2s b)
+	{
+		if (a.x == b.x && a.y == b.y)
+			return true;
+
+		return false;
+	}
+
+	public int GetHashCode(Vector2s obj)
+	{
+		return obj.hash;
+	}
 }
 
 public struct Vector3i
@@ -114,6 +159,22 @@ public struct Vector4i
 
 public class MathS
 {
+	//http://stackoverflow.com/a/13871379/5946559
+	public static long PerfectlyHashThem(int a, int b)
+	{
+		var A = (ulong)(a >= 0 ? 2 * (long)a : -2 * (long)a - 1);
+		var B = (ulong)(b >= 0 ? 2 * (long)b : -2 * (long)b - 1);
+		var C = (long)((A >= B ? A * A + A + B : A + B * B) / 2);
+		return a < 0 && b < 0 || a >= 0 && b >= 0 ? C : -C - 1;
+	}
+	//http://stackoverflow.com/a/13871379/5946559
+	public static int PerfectlyHashThem(short a, short b)
+	{
+		var A = (uint)(a >= 0 ? 2 * a : -2 * a - 1);
+		var B = (uint)(b >= 0 ? 2 * b : -2 * b - 1);
+		var C = (int)((A >= B ? A * A + A + B : A + B * B) / 2);
+		return a < 0 && b < 0 || a >= 0 && b >= 0 ? C : -C - 1;
+	}
 
 	public static int FloorToInt(float value)
 	{
