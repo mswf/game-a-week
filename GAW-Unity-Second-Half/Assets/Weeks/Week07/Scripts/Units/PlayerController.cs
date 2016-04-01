@@ -115,15 +115,9 @@ namespace Week07
 			if (enablePredictiveMovement)
 			{
 				if (IsRunning())
-				{
 					directionalInput = AdjustDirectionForObstacles(directionalInput, 80f);
-
-				}
 				else
-				{
-					directionalInput = AdjustDirectionForObstacles(directionalInput, 45f);
-
-				}
+					directionalInput = AdjustDirectionForObstacles(directionalInput, MathS.Lerp(0f, 45f, currentMovementVelocity.magnitude/200f - 0.3f));
 			}
 
 			#region capsuleAvoidance
