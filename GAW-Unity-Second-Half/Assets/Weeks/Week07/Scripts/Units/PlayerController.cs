@@ -113,7 +113,18 @@ namespace Week07
 
 
 			if (enablePredictiveMovement)
-				directionalInput = AdjustDirectionForObstacles(directionalInput);
+			{
+				if (IsRunning())
+				{
+					directionalInput = AdjustDirectionForObstacles(directionalInput, 80f);
+
+				}
+				else
+				{
+					directionalInput = AdjustDirectionForObstacles(directionalInput, 45f);
+
+				}
+			}
 
 			#region capsuleAvoidance
 			/*
@@ -230,11 +241,10 @@ namespace Week07
 			_rigidBody.velocity = currentMovementVelocity / _rigidBody.mass;
 		}
 
-		protected Vector3 AdjustDirectionForObstacles(Vector3 initialDirection, float currentRotation = 0f)
+		protected Vector3 AdjustDirectionForObstacles(Vector3 initialDirection, float maxRotation = 65f)
 		{
 			const float rotationSteps = 5f;
-			const float maxRotation = 65f;
-
+			
 			float rotationAmount = 0f;
 
 			Vector3 adjustedDirection = new Vector3(initialDirection.x, initialDirection.y, initialDirection.z);

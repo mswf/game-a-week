@@ -70,7 +70,7 @@ namespace Week07
 					AttackCollider(colliderBuffer[i].GetComponent<HitCollider>());
 				}
 
-				var scale = currentSample/2f + 0.5f;
+				var scale = Mathf.Max(1f, currentSample / 2f + 1f);
 				_transform.localScale = new Vector3(scale, scale, scale);
 
 				if (currentSample == Mathf.Epsilon)
