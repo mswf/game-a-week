@@ -164,6 +164,20 @@ namespace Week07
 			};
 		}
 
+		public static short[][] DiamondRoomEmpty()
+		{
+			return new short[ChunkDimension][]
+			{
+				new short[ChunkDimension] {S,S,S,S,O,S,S,S},
+				new short[ChunkDimension] {S,S,S,O,O,O,O,S},
+				new short[ChunkDimension] {S,S,O,O,O,O,O,S},
+				new short[ChunkDimension] {S,O,O,O,O,O,O,O},
+				new short[ChunkDimension] {O,O,O,O,O,O,O,S},
+				new short[ChunkDimension] {S,O,O,O,O,O,S,S},
+				new short[ChunkDimension] {S,O,O,O,O,S,S,S},
+				new short[ChunkDimension] {S,S,S,O,S,S,S,S}
+			};
+		}
 		public static short[][] SquareRoomRandom()
 		{
 			return new short[ChunkDimension][]

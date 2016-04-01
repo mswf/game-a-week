@@ -89,6 +89,15 @@ public static class Helper
 				where x.gameObject.name == name
 				select x.gameObject).First().transform;
 	}
+
+	public static Vector3 RotateBy(this Vector3 vec, float angle)
+	{
+		return new Vector3
+		{
+			x = vec.x * Mathf.Cos(-angle) - vec.z * Mathf.Sin(-angle),
+			z = vec.z * Mathf.Cos(-angle) + vec.x * Mathf.Sin(-angle)
+		};
+	}
 }
 
 

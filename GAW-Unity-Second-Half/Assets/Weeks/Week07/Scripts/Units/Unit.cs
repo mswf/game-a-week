@@ -16,9 +16,36 @@ namespace Week07
 
 		public double health;
 
-
 		private float _distanceToGround;
 
+
+		[Header("Physics")]
+		[SerializeField]
+		protected Vector2 baseDrag = new Vector2(3f, 0f);
+		[SerializeField]
+		protected Vector2 runningDrag = new Vector2(2f, 0f);
+		[SerializeField, ReadOnly]
+		protected Vector2 currentDrag = new Vector2(0f, 0f);
+
+		protected bool _isRunning;
+
+		[HideInInspector]
+		protected Vector3 previousInput;
+		protected Vector3 previousHeading;
+
+		protected Vector3 currentMovementVelocity;
+
+		public virtual Vector3 GetCurrentHeading()
+		{
+			return previousHeading;
+		}
+
+		public virtual bool IsRunning()
+		{
+			return _isRunning;
+		}
+
+		[Header("Weapons")]
 		[SerializeField]
 		protected Weapon[] _weapons;
 
@@ -32,9 +59,6 @@ namespace Week07
 			_distanceToGround = _characterCollider.bounds.extents.y;
 			_transform = GetComponent<Transform>();
 		}
-
-		public abstract Vector3 GetCurrentHeading();
-		public abstract bool IsRunning();
 
 		public bool IsGrounded()
 		{

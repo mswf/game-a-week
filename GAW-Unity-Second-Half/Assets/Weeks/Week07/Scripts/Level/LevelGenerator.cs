@@ -23,14 +23,16 @@ namespace Week07
 
 		public void CreateInitialLevel()
 		{
+			const short lSize = 6;
+
 			_level = new Level();
 
-			for (short i = -4; i < 4; i++)
+			for (short i = -lSize; i < lSize; i++)
 			{
-				for (short j = -4; j < 4; j++)
+				for (short j = -lSize; j < lSize; j++)
 				{
 					var testPosition = new Vector2s(i, j);
-					var testChunk = new Chunk(testPosition, ChunkData.SquareRoomEmpty());
+					var testChunk = new Chunk(testPosition, ChunkData.SquareRoomRandom());
 					_level[testPosition] = testChunk;
 
 					testChunk.Place();
