@@ -137,6 +137,11 @@ public struct Vector2s : IEqualityComparer<Vector2s>
 		hash = MathS.PerfectlyHashThem(x, y);
 	}
 
+	public override string ToString()
+	{
+		return ("x: " + x + ", y: " + y);
+	}
+
 	public bool Equals(Vector2s a, Vector2s b)
 	{
 		if (a.x == b.x && a.y == b.y)

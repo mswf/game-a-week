@@ -7,7 +7,15 @@ namespace Week07
 	[RequireComponent(typeof(Collider))]
 	public class HitCollider : SteffBehaviour
 	{
-		public static int layerMask = LayerMask.NameToLayer("HitCollider");
+		public static int layerMask
+		{
+			get
+			{
+				return LayerMask.NameToLayer("HitCollider");
+			}
+		}
+
+
 
 		[HideInInspector]
 		public Collider _collider;

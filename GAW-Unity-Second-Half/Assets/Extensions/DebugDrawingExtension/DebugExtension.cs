@@ -1,6 +1,13 @@
+
+
+#define DEBUGDRAW
+
 using UnityEngine;
 using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using Debug = UnityEngine.Debug;
 
 /// <summary>
 /// Debug Extension
@@ -12,7 +19,31 @@ using System.Reflection;
 public static class DebugExtension
 {
 	#region DebugDrawFunctions
-	
+
+	[Conditional("DEBUGDRAW")]
+	public static void DebugRay(Vector3 position, Vector3 direction)
+	{
+		Debug.DrawRay(position, direction);
+	}
+
+	[Conditional("DEBUGDRAW")]
+	public static void DebugRay(Vector3 position, Vector3 direction, Color color)
+	{
+		Debug.DrawRay(position, direction, color);
+	}
+
+	[Conditional("DEBUGDRAW")]
+	public static void DebugRay(Vector3 position, Vector3 direction, Color color, float duration)
+	{
+		Debug.DrawRay(position, direction, color, duration);
+	}
+
+	[Conditional("DEBUGDRAW")]
+	public static void DebugRay(Vector3 position, Vector3 direction, Color color, float duration, bool depthtest)
+	{
+		Debug.DrawRay(position, direction, color, duration, depthtest);
+	}
+
 	/// <summary>
 	/// 	- Debugs a point.
 	/// </summary>
@@ -31,6 +62,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not this point should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugPoint(Vector3 position, Color color, float scale = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		color = (color == default(Color)) ? Color.white : color;
@@ -55,6 +87,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not this point should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugPoint(Vector3 position, float scale = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		DebugPoint(position, Color.white, scale, duration, depthTest);
@@ -75,6 +108,8 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the bounds should be faded when behind other objects.
 	/// </param>
+	/// 
+	[Conditional("DEBUGDRAW")]
 	public static void DebugBounds(Bounds bounds, Color color, float duration = 0, bool depthTest = true)
 	{
 		Vector3 center = bounds.center;
@@ -121,6 +156,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the bounds should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugBounds(Bounds bounds, float duration = 0, bool depthTest = true)
 	{
 		DebugBounds(bounds, Color.white, duration, depthTest);
@@ -147,6 +183,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cube should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugLocalCube(Transform transform, Vector3 size, Color color, Vector3 center = default(Vector3), float duration = 0, bool depthTest = true)
 	{
 		Vector3 lbb = transform.TransformPoint(center+((-size)*0.5f));
@@ -195,6 +232,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cube should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugLocalCube(Transform transform, Vector3 size, Vector3 center = default(Vector3), float duration = 0, bool depthTest = true)
 	{
 		DebugLocalCube(transform, size, Color.white, center, duration, depthTest);
@@ -221,6 +259,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cube should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugLocalCube(Matrix4x4 space, Vector3 size, Color color, Vector3 center = default(Vector3), float duration = 0, bool depthTest = true)
 	{	
 		color = (color == default(Color)) ? Color.white : color;
@@ -271,6 +310,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cube should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugLocalCube(Matrix4x4 space, Vector3 size, Vector3 center = default(Vector3), float duration = 0, bool depthTest = true)
 	{
 		DebugLocalCube(space, size, Color.white, center, duration, depthTest);
@@ -297,6 +337,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the circle should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCircle(Vector3 position, Vector3 up, Color color, float radius = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		Vector3 _up = up.normalized * radius;
@@ -352,6 +393,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the circle should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCircle(Vector3 position, Color color, float radius = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		DebugCircle(position, Vector3.up, color, radius, duration, depthTest);
@@ -375,6 +417,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the circle should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCircle(Vector3 position, Vector3 up, float radius = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		DebugCircle(position, up, Color.white, radius, duration, depthTest);
@@ -395,6 +438,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the circle should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCircle(Vector3 position, float radius = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		DebugCircle(position, Vector3.up, Color.white, radius, duration, depthTest);
@@ -418,6 +462,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the sphere should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugWireSphere(Vector3 position, Color color, float radius = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		float angle = 10.0f;
@@ -461,6 +506,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the sphere should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugWireSphere(Vector3 position, float radius = 1.0f, float duration = 0, bool depthTest = true)
 	{
 		DebugWireSphere(position, Color.white, radius, duration, depthTest);
@@ -487,6 +533,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cylinder should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCylinder(Vector3 start, Vector3 end, Color color, float radius = 1, float duration = 0, bool depthTest = true)
 	{
 		Vector3 up = (end-start).normalized*radius;
@@ -532,6 +579,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cylinder should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCylinder(Vector3 start, Vector3 end, float radius = 1, float duration = 0, bool depthTest = true)
 	{
 		DebugCylinder(start, end, Color.white, radius, duration, depthTest);
@@ -558,6 +606,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cone should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCone(Vector3 position, Vector3 direction, Color color, float angle = 45, float duration = 0, bool depthTest = true)
 	{
 		float length = direction.magnitude;
@@ -603,6 +652,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cone should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCone(Vector3 position, Vector3 direction, float angle = 45, float duration = 0, bool depthTest = true)
 	{
 		DebugCone(position, direction, Color.white, angle, duration, depthTest);
@@ -626,6 +676,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cone should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCone(Vector3 position, Color color, float angle = 45, float duration = 0, bool depthTest = true)
 	{
 		DebugCone(position, Vector3.up, color, angle, duration, depthTest);
@@ -646,6 +697,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the cone should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCone(Vector3 position, float angle = 45, float duration = 0, bool depthTest = true)
 	{
 		DebugCone(position, Vector3.up, Color.white, angle, duration, depthTest);
@@ -669,6 +721,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the arrow should be faded when behind other objects. 
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugArrow(Vector3 position, Vector3 direction, Color color, float duration = 0, bool depthTest = true)
 	{
 		Debug.DrawRay(position, direction, color, duration, depthTest);
@@ -690,6 +743,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the arrow should be faded when behind other objects. 
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugArrow(Vector3 position, Vector3 direction, float duration = 0, bool depthTest = true)
 	{
 		DebugArrow(position, direction, Color.white, duration, depthTest);
@@ -716,6 +770,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the capsule should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCapsule(Vector3 start, Vector3 end, Color color, float radius = 1, float duration = 0, bool depthTest = true)
 	{
 		Vector3 up = (end-start).normalized*radius;
@@ -774,6 +829,7 @@ public static class DebugExtension
 	/// <param name='depthTest'>
 	/// 	- Whether or not the capsule should be faded when behind other objects.
 	/// </param>
+	[Conditional("DEBUGDRAW")]
 	public static void DebugCapsule(Vector3 start, Vector3 end, float radius = 1, float duration = 0, bool depthTest = true)
 	{
 		DebugCapsule(start, end, Color.white, radius, duration, depthTest);	

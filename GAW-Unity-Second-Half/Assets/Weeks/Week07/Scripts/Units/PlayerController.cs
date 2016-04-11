@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Deployment.Internal;
 using UnityEditorInternal;
+using UnityEngine.SceneManagement;
 
 namespace Week07
 {
@@ -44,6 +45,12 @@ namespace Week07
 
 		private void FixedUpdate()
 		{
+			if (Input.GetKeyDown(KeyCode.R))
+			{
+				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+				return;
+			}
+
 			var dt = Time.fixedDeltaTime;
 
 			/*
@@ -300,8 +307,9 @@ namespace Week07
 				}
 
 			}
-			if (numberOfLoops > 80)
-				Debug.Log(numberOfLoops);
+			
+			//if (numberOfLoops > 80)
+				//Debug.Log(numberOfLoops);
 
 			return adjustedDirection;
 		}
@@ -329,13 +337,13 @@ namespace Week07
 			var dt = Time.fixedDeltaTime;
 
 			DebugExtension.DebugPoint(_transform.position + center, Color.yellow, 1f, dt, false);
-			Debug.DrawRay(_transform.position + center, direction * middleSpace, Color.blue, dt, false);
+			DebugExtension.DebugRay(_transform.position + center, direction * middleSpace, Color.blue, dt, false);
 			
 			DebugExtension.DebugPoint(_transform.position + center + sideWaysDirection * cap.radius, new Color(1, 0, 0, 0.5f), 1f, dt);
-			Debug.DrawRay(_transform.position + center + sideWaysDirection * cap.radius, direction * leftSpace, Color.blue, dt, false);
+			DebugExtension.DebugRay(_transform.position + center + sideWaysDirection * cap.radius, direction * leftSpace, Color.blue, dt, false);
 
 			DebugExtension.DebugPoint(_transform.position + center - sideWaysDirection * cap.radius, new Color(1, 0, 0, 0.5f), 1f, dt);
-			Debug.DrawRay(_transform.position + center - sideWaysDirection * cap.radius, direction * rightSpace, Color.blue, dt, false);
+			DebugExtension.DebugRay(_transform.position + center - sideWaysDirection * cap.radius, direction * rightSpace, Color.blue, dt, false);
 		}
 
 		private float GetSpaceAhead(Ray ray)

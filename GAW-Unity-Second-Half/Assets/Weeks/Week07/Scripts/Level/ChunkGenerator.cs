@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using UnityEngine.SceneManagement;
 
 namespace Week07
@@ -13,7 +14,7 @@ namespace Week07
 	[System.Serializable]
 	public class Chunk
 	{
-		public const int ChunkDimension = 8;
+		private const int ChunkDimension = ChunkData.ChunkDimension;
 
 		[SerializeField]
 		private readonly short[][] _chunkData;
@@ -42,9 +43,9 @@ namespace Week07
 
 
 
-			const float scale = 3f;
-			var initialPosition = new Vector3(_position.x * ChunkDimension * scale, scale / 2f, _position.y * ChunkDimension * scale);
-			var initialScale = new Vector3(scale, scale, scale);
+			const float tileScale = 3f;
+			var initialPosition = new Vector3(_position.x * ChunkDimension * tileScale, tileScale / 2f, _position.y * ChunkDimension * tileScale);
+			var initialScale = new Vector3(tileScale, tileScale, tileScale);
 	
 			for (int x = 0; x < ChunkDimension; x++)
 			{
@@ -52,30 +53,144 @@ namespace Week07
 				{
 					var tileType = _chunkData[x][y];
 					
-					if (tileType == 1)
+					if (tileType == ChunkData.SOLID)
 					{
 						var tile = GameObject.CreatePrimitive(PrimitiveType.Cube);
-						tile.transform.position = initialPosition + new Vector3(x* scale, 0, y*scale);
+						tile.transform.position = initialPosition + new Vector3(x* tileScale, 0, y*tileScale);
 						tile.transform.localScale = initialScale;
 						tile.AddComponent<HitCollider>();
 					}
-					else if (tileType == 2 && Random.value > 0.6f)
+					else if (tileType == ChunkData.RANDOM)
+						if (Random.value > 0.6f)
+						{
+							_chunkData[x][y] = ChunkData.SOLID;
+
+							var tile = GameObject.CreatePrimitive(PrimitiveType.Cube);
+							tile.transform.position = initialPosition + new Vector3(x*tileScale, 0, y*tileScale);
+							tile.transform.localScale = initialScale;
+							tile.AddComponent<HitCollider>();
+						}
+						else
+						{
+							_chunkData[x][y] = ChunkData.OPEN;
+
+						}
+				}
+			}
+
+			for (int x = 0; x < ChunkDimension; x++)
+			{
+				for (int y = 0; y < ChunkDimension; y++)
+				{
+					var tileType = _chunkData[x][y];
+
+					if (tileType == ChunkData.OPEN)
 					{
-						var tile = GameObject.CreatePrimitive(PrimitiveType.Cube);
-						tile.transform.position = initialPosition + new Vector3(x * scale, 0, y * scale);
+						int numSolidNeighbours = 0;
+
+						var cardNeighbours = GetCardinalNeighbours(x, y);
+
+						foreach (short neighbour in cardNeighbours)
+						{
+							if (neighbour == ChunkData.SOLID)
+								numSolidNeighbours += 4;
+						}
+
+
+						var diagNeighbours = GetDiagonalNeighbours(x, y);
+
+						foreach (short neighbour in diagNeighbours)
+						{
+							if (neighbour == ChunkData.SOLID)
+								numSolidNeighbours += 1;
+						}
+
+						if (numSolidNeighbours >= 12)
+						{
+							float thresHold = 0.4f + 0.1f*numSolidNeighbours - 12;
+
+							if (Random.value > thresHold)
+							{
+								_chunkData[x][y] = ChunkData.TREASURE;
+
+								// place treasure
+								var tile = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+								tile.transform.position = initialPosition + new Vector3(x * tileScale, 0, y * tileScale);
+								tile.transform.localScale = initialScale;
+								tile.GetComponent<MeshRenderer>().material.color = Color.yellow;
+								tile.AddComponent<HitCollider>();
+							}
+						}
+					}
+					else if (tileType == ChunkData.TREASURE)
+					{
+						// place treasure
+						var tile = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+						tile.transform.position = initialPosition + new Vector3(x * tileScale, 0, y * tileScale);
 						tile.transform.localScale = initialScale;
+						tile.GetComponent<MeshRenderer>().material.color = Color.yellow;
 						tile.AddComponent<HitCollider>();
 					}
 				}
 			}
-			
+
 			_isPlaced = true;
+		}
+
+		public short[] GetNeighbours(int x, int y)
+		{
+			return new short[8]
+			{
+				GetTileAt(x - 1, y - 1),
+				GetTileAt(x    , y - 1),
+				GetTileAt(x + 1, y - 1),
+				GetTileAt(x - 1, y    ),
+				GetTileAt(x + 1, y    ),
+				GetTileAt(x - 1, y + 1),
+				GetTileAt(x    , y + 1),
+				GetTileAt(x + 1, y + 1),
+			};
+		}
+
+		public short[] GetCardinalNeighbours(int x, int y)
+		{
+			return new short[4]
+			{
+				GetTileAt(x    , y - 1),
+				GetTileAt(x - 1, y    ),
+				GetTileAt(x + 1, y    ),
+				GetTileAt(x    , y + 1),
+			};
+		}
+
+		public short[] GetDiagonalNeighbours(int x, int y)
+		{
+			return new short[4]
+			{
+				GetTileAt(x - 1, y - 1),
+				GetTileAt(x + 1, y - 1),
+				GetTileAt(x - 1, y + 1),
+				GetTileAt(x + 1, y + 1),
+			};
+		}
+
+		public short GetTileAt(int x, int y)
+		{
+			if (x > 0 && x < ChunkDimension &&
+			    y > 0 && y < ChunkDimension)
+			{
+				return _chunkData[x][y];
+			}
+			else
+			{
+				return ChunkData.OPEN;
+			}
 		}
 	}
 
 	public static class ChunkData
 	{
-		private const int ChunkDimension = Chunk.ChunkDimension;
+		public const int ChunkDimension = 8;
 
 		// Open = O = 0
 		public const short OPEN = 0;
@@ -88,6 +203,10 @@ namespace Week07
 		// Random = R = 2
 		public const short RANDOM = 2;
 		public const short R = RANDOM;
+
+		public const short TREASURE = 10;
+		public const short T = TREASURE;
+
 
 		public static short[][] EmptyRoom()
 		{
@@ -149,6 +268,21 @@ namespace Week07
 			};
 		}
 
+		public static short[][] TreasureRoom()
+		{
+			return new short[ChunkDimension][]
+			{
+				new short[ChunkDimension] {S,S,S,O,O,S,S,S},
+				new short[ChunkDimension] {S,O,O,O,O,O,O,S},
+				new short[ChunkDimension] {S,O,O,T,T,O,O,S},
+				new short[ChunkDimension] {O,O,T,T,T,T,O,O},
+				new short[ChunkDimension] {O,O,T,T,T,T,O,O},
+				new short[ChunkDimension] {S,O,O,T,T,O,O,S},
+				new short[ChunkDimension] {S,O,O,O,O,O,O,S},
+				new short[ChunkDimension] {S,S,S,O,O,S,S,S}
+			};
+		}
+
 		public static short[][] SquareRoomEmpty()
 		{
 			return new short[ChunkDimension][]
@@ -168,13 +302,13 @@ namespace Week07
 		{
 			return new short[ChunkDimension][]
 			{
-				new short[ChunkDimension] {S,S,S,S,O,S,S,S},
-				new short[ChunkDimension] {S,S,S,O,O,O,O,S},
+				new short[ChunkDimension] {S,S,S,S,S,S,S,S},
+				new short[ChunkDimension] {S,S,S,O,O,O,S,S},
 				new short[ChunkDimension] {S,S,O,O,O,O,O,S},
 				new short[ChunkDimension] {S,O,O,O,O,O,O,O},
 				new short[ChunkDimension] {O,O,O,O,O,O,O,S},
 				new short[ChunkDimension] {S,O,O,O,O,O,S,S},
-				new short[ChunkDimension] {S,O,O,O,O,S,S,S},
+				new short[ChunkDimension] {S,S,O,O,O,S,S,S},
 				new short[ChunkDimension] {S,S,S,O,S,S,S,S}
 			};
 		}
