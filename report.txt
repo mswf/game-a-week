@@ -1,0 +1,35 @@
+<h1><span style="font-size: 22px; line-height: 1.3;">Specialisation (Q3 2015-2016) report by Steff Kempink</span></h1>
+Based on the game a week concept. Blablabal placeholder
+
+&nbsp;
+
+[caption id="attachment_224" align="aligncenter" width="466"]<img class="size-full wp-image-224 " alt="SPEC_W04_AI" src="http://kempink.eu/wp-content/uploads/2016/04/W04_AI.gif" width="466" height="283" /> Test subscript[/caption]
+
+Abstract
+In this article I will report on the work and results of 8 weekly experimental projects I made. By researching a select amount of AI, physics and procedural generation techniques and applying them in my work I gained a lot of experience in little time. This article will walk you through my weekly (thought)process.
+All the results are stored in a public Github repository.
+
+Workflow
+I started by reading/researching different concepts through articles, papers and presentations. From this pool of information I chose a concept I wanted to work with more.
+Using Unity I would build a working implementation, researching more only when I got stuck. After this was running I would couple it with a crude game concept, just something to give context for any further work.
+
+
+Week 00
+Deciding no subject.
+Setting up environment, gather utility libraries I anticipited I would need.
+
+-DebugDrawingExtension
+-DOTween
+
+-GradientMaker
+
+Week 01
+Warmup, to get used to C# I decided to just follow tutorials from Catlike Coding. Subject came to multidimensional noise. I envisioned a space nebula you could move through.
+Implemented 1D-2D-3D value and perlin noise. Looked into distribution techniques.
+http://devmag.org.za/2009/05/03/poisson-disk-sampling/
+Found Poisson Disk Sampling, read the theory. Started a mock implementation.
+http://theinstructionlimit.com/fast-uniform-poisson-disk-sampling-in-c
+Decided to take free distributed C# implementation in 2D. Having the logic already be there sped things up but it still took a while to convert it to 3D and then debug ensuing issues. The algorithm also ate performance as it was calling into native Unity functions. After testing a lot I found it much better to substitute all Math calls with my own one. Profiling showed that calling overhead was reduced by 80%. 
+Inspired by the DevMag article, I made the Min and Max Distance of the Poisson Disc sample from the 3D noise. I then spawned particles on these coordinates, again sampling their color from the same noise values.  
+
+On the last day I added a simple spaceship.
