@@ -5,7 +5,9 @@
 
 ![Gif thing](images/W02_cover.gif)
 
-<img alt="SPEC_W04_AI" src="images/W02_cover.gif" width="100" />
+<a href="http://kempink.eu/resource-list/">
+<img alt="SPEC_W04_AI" src="images/W02_cover.gif" width="100" draggable="false" />
+</a>
 
 Abstract
 In this article I will report on the work, insights and results of 8 weekly experimental projects I made. By researching a select amount of AI, physics and procedural generation techniques and applying them in my work I gained a lot of experience in little time.
