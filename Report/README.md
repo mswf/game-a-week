@@ -1,14 +1,5 @@
 # Specialization (Q3 2015-2016) report - Steff Kempink
-#### Based on the game a week concept
-
-<img class="size-full wp-image-224 " alt="SPEC_W04_AI" src="http://kempink.eu/wp-content/uploads/2016/04/W04_AI.gif" width="466" height="283" />   
-Test subscript
-
-![Gif thing](images/W02_cover.gif)
-
-<a href="http://kempink.eu/resource-list/">
-<img alt="SPEC_W04_AI" src="images/W02_cover.gif" width="100" />
-</a>
+###### Based on the game a week concept
 
 ## Abstract  
 In this article I will report on the work, insights and results of 8 weekly experimental projects I made. By researching a select amount of AI, physics and procedural generation techniques and applying them in my work I gained a lot of experience in little time.
@@ -69,6 +60,12 @@ http://www.gdcvault.com/play/1023559/Math-for-Game-Programmers-Building
 So after reading multiple articles I created movement controls. Although the player looks like a capsule, movement is actually based on a free rolling ball. I worked on the input until I could predictably add the correct amount of force for the ball to roll exactly as far as I designed. However the control didn't feel how I wanted it to, so I spend time trying several different input schemes. The results couldn't satisfy me, so I decided to jump over to work on another part; the shooting and avoiding. This was all very straightforward.
 Physics based action game bad idea as I was very inexperienced with Physics. I had to give up on getting the game to work well. I instead doubled down on research to have a better shot at understanding all the requirements the next time something like this would come up.
 
+![Gif thing](images/W02_cover.gif)
+
+<a href="http://kempink.eu/resource-list/">
+<img alt="SPEC_W04_AI" src="images/W02_cover.gif" width="100" />
+</a>
+
 https://github.com/InfiniteAmmoInc/Yarn
 To take my mind off physics for a short while I also read up on the Yarn dialogue engine. Implementing it's Unity interpreter was very straightforward. As a learning exercise I then cracked open the code to see how its developers solved some common problems in dialogue systems using very straightforward solutions.
 
@@ -84,6 +81,9 @@ Made economy
 Made factions, with units
 Flexible UI
 Spend too much time
+
+<img class="size-full wp-image-224 " alt="SPEC_W04_AI" src="http://kempink.eu/wp-content/uploads/2016/04/W04_AI.gif" width="466" height="283" />   
+Test subscript
 
 ## Week 05
 Behavior Tree
