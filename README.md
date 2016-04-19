@@ -60,10 +60,10 @@ http://www.gdcvault.com/play/1023559/Math-for-Game-Programmers-Building
 So after reading multiple articles I created movement controls. Although the player looks like a capsule, movement is actually based on a free rolling ball. I worked on the input until I could predictably add the correct amount of force for the ball to roll exactly as far as I designed. However the control didn't feel how I wanted it to, so I spend time trying several different input schemes. The results couldn't satisfy me, so I decided to jump over to work on another part; the shooting and avoiding. This was all very straightforward.
 Physics based action game bad idea as I was very inexperienced with Physics. I had to give up on getting the game to work well. I instead doubled down on research to have a better shot at understanding all the requirements the next time something like this would come up.
 
-![Gif thing](report/images/W02_cover.gif)
+![Gif thing](Report/images/W02_cover.gif)
 
 <a href="http://kempink.eu/resource-list/">
-<img alt="SPEC_W04_AI" src="report/images/W02_cover.gif" width="100" />
+<img alt="SPEC_W04_AI" src="Report/images/W02_cover.gif" width="100" />
 </a>
 
 https://github.com/InfiniteAmmoInc/Yarn
