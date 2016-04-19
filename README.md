@@ -11,45 +11,54 @@ Using Unity I would build a working implementation, researching more only when I
 
 
 ## Week 00
-Deciding the subject of the Specialization.
-Setting up environment, gather utility libraries I anticipated I would need. Because I limited myself to free and open source assets, many were out of date with Unity's current version. Coupled with my rusty C# memory I spend longer than I wanted fixing issues.
+This was the inception phase of the project. Here I decided on the subject for my Specialization. This included defining my scope and motivating the merits of this workflow.
+I also set up my working environment. I decided to host the project in an open Github repository. Unity as a platform was an easy decision as I had a lot of previous experience with this engine. I wanted to gather some utility libraries I anticipated I would need. I limited myself to free and open source assets.
 
-* DebugDrawingExtension  
-* DOTween  
-* GradientMaker
+* [DebugDrawingExtension](https://www.assetstore.unity3d.com/en/#!/content/11396)
+Extends Unity's build-in debug line drawing to easily draw primitives wire spheres, boxes and arrows. Every time I used this I got to appreciate the value of visual debugging more.
+* [DOTween](https://www.assetstore.unity3d.com/en/#!/content/27676)  
+A tweening library. It always pays to add extra flair to objects my having them animate all the time. Although I didn't end up putting a lot of polish into the experiments, it's always good to have this sort of library at your fingertips.
+* [GradientMaker](https://www.assetstore.unity3d.com/en/#!/content/29252)
+I nice little editor extension that let's you generates gradient textures from within the editor. Very useful for tweaking effects.
+* [Lunar Mobile Console](https://www.assetstore.unity3d.com/en/#!/content/43800)
+A development utility that let's you view debug logs on a mobile device.
 
 ## Week 01
 Because I had noticed how unfamiliar I had become with C#, I decided to closely follow some Catlike Coding articles to get back up to speed. This got me back into the right mindset. And made me run headfirst into my what I would focus on this week; pseudorandom noise.
 
 Pseudorandom noise functions are extremely common in computer graphics. They can be used as a base for procedural effects, terrains and animations. Pseudorandom noise has the nice property of yielding varied results, but slightly predictable as compared to pure random noise.
 
-The most well known one is Perlin noise, which when viewed in 2D looks a bit like clouds.
+The most well known one is Perlin noise, which when generated in 2D looks a bit like clouds.
 
-If you then map these values to height and a color gradient, you get this very rudimentary terrain:
+<img alt="2D Perlin Noise" src="Report/images/W01_noise.png" width="150" />
 
-This is an example of a 2D noise function. For most noise functions, there exist no theoretical cap for up to how many dimensions they go, but most libraries stick to 1, 2, 3, 4 and 6 dimensional noise. I only implemented 1, 2 and 3 dimensional Value and Perlin noise for my purposes.
+A simple use case of this data is to let it drive the height and color of a mesh, which produces this  very rudimentary terrain:
 
-I had the idea to use 3D Perlin noise to create a space nebula you can fly through. But a good looking volume of scattered points requires more than just the noise function. Because I would be using billboarded particles, I couldn't just place one at every n'th  point because the grid would be too obvious. Just randomly offsetting the points also doesn't work, as this article illustrates:
+<img alt="Terrain" src="Report/images/W01_terrain.png" width="300" />
 
-http://www.gamasutra.com/view/feature/1648/random_scattering_creating_.php?print=1
+This is an example of a 2D noise function. For most noise functions, there exist no theoretical cap for up to how many dimensions they go, but most libraries stick to 1, 2, 3, 4 and 6 dimensional noise. Following [this article](http://web.archive.org/web/20160318140201/http://catlikecoding.com/unity/tutorials/noise/), I only implemented 1, 2 and 3 dimensional Value and Perlin noise for my purposes.
 
-Luckily while I was researching procedural content generation, I had read an article by Herman Tullleken that described how Poisson Disk sampling worked. The algorithm essentially starts at a random point, then creates "x" amount of new points around itself based on a minimum and maximum distance. Then it discards points that are too close to already existing points and repeats these steps until the area/volume is all filled up. If you want to read exactly how I strongly recommend the article.
+I had the idea to use 3D Perlin noise to create a space nebula you can fly through. But a good looking volume of scattered points requires more than just the noise function. Because I would be using billboarded particles, I couldn't just place one at every n'th  point because the grid would be too obvious. Just randomly offsetting the points also doesn't work, [as this article illustrates](http://web.archive.org/web/20141222220009/http://www.gamasutra.com/view/feature/1648/random_scattering_creating_.php?print=1):
 
-http://devmag.org.za/2009/05/03/poisson-disk-sampling/
+While I was researching procedural content generation, I had read [an article by Herman Tullleken that described how Poisson Disk sampling worked](http://web.archive.org/web/20160330213235/http://devmag.org.za/2009/05/03/poisson-disk-sampling/). The algorithm essentially starts at a random point, then creates "x" amount of new points around itself based on a minimum and maximum distance. Then it discards points that are too close to already existing points and repeats these steps until the area/volume is all filled up. If you want to read exactly how I strongly recommend the article.
 
-In its conclusion, Tulleken mentions how driving the minimum distance of the algorithm by a noise function instead of constants can yield even more convincing results.
+In its conclusion, Tulleken mentions how driving the minimum distance of the algorithm by a noise function instead of constant values can yield very nice results. This was the part that I remembered as I began on my nebula.
 
-I started a mock implementation of the algorithm, but then I saw how the article linked to a freely distributed C# 2D implementation of Poisson Disk sampling. To save time, I took this implementation by Renaud Bédard and converted it to 3D instead of writing my own.
+I started a mock implementation of the algorithm, but then I saw how the article linked to a freely distributed C# 2D implementation of Poisson Disk sampling. To save time, I took [this implementation by Renaud Bédard](http://theinstructionlimit.com/fast-uniform-poisson-disk-sampling-in-c) and converted it to 3D instead of writing it from scratch.
 
-http://theinstructionlimit.com/fast-uniform-poisson-disk-sampling-in-c
+Having the base logic already be implemented saves a lot time. However it still took me longer than expected to convert it to 3D and then debug the ensuing issues that came with this. The algorithm also ate up memory as the 3D version of finding a random surrounding point scaled exponentially compared to the 2D version. This made me want to pay closer attention to potential hotspots in the code.
+Using Unity's build-in profiler and logging the raw time in some small test code I found it is much better to substitute all calls to Unity's Mathf library with my own. Statistics showed that calling overhead on distance and lerp functions was reduced by 80%.
+So finally I made the Min and Max Distance of the Poisson Disc sample from the 3D noise. I then spawned particles on these coordinates,  basing their color and lifetime on the same noise values. Iterating through the resulting array nicely shows how Poisson Disk sampling finds points in space:
 
-Having the base logic already be implemented saves a lot time. However it still took me longer than expected to convert it to 3D and then debug the ensuing issues that came with this. The algorithm also ate up memory as the 3D version of the mathematics scaled exponentially from 2 dimensions. After profiling I found it is much better to substitute all calls to Unity's Mathf library with my own. Statistics showed that calling overhead on distance and lerp functions was reduced by 80%.
-Inspired by the DevMag article, I made the Min and Max Distance of the Poisson Disc sample from the 3D noise. I then spawned particles on these coordinates,  basing their color and lifetime on the same noise values. Iterating through the resulting array nicely shows how Poisson Disk sampling finds points in space:
+![Ordered particle field](Report/images/W01_sampling.gif)
 
-However, this does not look convincing so after shuffling the resulting points this was the end result:
+However, this ripple effect looks very artificial, especially as the particle field starts looping. So after shuffling the resulting points this is the end result:
 
+![Shuffled particle field](Report/images/W01_sampling_shuffle.gif)
 
 On the last day I added a simple spaceship. I quickly threw together some basic controls and exhaust effects. I had tried making a "chunk" system that was supposed to help me spawn new segments as the player moved, but it didn't solve the real issue of many of the 3D calculations being prohibitively slow. So I had to box the spaceship inside a very large cube.
+
+![Week 01 end result](Report/images/W01_space.gif)
 
 
 ## Week 02
