@@ -12,10 +12,10 @@ namespace Week06
 			GameObject.DontDestroyOnLoad(this);
 			behaviorState = new BehaviorState();
 
-			/*
+			
 			var parser = new DefinitionParser();
 			parser.ParseTestFile();
-			*/
+		
 		}
 
 		public List<Squad> squadsInScene;

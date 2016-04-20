@@ -34,7 +34,10 @@ The most well known one is Perlin noise, which when generated in 2D looks a bit 
 
 A simple use case of this data is to let it drive the height and color of a mesh, which produces this  very rudimentary terrain:
 
-<img alt="Terrain" src="Report/images/W01_terrain.png" width="300" />
+<img alt="Terrain" src="Report/images/W01_terrain.png" width="466" />
+
+<img alt="Terrain" src="Report/images/W01_terrain.gif" />
+
 
 This is an example of a 2D noise function. For most noise functions, there exist no theoretical cap for up to how many dimensions they go, but most libraries stick to 1, 2, 3, 4 and 6 dimensional noise. Following [this article](http://web.archive.org/web/20160318140201/http://catlikecoding.com/unity/tutorials/noise/), I only implemented 1, 2 and 3 dimensional Value and Perlin noise for my purposes.
 
@@ -62,27 +65,44 @@ On the last day I added a simple spaceship. I quickly threw together some basic 
 
 
 ## Week 02
-The previous week had yielded a result with very minimal amounts of interaction. I started out this week with the goal by planning more gameplay. I wanted to base the game on physics which in retrospect would clearly trip me up.
-The concept was to combine the gameplay from minigolf games with action movies where the hero dodges bullets jumping from desk to desk. Based on previous knowledge I knew I'd need to have a good grip on how the player would move.
-http://gafferongames.com/game-physics/
-http://www.gdcvault.com/play/1023559/Math-for-Game-Programmers-Building
-So after reading multiple articles I created movement controls. Although the player looks like a capsule, movement is actually based on a free rolling ball. I worked on the input until I could predictably add the correct amount of force for the ball to roll exactly as far as I designed. However the control didn't feel how I wanted it to, so I spend time trying several different input schemes. The results couldn't satisfy me, so I decided to jump over to work on another part; the shooting and avoiding. This was all very straightforward.
-Physics based action game bad idea as I was very inexperienced with Physics. I had to give up on getting the game to work well. I instead doubled down on research to have a better shot at understanding all the requirements the next time something like this would come up.
+The previous week had yielded something with a very minimal amount of interaction. I started out this week with the goal by planning more gameplay. I wanted to base the game on physics which in retrospect would clearly trip me up.
+
+The concept was to combine the gameplay from minigolf games with action movies where the hero dodges bullets jumping from desk to desk. Based on previous knowledge I knew I couldn't just twiddle with values and derive the movement values from my intent.
+* http://gafferongames.com/game-physics/
+* http://www.gdcvault.com/play/1023559/Math-for-Game-Programmers-Building
+
+So after reading multiple articles I created the movement controls. The player looks like a capsule, but all movement is actually based on a freely gyrating ball. I worked on the input until I could predictably add the correct amount of force for the ball to roll based on exactly how far I wanted it to be able to move.
+![Gif thing](Report/images/W02_cover2.gif)
+
+However the controls didn't feel satisfying so I spun my wheels trying several different input schemes. These results couldn't satisfy me either, so I decided to jump over to work on another part; the shooting and avoiding. This was all very straightforward.
 
 ![Gif thing](Report/images/W02_cover.gif)
 
-<a href="http://kempink.eu/resource-list/">
-<img alt="SPEC_W04_AI" src="Report/images/W02_cover.gif" width="100" />
-</a>
+I should've known better than to make a physics based game before I had a good grip on the mathematics involved. In the end I had to give up on getting the game to work well. I instead doubled down on research so that I would have a better shot at understanding all the requirements the next time something like this would come up.
+
+![Gif thing](Report/images/W02_ramp.gif)
+
+In order to take my mind off physics I spend the last day on miscellaneous bits and pieces. I read up on the Yarn dialogue engine. I added its interpreter to my Unity project, which was designed to not require the user to learn how the Yarn interpreter even worked. However, as learning exercise I then cracked open the code to see how its developers solved some common problems in dialogue systems. I mostly found very straightforward solutions with only few super elegant structures.
 
 https://github.com/InfiniteAmmoInc/Yarn
-To take my mind off physics for a short while I also read up on the Yarn dialogue engine. Implementing it's Unity interpreter was very straightforward. As a learning exercise I then cracked open the code to see how its developers solved some common problems in dialogue systems using very straightforward solutions.
+
 
 ## Week 03
-Physics playground
-http://gafferongames.com/game-physics/spring-physics/
-Inspired by one specific article on spring physics I wanted to replicate it in Unity on top off the existing PhysX system.
+My objective this week was to start applying some of the lessons I learned last week. Because during the previous week I had found that my experience with physics was totally lacking, I just wanted to dive in and toy with formulas this time around.
+
+I started by implementing spring physics on top of Unity's Physx rigid bodies and colliders. Using the formulas I found in [this article](http://gafferongames.com/game-physics/spring-physics/) as a base, I was off to a pretty good start.
+
+![Gif thing](Report/images/W03_editor2.gif)
+
+It was interesting to play with different rules for when springs would be created/destroyed between points and the effects they had on the motion of the swarm as a whole. In the above animation the points will occasionally start looking for close neighbors, expanding the search range if the amount of neighbors was below a certain threshold. It would then create the springs between everything it found. Springs have a set lifetime which decreases slowly over time and drains a lot faster when the distance between points is further away.
+
+The visualization of every connection's state provides another layer of information. It made it more clear when a tweak I made to the simulation was causing too much instability, like here:
+
+![Gif thing](Report/images/W03_editor.gif)
+
 Learned debugging, got it to build to Android, burned some time getting Android environment up and running (wanting to get log messages on my laptop from my phone).
+
+![Week 03 end result](Report/images/W03_drops.gif)
 
 ## Week 04
 Android strategy
