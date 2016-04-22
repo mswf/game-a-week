@@ -1,6 +1,6 @@
 ﻿
 
-namespace BehaviorTree.DefinitionReader.Tokenizing
+namespace BehaviorTree.DefinitionReader.Lexing
 {
 	public class TokenPosition
 	{

@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace BehaviorTree.DefinitionReader.Tokenizing
+namespace BehaviorTree.DefinitionReader.Lexing
 {
 	public enum TokenType
 	{
@@ -37,7 +37,7 @@ namespace BehaviorTree.DefinitionReader.Tokenizing
 		End
 	}
 
-	public class Tokenizer
+	public class Lexer
 	{
 		//	Regex endOfLineRegex = new Regex(@"\r\n|\r|\n", RegexOptions.Compiled);
 		Regex endOfLineRegex = new Regex(@"\r\n|\r|\n");

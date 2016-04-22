@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 
-using BehaviorTree.DefinitionReader.Tokenizing;
+using BehaviorTree.DefinitionReader.Lexing;
 
 namespace BehaviorTree.DefinitionReader
 {
@@ -21,6 +20,7 @@ namespace BehaviorTree.DefinitionReader
 		{
 			ParseFile("TestTree.txt");
 		}
+
 		// https://github.com/sprache/Sprache
 		//http://nblumhardt.com/2010/01/building-an-external-dsl-in-c/
 		public void ParseFile(string relativePath)
@@ -31,22 +31,6 @@ namespace BehaviorTree.DefinitionReader
 
 			ParseLines(ref lines, relativePath);
 		}
-
-		/*
-		private static readonly Parser<string> StripWhiteSpace =
-			from leading in Parse.WhiteSpace.Many()
-			from first in Parse.Letter.Once()
-			from rest in Parse.LetterOrDigit.Many()
-			from trailing in Parse.WhiteSpace.Many()
-			select new string(first.Concat(rest).ToArray());
-
-		private static readonly Parser<string> GetUsingDirective =
-			from leading in Parse.Chars("using")
-			from usingDirective in Parse.String()
-			from trailing in Parse.Char(";")
-			select usingDirective;
-
-		*/
 
 		//http://jakubdziworski.github.io/enkel/2016/03/11/enkel_2_technology.html
 		
@@ -59,7 +43,7 @@ namespace BehaviorTree.DefinitionReader
 			var rawResult = new RawResult();
 			rawResult.path = relativePath;
 
-			var tokenizer = new Tokenizer();
+			var tokenizer = new Lexer();
 
 			tokenizer.AddDefinition(new TokenDefinition(
 				TokenType.Comment,

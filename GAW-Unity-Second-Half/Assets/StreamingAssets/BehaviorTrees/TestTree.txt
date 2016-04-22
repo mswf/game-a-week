@@ -23,7 +23,7 @@ subtree: (name= "MySubtree")
 	MyTask (arg1= 1)
 		MySubTask ( pattern = pattern.alpha )
 		[MyGuard ()] MySubTask ()
-	myTask ()
+		myTask ()
 
 root: (name= "TestTree")
 	[MyGuard1 ()] [MyGuard2 (arg1= 1)] MyTask (arg1= 1, arg2= "Hello")
