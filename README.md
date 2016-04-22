@@ -145,3 +145,8 @@ spelunky book
 http://www.gamasutra.com/blogs/MikeBithell/20140420/215842/Automatic_avoidance_for_player_characters_on_an_indie_budget.php
 
 Added simple hack 'n slash like boxing mechanics. Made a custom character, helped emphasize movements.
+
+
+## Lessons Learned
+
+## Conclusion
