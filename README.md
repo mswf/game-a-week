@@ -59,10 +59,14 @@ However, this ripple effect looks very artificial, especially as the particle fi
 
 ![Shuffled particle field](Report/images/W01_sampling_shuffle.gif)
 
-On the last day I added a simple spaceship. I quickly threw together some basic controls and exhaust effects. I had tried making a "chunk" system that was supposed to help me spawn new segments as the player moved, but it didn't solve the real issue of many of the 3D calculations being prohibitively slow. So I had to box the spaceship inside a very large cube.
+On the last day I added a simple spaceship. I quickly threw together some basic controls and exhaust effects. I had tried making a "chunk" system that was supposed to help me spawn new segments as the player moved, but it didn't solve the real issue of many of the 3D calculations being prohibitively slow. So I had to box the spaceship inside a very large cube with *invisible* colliders and a complete admission of defeat.
 
 ![Week 01 end result](Report/images/W01_space.gif)
 
+### Lessons Learned
+Finding a good implementation reference for a single noise function had multiple effects. Not only was I able to move beyond only theoretical understanding of the workings of Perlin noise. But this also provided a good foundation for reasoning about other types of noise in the future as well.
+
+I also learned the effects of moving algorithms from 2 to 3 dimensions. Even though it is simple to extend some cheap and efficient algorithms that work well in 2 dimensions into 3 dimensions, their execution can become exponentially more expensive. For my use case, this caused a loss of flexibility.
 
 ## Week 02
 The previous week had yielded something with a very minimal amount of interaction. I started out this week with the goal by planning more gameplay. I wanted to base the game on physics which in retrospect would clearly trip me up.
@@ -86,6 +90,8 @@ In order to take my mind off physics I spend the last day on miscellaneous bits 
 
 https://github.com/InfiniteAmmoInc/Yarn
 
+### Lessons Learned
+I gained a much better understanding of the internals of a physics engine. However I made the mistake to think I had learned enough to even base a simple physics game on them. Because I had not internalized the formulas enough, I could not be flexible enough with the game. Every change I wanted to make to the balls behavior led me to read more about physics first. This slowdown killed the experimental flow for me.
 
 ## Week 03
 My objective this week was to start applying some of the lessons I learned last week. Because during the previous week I had found that my experience with physics was totally lacking, I just wanted to dive in and toy with formulas this time around.
@@ -100,11 +106,30 @@ The visualization of every connection's state provides another layer of informat
 
 ![Gif thing](Report/images/W03_editor.gif)
 
-Learned debugging, got it to build to Android, burned some time getting Android environment up and running (wanting to get log messages on my laptop from my phone).
+Unstable connections led me to seriously use the debugger to step through the state of my program. I still have to learn that I should use the debugger for most issues and every time I am forced to use it I appreciate the tool more and more.  
+I then wanted to also build the experiment for Android. I found the setup of the SDK quite painless by following the [Unity documentation](http://docs.unity3d.com/Manual/android-sdksetup.html). A lot of the development environment is automatically setup for the user too. So building an Android project while a phone is connected will automatically push and launch the build on that device.  
+One extraneous feature I personally wanted was getting debug log messages displayed in the Unity editor while running on a phone. I burned a few hours too much on this and later just dropped the issue for a later time.
 
 ![Week 03 end result](Report/images/W03_drops.gif)
 
 ## Week 04
+At the start of week 4 I wanted to make a simple strategy game for my phone. Inspired by games like Swords & Soldiers and older Flash games I played on online portals it was to be a single lane game.  
+The concept was that you played as an angry little necromancer sitting in your castle, sending out minions to plunder the neighboring farms. Getting the loot back in your domain would enable you to build more minions. Overextending your raids would cause to farmers to get fed up and retaliate.
+
+I had researched plenty of techniques for running economies in the past. The biggest challenge for this experiment was getting all systems up and running in a short time.  
+On the first day I made basic assets in order to have reference points for placing the camera. I then made a simple UI that would work well for mobile phones as well as scale properly with different screens.   
+
+On the second day I made a simple resource system. I researched C# operator overloading in order to come up with a user friendly way of programming transactions. A *loot* item can hold any amount of any *resource*. This way a unit can just add any *loot* it picks up to one *pouch*. A *pouch* then acts the same as a piece of loot, but adding or removing resources from it triggers an event on the holder of the container. This way UI or feedback systems can just ask a unit or building to notify them when something changes instead of having to ping the *pouch* every so often.
+
+The next day I worked on the world units; the buildings, units and interactions (looting) between them. A units' location is a number on a 1 dimensional line and can be used for simple comparisons (are they ahead of me or behind) and colliders would be used for registering hits and attacks.  
+I also created a notion of *factions*, so that *units* can ask their *faction* for what their default action against another *unit* should be. For this experiment, I created a **player** faction that's aggressive towards anybody, a **peasant** faction that's scared of the **player** but supports the **royal** faction and a **royal** faction that's aggressive towards the **player** and ignores the **peasant**.  
+I found enjoyment in creating a system that would enable simple reasoning for its agents. For example, a **peasant** unit could even modify it's stance against a **player** unit based on how fed up it was with the amount of times this individual was stolen from.  
+However I hit a snag when 
+
+
+|  
+|  
+
 Android strategy
 Made economy
 Made factions, with units
