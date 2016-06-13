@@ -131,20 +131,85 @@ namespace Week01
 			return g.x * x + g.y * y + g.z * z;
 		}
 
-		public static float Sum(NoiseMethod method, Vector3 point, float frequency, int octaves, float lacunarity, float persistence)
+		// aka fBm
+		public static float fBm(NoiseMethod noiseFunc, Vector3 point, float frequency, int octaves, float lacunarity, float persistence)
 		{
-			float sum = method(point, frequency);
-			float amplitude = 1f;
-			float range = amplitude;
+			float value = 0.0f;
+			float power = 1f;
+			float range = power;
+			float pwHL = Mathf.Pow(lacunarity, -frequency);
+
 
 			for (int o = 1; o < octaves; o++)
 			{
+				value += noiseFunc(point, frequency) * power;
 				frequency *= lacunarity;
-				amplitude *= persistence;
-				range += amplitude;
-				sum += method(point, frequency)*amplitude;
+
+				power *= persistence;
+				range += power;
 			}
-			return sum/range;
+
+			return value/range;
+
+
+			/*
+
+				for (i = 0; i < (int)octaves; i++) {
+					value += noisefunc(x, y, z) * pwr;
+					pwr *= pwHL;
+					x *= lacunarity;
+					y *= lacunarity;
+					z *= lacunarity;
+				}
+
+				rmd = octaves - floorf(octaves);
+				if (rmd != 0.f) value += rmd * noisefunc(x, y, z) * pwr;
+
+			*/
+		}
+
+		public static float MultiFractal(NoiseMethod noiseFunc, Vector3 point, float frequency, int octaves, float lacunarity,
+			float persistence)
+		{
+			float value = 1.0f;
+			float pwr = 1.0f;
+
+			//float pwHL = Mathf.Pow(lacunarity, -H);
+
+
+			for (int i = 0; i < octaves; i++)
+			{
+				value *= (pwr * noiseFunc(point, frequency) + 2.0f);
+				pwr *= persistence;
+
+				frequency *= lacunarity;
+
+			}
+			return value;
+
+
+			/*
+
+			for (i = 0; i < (int)octaves; i++) {
+				value *= (pwr * noisefunc(x, y, z) + 1.0f);
+				pwr *= pwHL;
+				x *= lacunarity;
+				y *= lacunarity;
+				z *= lacunarity;
+			}
+
+			for (i = 0; i < (int)octaves; i++)
+			{
+				value *= (pwr * noisefunc(x, y, z) + 1.0f);
+				pwr *= pwHL;
+				x *= lacunarity;
+				y *= lacunarity;
+				z *= lacunarity;
+			}
+			rmd = octaves - floorf(octaves);
+			if (rmd != 0.0f) value *= (rmd * noisefunc(x, y, z) * pwr + 1.0f);
+			*/
+
 		}
 
 		private static readonly float Sqr2 = (float)System.Math.Sqrt(2d);

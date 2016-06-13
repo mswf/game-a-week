@@ -5,6 +5,11 @@ namespace Week01
 	[RequireComponent(typeof(MeshRenderer))]
 	public class TextureCreator : MonoBehaviour
 	{
+
+		[Range(0f, 1f)]
+		public float strength = 1f;
+		public bool damping;
+
 		[Range(2,512)]
 		public int resolution = 256;
 
@@ -16,7 +21,7 @@ namespace Week01
 		[Range(1f, 4f)]
 		public float lacunarity = 2f;
 
-		[Range(0f, 1f)]
+		[Range(-5f, 5f)]
 		public float persistence = 0.5f;
 
 		public NoiseMethodType noiseType;
@@ -63,11 +68,13 @@ namespace Week01
 			NoiseMethod method = Noise.NoiseMethods[(int)noiseType][dimensions - 1];
 
 			float stepSize = 1f/resolution;
+			float amplitude = damping ? strength / frequency : strength;
 
 			//float startTime = Time.realtimeSinceStartup;
 
 			Color whiteColor = Color.white;
 
+			/*
 			if (noiseType != NoiseMethodType.Value)
 			//  sample = sample * 0.5f + 0.5f
 			{
@@ -86,19 +93,27 @@ namespace Week01
 				}
 			}
 			else
+			*/
 			// sample = sample
 			{
 				for (int y = 0, i = 0; y < resolution; y++)
 				{
-					float t = (y + 0.5f) * stepSize;
+					float t = y * stepSize;
 					Vector3 point0 = MathS.Vector3LerpUnclamped(point00, point01, t);
 					Vector3 point1 = MathS.Vector3LerpUnclamped(point10, point11, t);
 
 					for (int x = 0; x < resolution; x++, i++)
 					{
-						Vector3 point = MathS.Vector3LerpUnclamped(point0, point1, (x + 0.5f) * stepSize);
-						float sample = Noise.Sum(method, point, frequency, octaves, lacunarity, persistence);
-						samples[i] = whiteColor * sample;
+						Vector3 point = MathS.Vector3LerpUnclamped(point0, point1, x * stepSize);
+
+
+
+						float sample = Noise.fBm(method, point, frequency, octaves, lacunarity, persistence);
+						sample = noiseType == NoiseMethodType.Value ? (sample - 0.5f) : (sample * 0.5f);
+
+						sample *= amplitude;
+
+						samples[i] = whiteColor * (sample + .5f);
 					}
 				}
 			}

@@ -76,7 +76,7 @@ namespace Week01
 				for (int x = 0; x <= resolution; x++, v++)
 				{
 					Vector3 point = Vector3.Lerp(point0, point1, x * stepSize);
-					float sample = Noise.Sum(method, point, frequency, octaves, lacunarity, persistence);
+					float sample = Noise.fBm(method, point, frequency, octaves, lacunarity, persistence);
 					sample = noiseType == NoiseMethodType.Value ? (sample - 0.5f) : (sample*0.5f);
 					if (coloringForStrength)
 					{
