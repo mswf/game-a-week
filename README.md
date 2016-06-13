@@ -10,7 +10,7 @@ I started by reading/researching different concepts through articles, papers and
 Using Unity I would build a working implementation, researching more only when I got stuck. After this was running I would couple it with a crude game concept, just something to give context for any further work.
 
 
-## Week 00
+## Week 00 - Preparations
 This was the inception phase of the project. Here I decided on the subject for my Specialization. This included defining my scope and motivating the merits of this workflow.
 I also set up my working environment. I decided to host the project in an open Github repository. Unity as a platform was an easy decision as I had a lot of previous experience with this engine. I wanted to gather some utility libraries I anticipated I would need. I limited myself to free and open source assets.
 
@@ -124,11 +124,9 @@ On the second day I made a simple resource system. I researched C# operator over
 The next day I worked on the world units; the buildings, units and interactions (looting) between them. A units' location is a number on a 1 dimensional line and can be used for simple comparisons (are they ahead of me or behind) and colliders would be used for registering hits and attacks.  
 I also created a notion of *factions*, so that *units* can ask their *faction* for what their default action against another *unit* should be. For this experiment, I created a **player** faction that's aggressive towards anybody, a **peasant** faction that's scared of the **player** but supports the **royal** faction and a **royal** faction that's aggressive towards the **player** and ignores the **peasant**.  
 I found enjoyment in creating a system that would enable simple reasoning for its agents. For example, a **peasant** unit could even modify it's stance against a **player** unit based on how fed up it was with the amount of times this individual was stolen from.  
-However I hit a snag when 
+I then made the units actually move around on the board. But then I ran into a part of the design that took much more time than I had anticipated: the logic for the units. Although simple in theory, I had zero previous experience with implementing AI directly. Because of this I spend the last two days of the week getting the simplest of interactions done.
 
-
-|  
-|  
+### Lessons Learned
 
 Android strategy
 Made economy
@@ -140,17 +138,18 @@ Spend too much time
 Test subscript
 
 ## Week 05
-Behavior Tree
+Because of my lack of experience directly working on NPC agents, I had to resort to an ad-hoc solution during last week. So this week I researched common game AI techniques with the goal of creating a basic implementation of one such scheme.  
+This [article by Dave Mark, AI Architectures: A Culinary Guide](http://intrinsicalgorithm.com/IAonAI/2012/11/ai-architectures-a-culinary-guide-gdmag-article/), gave a good description of the most common approaches. But [this article by  Chris Simpson, Behavior trees for AI: How they work](http://gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php), was my direct inspiration for what I worked on this week. In it Simpson goes over the use cases for behavior trees, all the tools a behavior tree scheme exposes to a designer and how they fit into your tool belt. It described none of the implementation details for a behavior tree, which left a great exercise for me.  
 
-http://gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
+With Simpson's article for reference I designed and worked on my own implementation of a behavior tree. I had finished 90% of the functionality I was planning on by Tuesday, but it was very hard to debug any logic errors in my implementation by stepping through code with the debugger. And poking around was also starting to be a no-go as I had unwittingly started relying on some C# features that increased in-editor build times. The point of using behavior trees is that they are very tool-friendly, so I resigned myself to creating an in-editor visualization tool.  
 
-After only reading the article on usage, worked on making my own implementation. I had finished 90% of the functionality I was going to use by Tuesday, but it was very hard to debug all the logic errors in my implementation by stepping through the code. The point of using behavior trees is that they are very tool-friendly, so I resigned myself to creating an in-editor visualization tool for my own implementation as well.
+I took my first dive into Unity's editor GUI scripting which was surprisingly consistent in it's API compared to other parts of Unity. I started by just drawing a simple tree view of behavior trees. I then added simple recording functions behind some debug toggles in the Node base class. The editor UI could then use this data to highlight specific nodes when they were recently evaluated.  
+This editor view would now instantly show when branches of the tree I expected to be evaluated would be skipped. All the time I wasted trying to find what node contained a bug could not be spend fixing said bug.  
+Sometimes I found Simpson's article a bit ambiguous. For these moments I used [LibGDX's documentation on their Behavior Tree implementation](https://github.com/libgdx/gdx-ai/wiki/Behavior-Trees) as it contained much more explicit definitions of how certain aggregate nodes should treat their children.  
 
-I had unknowingly started relying on some C# features that ruined build times for Unity.
+After finishing all the basic components of my behavior tree, I worked to replicate the rudimentary AI I had made in Week04 using this new system. I designed the logic and created additional types of tree nodes for interacting with the game.
 
-https://github.com/libgdx/gdx-ai/wiki/Behavior-Trees
 
-I took my first dive into Unity's editor GUI scripting which was surprisingly consistent in it's API compared to other parts of Unity. So after the active paths the agents were taking were being highlighted and I could add visual counters I was able to spend the rest of the week hammering out any remaining issues. On the last day I focused on getting the same rudimentary behavior from Week04 using this new more flexible system.
 
 
 ## Week 06
