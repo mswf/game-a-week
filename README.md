@@ -143,16 +143,26 @@ This [article by Dave Mark, AI Architectures: A Culinary Guide](http://intrinsic
 
 With Simpson's article for reference I designed and worked on my own implementation of a behavior tree. I had finished 90% of the functionality I was planning on by Tuesday, but it was very hard to debug any logic errors in my implementation by stepping through code with the debugger. And poking around was also starting to be a no-go as I had unwittingly started relying on some C# features that increased in-editor build times. The point of using behavior trees is that they are very tool-friendly, so I resigned myself to creating an in-editor visualization tool.  
 
-I took my first dive into Unity's editor GUI scripting which was surprisingly consistent in it's API compared to other parts of Unity. I started by just drawing a simple tree view of behavior trees. I then added simple recording functions behind some debug toggles in the Node base class. The editor UI could then use this data to highlight specific nodes when they were recently evaluated.  
+I took my first dive into Unity's editor GUI scripting which was surprisingly consistent in it's API compared to other parts of Unity. The editor GUI is scripted in an "immediate mode" paradigm. So instead of creating UI objects and adding callbacks, you write code like ``_newString = GUILayout.TextField(_oldString);`` which results in an inputfield appearing in your editor.       
+I started by just drawing a simple tree view of behavior trees. I then added simple recording functions behind some debug toggles in the Node base class. The editor UI could then use this data to highlight specific nodes when they were recently evaluated.  
 This editor view would now instantly show when branches of the tree I expected to be evaluated would be skipped. All the time I wasted trying to find what node contained a bug could not be spend fixing said bug.  
 Sometimes I found Simpson's article a bit ambiguous. For these moments I used [LibGDX's documentation on their Behavior Tree implementation](https://github.com/libgdx/gdx-ai/wiki/Behavior-Trees) as it contained much more explicit definitions of how certain aggregate nodes should treat their children.  
 
-After finishing all the basic components of my behavior tree, I worked to replicate the rudimentary AI I had made in Week04 using this new system. I designed the logic and created additional types of tree nodes for interacting with the game.
+After finishing all the basic components of my behavior tree, I worked to replicate the rudimentary AI I had made in Week04 using this new system. I designed the logic and created additional types of tree nodes for interacting with the game.  
+
+### Lessons Learned
+At the end of the week I had the same identical behavior from a week before. However, the old approach had already arrived at a dead end and was very resistant to modification. Now I had a system that invited change and experimentation. It showed what an agent was "thinking" at all times.  
+What I found to be the biggest success, was my productivity. By not worrying about a game and starting with a clear article on how the system I was to build should be used I could just analyze and work within a narrow field.   
+I can now say that although it's fun to learn a lot about many unrelated things at the same time, the cost for switching contexts all the time is very high. It's not just waste through adjusting to a different mindset. While I research a topic I build up a backlog of follow-up sources to study next. By switching between too many new topics I also lose the right frame of mind for the follow-up sources, making the learning experience less effective.  
+At the end of this week I was happy to have dived into AI. I found enough new ground and concepts within this corner of development that I would like to explore more.  
+
+## Week 06  
+I wanted to do more with behavior trees for this week. There were plenty of directions I couldn't travel down last week. First I spend some more time reading articles and watching presentations on AI. A common use for AI is to simulate intelligent squad behavior in action games. I wanted to take a crack at this.  
+My goal was to create an environment where the player has to hide from a squad of AI agents. The agents should exchange information and coordinate movement together.  
+
+Before I could start adding things to my behavior tree, there were some issues I needed to resolve in my old approach. 
 
 
-
-
-## Week 06
 Doing more with Behavior Trees.
 Create squad logic.
 Use Unity navmesh.
