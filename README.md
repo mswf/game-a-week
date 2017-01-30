@@ -160,26 +160,29 @@ At the end of this week I was happy to have dived into AI. I found enough new gr
 I wanted to do more with behavior trees for this week. There were plenty of directions I couldn't travel down last week. First I spend some more time reading articles and watching presentations on AI. A common use for AI is to simulate intelligent squad behavior in action games. I wanted to take a crack at this.  
 My goal was to create an environment where the player has to hide from a squad of AI agents. The agents should exchange information and coordinate movement together.  
 
-Before I could start adding things to my behavior tree, there were some issues I needed to resolve in my old approach. 
+Before I could start adding things to my behavior tree, there were some issues I needed to resolve in my old approach. I first had to spend time cleaning up my implementation so that it didn't rely on some static references anymore, instead behaviorTrees got a reference to BehaviorTreeManager to replace all this functionality. In retrospect it's similar to dependancy injection. This made it possible to keep track of which tree instances were trying to talk to global objects. Now multiple trees could be visually represented at the same time and even communication between them could be visualized in the future.
 
+Then came my attempts at creating a "squad" brain. My first instinct was to make it possible for tree nodes from a unit to look up it's "squad" in its AI blackboard. However this did not make it possible to create a squad brain. Units were still considering what to do on an individual basis. My changes only made it so that they could look at their squadmates, but not communicate with them. There was still no intelligent "squad mentality".  
+After mucking around with my work for a while I did more research and looked how other, smarter, people implemented these things before. I found that the architecture required to support this flexible hive mentality that I wanted to achieve was waaay out of scope for this project.  
+So in the end I had to give up. Before the end of the week, I did manage to make the units in my faker squad to use the Unity navmesh to traverse a scene and evaluate distances and proximity to targets. 
 
-Doing more with Behavior Trees.
-Create squad logic.
-Use Unity navmesh.
-
-Had to improve W05 code to be able to visualize multiple agents, share resources and send messages between agents.
-
-The squad part proved to be too much. After doing more research I found the architecture required to have the flexibility I wanted way out of scope.
+<img alt="Terrain" src="Report/images/W06_squad.png" width="466" />
 
 ## Week 07/08
-I merged these last weeks because these two weeks would both be cut short and I didn't want to reduce the scope of the last experiments.
+I merged these last weeks because these two weeks would both be cut short and I didn't want to reduce the scope of the last experiment. I wanted to make a simple procedural level, after reading [a book written by Derek Yu, designer of the game Spelunky](https://bossfightbooks.com/products/spelunky-by-derek-yu). 
+
+<img alt="Terrain" src="Report/images/W07_simpleRandom.png" width="466" />
+
+
 
 Research
 spelunky book
 http://www.gamasutra.com/blogs/MikeBithell/20140420/215842/Automatic_avoidance_for_player_characters_on_an_indie_budget.php
 
 Added simple hack 'n slash like boxing mechanics. Made a custom character, helped emphasize movements.
+<img alt="Terrain" src="Report/images/W07_punching.png" width="466" />
 
+<img alt="Terrain" src="Report/images/W07_steer.png" width="466" />
 
 ## Lessons Learned
 
