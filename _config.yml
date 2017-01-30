@@ -1,0 +1,8 @@
+title: Game-a-Week
+description: School Project (Q3 2015-2016) by Steff Kempink
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-minimal
+
+gems:
+  - jekyll-mentions
