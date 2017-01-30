@@ -30,13 +30,13 @@ Pseudorandom noise functions are extremely common in computer graphics. They can
 
 The most well known one is Perlin noise, which when generated in 2D looks a bit like clouds.
 
-<img alt="2D Perlin Noise" src="Report/images/W01_noise.png" width="150" />
+<img alt="2D Perlin Noise" src="report_images/W01_noise.png" width="150" />
 
 A simple use case of this data is to let it drive the height and color of a mesh, which produces this  very rudimentary terrain:
 
-<img alt="Terrain" src="Report/images/W01_terrain.png" width="466" />
+<img alt="Terrain" src="report_images/W01_terrain.png" width="466" />
 
-<img alt="Terrain" src="Report/images/W01_terrain.gif" />
+<img alt="Terrain" src="report_images/W01_terrain.gif" />
 
 
 This is an example of a 2D noise function. For most noise functions, there exist no theoretical cap for up to how many dimensions they go, but most libraries stick to 1, 2, 3, 4 and 6 dimensional noise. Following [this article](http://web.archive.org/web/20160318140201/http://catlikecoding.com/unity/tutorials/noise/), I only implemented 1, 2 and 3 dimensional Value and Perlin noise for my purposes.
@@ -53,15 +53,15 @@ Having the base logic already be implemented saves a lot time. However it still 
 Using Unity's build-in profiler and logging the raw time in some small test code I found it is much better to substitute all calls to Unity's Mathf library with my own. Statistics showed that calling overhead on distance and lerp functions was reduced by 80%.
 So finally I made the Min and Max Distance of the Poisson Disc sample from the 3D noise. I then spawned particles on these coordinates,  basing their color and lifetime on the same noise values. Iterating through the resulting array nicely shows how Poisson Disk sampling finds points in space:
 
-![Ordered particle field](Report/images/W01_sampling.gif)
+![Ordered particle field](report_images/W01_sampling.gif)
 
 However, this ripple effect looks very artificial, especially as the particle field starts looping. So after shuffling the resulting points this is the end result:
 
-![Shuffled particle field](Report/images/W01_sampling_shuffle.gif)
+![Shuffled particle field](report_images/W01_sampling_shuffle.gif)
 
 On the last day I added a simple spaceship. I quickly threw together some basic controls and exhaust effects. I had tried making a "chunk" system that was supposed to help me spawn new segments as the player moved, but it didn't solve the real issue of many of the 3D calculations being prohibitively slow. So I had to box the spaceship inside a very large cube with *invisible* colliders and a complete admission of defeat.
 
-![Week 01 end result](Report/images/W01_space.gif)
+![Week 01 end result](report_images/W01_space.gif)
 
 ### Lessons Learned
 Finding a good implementation reference for a single noise function had multiple effects. Not only was I able to move beyond only theoretical understanding of the workings of Perlin noise. But this also provided a good foundation for reasoning about other types of noise in the future as well.
@@ -76,15 +76,15 @@ The concept was to combine the gameplay from minigolf games with action movies w
 * http://www.gdcvault.com/play/1023559/Math-for-Game-Programmers-Building
 
 So after reading multiple articles I created the movement controls. The player looks like a capsule, but all movement is actually based on a freely gyrating ball. I worked on the input until I could predictably add the correct amount of force for the ball to roll based on exactly how far I wanted it to be able to move.
-![Gif thing](Report/images/W02_cover2.gif)
+![Gif thing](report_images/W02_cover2.gif)
 
 However the controls didn't feel satisfying so I spun my wheels trying several different input schemes. These results couldn't satisfy me either, so I decided to jump over to work on another part; the shooting and avoiding. This was all very straightforward.
 
-![Gif thing](Report/images/W02_cover.gif)
+![Gif thing](report_images/W02_cover.gif)
 
 I should've known better than to make a physics based game before I had a good grip on the mathematics involved. In the end I had to give up on getting the game to work well. I instead doubled down on research so that I would have a better shot at understanding all the requirements the next time something like this would come up.
 
-![Gif thing](Report/images/W02_ramp.gif)
+![Gif thing](report_images/W02_ramp.gif)
 
 In order to take my mind off physics I spend the last day on miscellaneous bits and pieces. I read up on the Yarn dialogue engine. I added its interpreter to my Unity project, which was designed to not require the user to learn how the Yarn interpreter even worked. However, as learning exercise I then cracked open the code to see how its developers solved some common problems in dialogue systems. I mostly found very straightforward solutions with only few super elegant structures.
 
@@ -98,19 +98,19 @@ My objective this week was to start applying some of the lessons I learned last 
 
 I started by implementing spring physics on top of Unity's Physx rigid bodies and colliders. Using the formulas I found in [this article](http://gafferongames.com/game-physics/spring-physics/) as a base, I was off to a pretty good start.
 
-![Gif thing](Report/images/W03_editor2.gif)
+![Gif thing](report_images/W03_editor2.gif)
 
 It was interesting to play with different rules for when springs would be created/destroyed between points and the effects they had on the motion of the swarm as a whole. In the above animation the points will occasionally start looking for close neighbors, expanding the search range if the amount of neighbors was below a certain threshold. It would then create the springs between everything it found. Springs have a set lifetime which decreases slowly over time and drains a lot faster when the distance between points is further away.
 
 The visualization of every connection's state provides another layer of information. It made it more clear when a tweak I made to the simulation was causing too much instability, like here:
 
-![Gif thing](Report/images/W03_editor.gif)
+![Gif thing](report_images/W03_editor.gif)
 
 Unstable connections led me to seriously use the debugger to step through the state of my program. I still have to learn that I should use the debugger for most issues and every time I am forced to use it I appreciate the tool more and more.  
 I then wanted to also build the experiment for Android. I found the setup of the SDK quite painless by following the [Unity documentation](http://docs.unity3d.com/Manual/android-sdksetup.html). A lot of the development environment is automatically setup for the user too. So building an Android project while a phone is connected will automatically push and launch the build on that device.  
 One extraneous feature I personally wanted was getting debug log messages displayed in the Unity editor while running on a phone. I burned a few hours too much on this and later just dropped the issue for a later time.
 
-![Week 03 end result](Report/images/W03_drops.gif)
+![Week 03 end result](report_images/W03_drops.gif)
 
 ## Week 04
 At the start of week 4 I wanted to make a simple strategy game for my phone. Inspired by games like Swords & Soldiers and older Flash games I played on online portals it was to be a single lane game.  
@@ -166,12 +166,12 @@ Then came my attempts at creating a "squad" brain. My first instinct was to make
 After mucking around with my work for a while I did more research and looked how other, smarter, people implemented these things before. I found that the architecture required to support this flexible hive mentality that I wanted to achieve was waaay out of scope for this project.  
 So in the end I had to give up. Before the end of the week, I did manage to make the units in my faker squad to use the Unity navmesh to traverse a scene and evaluate distances and proximity to targets. 
 
-<img alt="Terrain" src="Report/images/W06_squad.png" width="466" />
+<img alt="Terrain" src="report_images/W06_squad.png" width="466" />
 
 ## Week 07/08
 I merged these last weeks because these two weeks would both be cut short and I didn't want to reduce the scope of the last experiment. I wanted to make a simple procedural level, after reading [a book written by Derek Yu, designer of the game Spelunky](https://bossfightbooks.com/products/spelunky-by-derek-yu). 
 
-<img alt="Terrain" src="Report/images/W07_simpleRandom.png" width="466" />
+<img alt="Terrain" src="report_images/W07_simple_random.png" width="466" />
 
 
 
@@ -180,9 +180,9 @@ spelunky book
 http://www.gamasutra.com/blogs/MikeBithell/20140420/215842/Automatic_avoidance_for_player_characters_on_an_indie_budget.php
 
 Added simple hack 'n slash like boxing mechanics. Made a custom character, helped emphasize movements.
-<img alt="Terrain" src="Report/images/W07_punching.png" width="466" />
+<img alt="Terrain" src="report_images/W07_punching.png" width="466" />
 
-<img alt="Terrain" src="Report/images/W07_steer.png" width="466" />
+<img alt="Terrain" src="report_images/W07_steer.png" width="466" />
 
 ## Lessons Learned
 
