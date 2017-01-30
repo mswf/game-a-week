@@ -173,17 +173,66 @@ I merged these last weeks because these two weeks would both be cut short and I 
 
 <img alt="Terrain" src="report_images/W07_simple_random.png" width="466" />
 
+From a zoomed out view you can still see the individual squares. The main take away from Derek Yu's writing was that sometimes (most of the time probably) extremely simple solutions will work great. So for my simple dungeon, I do a drunkard walk (randomly travel in different directions) to determine the start and end of the dungeon, then do a single "thicken" pass over the route where all empty neighbours are made walkable, and finally one more "thicken" pass where I make empty neighbours walkable with a 50/50 chance. This already gives a satisfying layout. For the individual rooms I used very simple hardcoded definitions. I just made static functions like the one below that return a 2D array of shorts.    
+
+```csharp
+// Open = O = 0
+public const short OPEN = 0;
+public const short O = OPEN;
+
+// Solid = S = 1
+public const short SOLID = 1;
+public const short S = SOLID;
+
+// Random = R = 2
+public const short RANDOM = 2;
+public const short R = RANDOM;
+
+public const short TREASURE = 10;
+public const short T = TREASURE;
 
 
-Research
-spelunky book
-http://www.gamasutra.com/blogs/MikeBithell/20140420/215842/Automatic_avoidance_for_player_characters_on_an_indie_budget.php
+public static short[][] EmptyRoom()
+{
+    return new short[ChunkDimension][]
+    {
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O},
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O},
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O},
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O},
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O},
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O},
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O},
+        new short[ChunkDimension] {O,O,O,O,O,O,O,O}
+    };
+}
 
-Added simple hack 'n slash like boxing mechanics. Made a custom character, helped emphasize movements.
-<img alt="Terrain" src="report_images/W07_punching.png" width="466" />
+public static short[][] TreasureRoom()
+{
+    return new short[ChunkDimension][]
+    {
+        new short[ChunkDimension] {S,S,S,O,O,S,S,S},
+        new short[ChunkDimension] {S,O,O,O,O,O,O,S},
+        new short[ChunkDimension] {S,O,O,T,T,O,O,S},
+        new short[ChunkDimension] {O,O,T,T,T,T,O,O},
+        new short[ChunkDimension] {O,O,T,T,T,T,O,O},
+        new short[ChunkDimension] {S,O,O,T,T,O,O,S},
+        new short[ChunkDimension] {S,O,O,O,O,O,O,S},
+        new short[ChunkDimension] {S,S,S,O,O,S,S,S}
+    };
+}
+```
+This did not take any time to set up. I don't need to do file IO to load anything, I don't need to design a data format. I just use plain 2D arrays for my simple 2D dungeon. And it works fine!
 
-<img alt="Terrain" src="report_images/W07_steer.png" width="466" />
+Next I worked on a simple character controller. I modelled a simple mole character, and rigged it to a simple rig with his belly on a separate bone from his body. This way, it could flop with a delay as the character turned around. Making the movement feel snappy, satisfying and punchy was a nice exercise. Using my improved understanding of physics gained over the previous weeks, I was able to easily plan and implement the kind of reactions I wanted.  
+<img alt="Terrain" src="report_images/W07_char.gif" width="466" />  
+I also added simple hack 'n slash like boxing mechanics. The gloves are animated through code, and the hitbox expands completely separate from the visuals. This made it easy to make it feel like your punches would always connect when you would expect them to.   
+<img alt="Terrain" src="report_images/W07_punching.png" width="466" />  
+Next up it was very annoying how the character would often get stuck on corners. What happens is that when the character is touching a wall and you move diagonally towards it, the character won't even move sideways because it can never start gaining momentum, thus never start sliding.
 
-## Lessons Learned
+<img alt="Terrain" src="report_images/W07_steer.png" width="466" />  
+<img alt="Terrain" src="report_images/W07_avoidance.gif" width="466" />  
 
-## Conclusion
+To fix this I implemented avoidance, [based on this article](http://www.gamasutra.com/blogs/MikeBithell/20140420/215842/Automatic_avoidance_for_player_characters_on_an_indie_budget.php). The system uses three "whiskers" to look in the direction the player is pressing on the joystick. If the center whisker is quite touching a wall, and either the left or right whisker is significantly shorter than the other one, the character will try to rotate it's input direction and try again, untill no whiskers are squashed anymore, or rotating didn't really improve the situation. After tuning the width, length and steering strength of this system, the character will easily steer alongside very tight corners. This was very satisfying, because although the final implementation got a bit complex the end result is completely invisible to the player.
+### Lessons Learned
+Simple design equals a much faster pace of development. This just makes everything more enjoyable to work and iterate on, which is a general lesson learned over this entire project.
