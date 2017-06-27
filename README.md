@@ -5,6 +5,10 @@
 In this article I will report on the work, insights and results of 8 weekly experimental projects I made. By researching a select amount of AI, physics and procedural generation techniques and applying them in my work I gained a lot of experience in little time.
 All the results are stored in a public Github repository.
 
+## Introduction
+Like any creative endeavor, a great video game is both a great idea and a great execution. Ideas can be found virtually anywhere. Execution however depends on a combination of skill and experience. Both are primarily gained through diligent practice. For this reason, it can be a great boon for anybody wanting to increase their game making proficiency to work on projects with the singular goal of gaining new insights through work. 
+The goal of keeping a log of the work I'm doing is to analyze the thought process and through a critical look increase the benefits from these experiments.
+
 ## Workflow
 I started by reading/researching different concepts through articles, papers and presentations. From this pool of information I chose a concept I wanted to work with more.
 Using Unity I would build a working implementation, researching more only when I got stuck. After this was running I would couple it with a crude game concept, just something to give context for any further work.
@@ -234,5 +238,12 @@ Next up it was very annoying how the character would often get stuck on corners.
 <img alt="Terrain" src="report_images/W07_avoidance.gif" width="466" />  
 
 To fix this I implemented avoidance, [based on this article](http://www.gamasutra.com/blogs/MikeBithell/20140420/215842/Automatic_avoidance_for_player_characters_on_an_indie_budget.php). The system uses three "whiskers" to look in the direction the player is pressing on the joystick. If the center whisker is quite touching a wall, and either the left or right whisker is significantly shorter than the other one, the character will try to rotate it's input direction and try again, untill no whiskers are squashed anymore, or rotating didn't really improve the situation. After tuning the width, length and steering strength of this system, the character will easily steer alongside very tight corners. This was very satisfying, because although the final implementation got a bit complex the end result is completely invisible to the player.
+
 ### Lessons Learned
 Simple design equals a much faster pace of development. This just makes everything more enjoyable to work and iterate on, which is a general lesson learned over this entire project.
+
+
+## Conclusion
+After several weeks of intense experimentation I can safely say I learned a lot about programming and a little bit about myself.
+By trying to tackle different subjects than the basics of a game (like standard navigation and UI), I was forced into trying out new programming structures to solve new problems. Between weeks I went back and forth between attempting the simplest possible design and overcooked structure. This grew my appreciation of the consequences of poor design and made me dread the timesink that is overengineering. Over these few weeks my sensibilities and taste for "good code" grew a lot more than during the times I was only using programming as a means to an end. 
+I also learned some things about myself. The goal was to chase interesting new subjects to try to tackle every week, but while working on new subjects I sometimes found myself extracting and focusing on an area of the new subject that I was already more comfortably with, like working on toolmaking and designing a workflow while I was meant to work on AI. Even when my goal is to "cut loose" I need to keep an eye on myself to make sure I still maintain focus on my bigger goals.
